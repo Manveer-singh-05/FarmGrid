@@ -1,51 +1,49 @@
-@extends('layouts.app')
+@extends('layouts.main')
 
-@section('content')
-    <div class="min-h-screen bg-gray-100">
-        <div class="max-w-4xl mx-auto px-4 py-8">
-            <div class="bg-white rounded-lg shadow p-6">
-                <h2 class="text-2xl font-bold mb-6">Apply for Electricity Connection</h2>
+@section('main-content')
+    <div class="max-w-3xl">
+        <div class="glass-card p-8 mb-6">
+            <h2 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-400 mb-8">
+                Apply for Electricity Connection</h2>
 
-                <form action="{{ route('farmer.store') }}" method="POST" class="space-y-6">
-                    @csrf
+            <form action="{{ route('farmer.store') }}" method="POST" class="space-y-6">
+                @csrf
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Village Name</label>
-                        <input type="text" name="village" required
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
-                    </div>
+                <div class="group">
+                    <label class="glass-label">Village Name</label>
+                    <input type="text" name="village" required class="glass-input">
+                </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Land Area (in acres)</label>
-                        <input type="number" step="0.1" name="land_area" required
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
-                    </div>
+                <div class="group">
+                    <label class="glass-label">Land Area (in acres)</label>
+                    <input type="number" step="0.1" name="land_area" required class="glass-input">
+                </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Connection Number</label>
-                        <input type="text" name="connection_no" required
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
-                    </div>
+                <div class="group">
+                    <label class="glass-label">Connection Number</label>
+                    <input type="text" name="connection_no" required class="glass-input">
+                </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Water Source</label>
-                        <select name="water_source" required
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
-                            <option value="">Select...</option>
-                            <option value="tube_well">Tube Well</option>
-                            <option value="borewell">Borewell</option>
-                            <option value="canal">Canal</option>
-                        </select>
-                    </div>
+                <div class="group">
+                    <label class="glass-label">Water Source</label>
+                    <select name="water_source" required class="glass-input">
+                        <option value="" class="bg-slate-900 text-white">Select...</option>
+                        <option value="tube_well" class="bg-slate-900 text-white">Tube Well</option>
+                        <option value="borewell" class="bg-slate-900 text-white">Borewell</option>
+                        <option value="canal" class="bg-slate-900 text-white">Canal</option>
+                    </select>
+                </div>
 
-                    <div class="flex gap-4">
-                        <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">Submit
-                            Application</button>
-                        <a href="{{ route('farmer.dashboard') }}"
-                            class="bg-gray-300 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-400">Cancel</a>
-                    </div>
-                </form>
-            </div>
+                <div class="flex gap-4 pt-6">
+                    <button type="submit" class="btn-glass btn-green px-8 py-3 font-semibold">
+                        ✓ Submit Application
+                    </button>
+                    <a href="{{ route('farmer.dashboard') }}"
+                        class="btn-glass btn-blue px-8 py-3 font-semibold text-center">
+                        ← Cancel
+                    </a>
+                </div>
+            </form>
         </div>
     </div>
 @endsection
