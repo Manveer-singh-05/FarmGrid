@@ -19,6 +19,6 @@ class AdminMiddleware
             return $next($request);
         }
 
-        abort(403, 'Unauthorized. Admin access required.');
+        return abort(403, 'Unauthorized. Admin access required.');
     }
 }
