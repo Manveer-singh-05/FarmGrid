@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FarmerController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\GovernmentController;
 use App\Http\Controllers\ComplaintController;
 use App\Http\Controllers\ElectricityScheduleController;
 use Illuminate\Support\Facades\Route;
@@ -10,16 +11,22 @@ use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     if (Auth::check()) {
-        // Redirect authenticated users to their dashboard
-        if (Auth::user()->role === 'admin') {
+        // Redirect authenticated users to their role-based dashboard
+        $role = Auth::user()->role;
+
+        if ($role === 'admin') {
             return redirect()->route('admin.dashboard');
-        } else if (Auth::user()->role === 'farmer') {
+        } else if ($role === 'farmer') {
             return redirect()->route('farmer.dashboard');
+        } else if ($role === 'government') {
+            return redirect()->route('government.dashboard');
         }
+
         return redirect()->route('dashboard');
     }
-    // Redirect unauthenticated users to login
-    return redirect()->route('login');
+
+    // Show welcome page for unauthenticated users
+    return view('welcome');
 });
 
 Route::get('/dashboard', function () {
@@ -75,6 +82,28 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
 
     // Reports
     Route::get('/reports', [AdminController::class, 'reports'])->name('admin.reports');
+});
+
+/**
+ * Government Routes
+ */
+Route::middleware(['auth', 'verified', 'admin'])->prefix('government')->group(function () {
+    Route::get('/dashboard', [GovernmentController::class, 'dashboard'])->name('government.dashboard');
+
+    // Farmers Information
+    Route::get('/farmers', [GovernmentController::class, 'farmers'])->name('government.farmers');
+
+    // Complaints Monitoring
+    Route::get('/complaints', [GovernmentController::class, 'complaints'])->name('government.complaints');
+
+    // Power Usage Reports
+    Route::get('/power-usage', [GovernmentController::class, 'powerUsage'])->name('government.power-usage');
+
+    // Electricity Schedules
+    Route::get('/schedules', [GovernmentController::class, 'schedules'])->name('government.schedules');
+
+    // Reports and Analytics
+    Route::get('/reports', [GovernmentController::class, 'reports'])->name('government.reports');
 });
 
 /**
