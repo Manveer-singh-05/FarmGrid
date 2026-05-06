@@ -19,6 +19,10 @@
 /storage/*.key
 /storage/pail
 /vendor
+/database/database.sqlite
+/database/*.sqlite
+/database/*.sqlite-shm
+/database/*.sqlite-wal
 Homestead.json
 Homestead.yaml
 Thumbs.db
