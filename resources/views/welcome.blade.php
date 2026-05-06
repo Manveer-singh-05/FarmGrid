@@ -39,6 +39,21 @@
             blur: 50px;
         }
 
+        /* Hero Grid Alignment */
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: center;
+        }
+
+        @media (max-width: 1024px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+        }
+
         /* Feature Cards Animation */
         .feature-card {
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -47,6 +62,9 @@
             overflow: hidden;
             background: white;
             border: 1px solid #e5e7eb;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
         .feature-card::before {
@@ -74,6 +92,8 @@
             font-size: 3.5rem;
             margin-bottom: 16px;
             transition: transform 0.3s ease;
+            display: block;
+            text-align: center;
         }
 
         .feature-card:hover .feature-card-icon {
@@ -131,6 +151,9 @@
             overflow: hidden;
             border-radius: 16px;
             padding: 32px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
         .role-card::after {
@@ -260,8 +283,9 @@
         .section-title p {
             font-size: 1.25rem;
             color: #6b7280;
-            max-width: 500px;
+            max-width: 600px;
             margin: 0 auto;
+            line-height: 1.6;
         }
 
         .feature-grid {
@@ -277,20 +301,60 @@
             gap: 28px;
         }
 
+        /* Button Group Alignment */
+        .button-group {
+            display: flex;
+            flex-direction: row;
+            gap: 12px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Hero Emoji Section */
+        .hero-emoji-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            text-align: center;
+        }
+
+        .emoji-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .emoji-glow {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.3), transparent 70%);
+            border-radius: 50%;
+            filter: blur(20px);
+        }
+
         /* Accessibility */
         @media (max-width: 768px) {
             .section-title h2 {
                 font-size: 2rem;
             }
 
+            .button-group {
+                flex-direction: column;
+                gap: 10px;
+                width: 100%;
+            }
+
             .btn-secondary {
                 margin-left: 0;
-                margin-top: 10px;
-                display: block;
             }
 
             .stat-number {
                 font-size: 2rem;
+            }
+
+            .hero-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -332,7 +396,7 @@
     <!-- Hero Section -->
     <div class="hero-gradient text-white pt-36 pb-28 mt-16 relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid md:grid-cols-2 gap-16 items-center">
+            <div class="hero-grid">
                 <div class="space-y-8">
                     <div>
                         <span
@@ -345,24 +409,22 @@
                             power management with intelligent zone-wise electricity scheduling, real-time monitoring,
                             and complaint resolution for sustainable farming.</p>
                     </div>
-                    <div class="flex flex-col sm:flex-row gap-4 pt-4">
+                    <div class="button-group sm:justify-start">
                         @guest
-                            <a href="{{ route('login') }}" class="btn-primary text-center">🔓 Login Now</a>
-                            <a href="{{ route('register') }}" class="btn-secondary text-center">✨ Get Started Free</a>
+                            <a href="{{ route('login') }}" class="btn-primary">🔓 Login Now</a>
+                            <a href="{{ route('register') }}" class="btn-secondary">✨ Get Started Free</a>
                         @else
-                            <a href="{{ url('/dashboard') }}" class="btn-primary text-center">📊 Go to Dashboard</a>
+                            <a href="{{ url('/dashboard') }}" class="btn-primary">📊 Go to Dashboard</a>
                         @endguest
                     </div>
                 </div>
-                <div class="flex flex-col items-center justify-center space-y-8">
-                    <div class="relative">
-                        <div
-                            class="absolute -inset-4 bg-gradient-to-r from-green-400 to-green-600 opacity-20 blur-xl rounded-full">
-                        </div>
-                        <div class="text-9xl animate-bounce relative">⚡</div>
+                <div class="hero-emoji-section">
+                    <div class="emoji-container">
+                        <div class="emoji-glow"></div>
+                        <div class="text-9xl animate-bounce relative z-10">⚡</div>
                     </div>
                     <div class="text-8xl">🌾</div>
-                    <p class="text-2xl font-bold text-green-50 text-center">Efficient Power for Better Farming</p>
+                    <p class="text-2xl font-bold text-green-50">Efficient Power for Better Farming</p>
                 </div>
             </div>
         </div>
@@ -571,7 +633,7 @@
             <p class="text-xl mb-12 text-green-50 max-w-2xl mx-auto">Join thousands of farmers benefiting from
                 intelligent electricity management. Experience real-time monitoring, fair distribution, and seamless
                 complaint resolution.</p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <div class="button-group">
                 @guest
                     <a href="{{ route('register') }}" class="btn-primary">🚀 Start Free Now</a>
                     <a href="{{ route('login') }}" class="btn-secondary">Already a Member? Login</a>
@@ -652,93 +714,6 @@
             observer.observe(el);
         });
     </script>
-</body>
-
-</html>
-</div>
-</div>
-</div>
-</div>
-
-<!-- CTA Section -->
-<div class="py-20 bg-gradient-to-r from-green-600 to-green-700 text-white">
-    <div class="max-w-4xl mx-auto text-center px-4">
-        <h3 class="text-5xl font-bold mb-6">Transform Your Farm Today</h3>
-        <p class="text-xl mb-10 text-green-50">Join thousands of farmers benefiting from intelligent electricity
-            management</p>
-        <div>
-            @guest
-                <a href="{{ route('register') }}" class="btn-primary" style="color: #1e40af; margin-right: 15px;">🚀
-                    Start Free Now</a>
-                <a href="{{ route('login') }}" class="btn-secondary"
-                    style="background: white; color: #10b981; margin-left: 0;">Already a Member? Login</a>
-            @else
-                <a href="{{ url('/dashboard') }}" class="btn-primary" style="color: #1e40af;">📊 Open Dashboard</a>
-            @endguest
-        </div>
-    </div>
-</div>
-
-<!-- Footer -->
-<footer class="bg-gray-900 text-gray-400 py-12">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid md:grid-cols-4 gap-8 mb-8">
-            <div>
-                <div class="flex items-center space-x-2 mb-4">
-                    <div class="w-8 h-8 bg-green-600 rounded flex items-center justify-center">
-                        <span class="text-white">⚡</span>
-                    </div>
-                    <span class="font-bold text-white">FarmGrid</span>
-                </div>
-                <p class="text-sm">Smart Agricultural Electricity Distribution System</p>
-            </div>
-            <div>
-                <h4 class="text-white font-semibold mb-4">Features</h4>
-                <ul class="space-y-2 text-sm">
-                    <li><a href="#" class="hover:text-white transition">Scheduling</a></li>
-                    <li><a href="#" class="hover:text-white transition">Complaints</a></li>
-                    <li><a href="#" class="hover:text-white transition">Analytics</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="text-white font-semibold mb-4">Company</h4>
-                <ul class="space-y-2 text-sm">
-                    <li><a href="#" class="hover:text-white transition">About</a></li>
-                    <li><a href="#" class="hover:text-white transition">Contact</a></li>
-                    <li><a href="#" class="hover:text-white transition">Support</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="text-white font-semibold mb-4">Legal</h4>
-                <ul class="space-y-2 text-sm">
-                    <li><a href="#" class="hover:text-white transition">Privacy</a></li>
-                    <li><a href="#" class="hover:text-white transition">Terms</a></li>
-                    <li><a href="#" class="hover:text-white transition">Security</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="border-t border-gray-700 pt-8 flex justify-between items-center">
-            <p class="text-sm">© 2026 FarmGrid. All rights reserved.</p>
-            <div class="flex space-x-6 text-sm">
-                <a href="#" class="hover:text-white transition">Facebook</a>
-                <a href="#" class="hover:text-white transition">Twitter</a>
-                <a href="#" class="hover:text-white transition">LinkedIn</a>
-            </div>
-        </div>
-    </div>
-</footer>
-
-<script>
-    const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -100px 0px' };
-    const observer = new IntersectionObserver(function (entries) {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.animation = 'fadeInUp 0.6s ease forwards';
-            }
-        });
-    }, observerOptions);
-    document.querySelectorAll('.feature-card, .stat-box').forEach(el => observer.observe(el));
-</script>
 </body>
 
 </html>
