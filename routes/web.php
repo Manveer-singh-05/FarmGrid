@@ -73,6 +73,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::get('/schedules', [AdminController::class, 'schedules'])->name('admin.schedules');
     Route::get('/schedule/create', [AdminController::class, 'createSchedule'])->name('admin.schedule.create');
     Route::post('/schedule', [AdminController::class, 'storeSchedule'])->name('admin.schedule.store');
+    Route::get('/schedule/{id}/edit', [AdminController::class, 'editSchedule'])->name('admin.schedule.edit');
     Route::patch('/schedule/{id}', [AdminController::class, 'updateSchedule'])->name('admin.schedule.update');
     Route::delete('/schedule/{id}', [AdminController::class, 'deleteSchedule'])->name('admin.schedule.delete');
 

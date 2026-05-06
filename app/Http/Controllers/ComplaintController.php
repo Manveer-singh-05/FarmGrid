@@ -15,6 +15,12 @@ class ComplaintController extends Controller
     public function index()
     {
         $farmer = Auth::user()->farmer;
+
+        if (!$farmer) {
+            return redirect()->route('farmer.apply')
+                ->with('info', 'Please apply for a connection first before viewing complaints.');
+        }
+
         $complaints = $farmer->complaints()->latest()->paginate(10);
         return view('farmer.complaints', compact('complaints'));
     }

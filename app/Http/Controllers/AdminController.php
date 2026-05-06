@@ -66,6 +66,15 @@ class AdminController extends Controller
     }
 
     /**
+     * Show edit schedule form
+     */
+    public function editSchedule($id)
+    {
+        $schedule = ElectricitySchedule::findOrFail($id);
+        return view('admin.edit-schedule', compact('schedule'));
+    }
+
+    /**
      * Create new schedule
      */
     public function createSchedule()

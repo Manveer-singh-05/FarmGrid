@@ -47,7 +47,7 @@ class GovernmentController extends Controller
      */
     public function complaints()
     {
-        $complaints = Complaint::with(['user', 'farmer'])->paginate(15);
+        $complaints = Complaint::with(['farmer.user'])->paginate(15);
         return view('government.complaints', compact('complaints'));
     }
 
