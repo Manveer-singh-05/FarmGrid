@@ -10,7 +10,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 /**
- * @property string $role
+ * @property-read string $role
+ * @property-read Farmer|null $farmer
  */
 class User extends Authenticatable
 {

@@ -3,7 +3,6 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Auth\AuthorizationException;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -20,6 +19,6 @@ class AdminMiddleware
             return $next($request);
         }
 
-        throw new AuthorizationException('Unauthorized. Admin access required.');
+        abort(403, 'Unauthorized. Admin access required.');
     }
 }
