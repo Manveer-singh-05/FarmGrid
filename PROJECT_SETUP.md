@@ -228,9 +228,11 @@ Update `.env`:
 
 ```
 DB_CONNECTION=mongodb
-MONGODB_URI=mongodb+srv://manveersingh:100121@proappoint.m2kipdf.mongodb.net/farmgrid_db
+MONGODB_URI=mongodb+srv://your_username:your_password@your_cluster.mongodb.net/farmgrid_db
 DB_DATABASE=farmgrid_db
 ```
+
+⚠️ **Note:** Keep credentials in `.env` file only, never commit to GitHub
 
 ---
 
@@ -271,8 +273,8 @@ php artisan tinker
 
 - Host: `smtp.gmail.com`
 - Port: `587`
-- Email: `manveersingh0501l@gmail.com`
-- Password: App Password (via Gmail 2FA)
+- Email: Your email address (set in `.env`)
+- Password: App Password via Gmail 2FA (set in `.env`)
 
 **To Test Email:**
 
@@ -280,6 +282,8 @@ php artisan tinker
 php artisan tinker
 >>> Mail::raw('Test email', function($message) { $message->to('test@example.com'); })
 ```
+
+⚠️ **Note:** Email credentials stored in `.env` file only, never commit to GitHub
 
 ---
 
