@@ -6,9 +6,20 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ComplaintController;
 use App\Http\Controllers\ElectricityScheduleController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
-    return view('welcome');
+    if (Auth::check()) {
+        // Redirect authenticated users to their dashboard
+        if (Auth::user()->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        } else if (Auth::user()->role === 'farmer') {
+            return redirect()->route('farmer.dashboard');
+        }
+        return redirect()->route('dashboard');
+    }
+    // Redirect unauthenticated users to login
+    return redirect()->route('login');
 });
 
 Route::get('/dashboard', function () {

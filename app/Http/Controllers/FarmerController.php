@@ -79,6 +79,37 @@ class FarmerController extends Controller
     }
 
     /**
+     * View power usage
+     */
+    public function usage()
+    {
+        $farmer = Auth::user()->farmer;
+        if (!$farmer) {
+            return redirect()->route('farmer.apply');
+        }
+
+        $usages = $farmer->powerUsages()->latest()->get();
+        return view('farmer.usage', compact('usages'));
+    }
+
+    /**
+     * Update profile
+     */
+    public function updateProfile(Request $request)
+    {
+        $farmer = Auth::user()->farmer;
+
+        $validated = $request->validate([
+            'village' => 'required|string',
+            'land_area' => 'required|numeric|min:0.1',
+        ]);
+
+        $farmer->update($validated);
+
+        return back()->with('success', 'Profile updated successfully!');
+    }
+
+    /**
      * Update profile
      */
     public function update(Request $request, string $id)
