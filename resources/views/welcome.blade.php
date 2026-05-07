@@ -426,7 +426,8 @@
 
         /* Stats Section Background */
         #stats {
-            background: linear-gradient(to bottom, rgba(15, 23, 42, 0.5), rgba(15, 23, 42, 0.8));
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0) 0%, rgba(37, 99, 235, 0.03) 50%, rgba(15, 23, 42, 0.5) 100%),
+                linear-gradient(135deg, #0f172a 0%, #1a2f50 100%);
             position: relative;
             overflow: hidden;
         }
@@ -434,11 +435,11 @@
         #stats::before {
             content: '';
             position: absolute;
-            top: -50%;
-            right: 5%;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(56, 189, 248, 0.08) 0%, transparent 70%);
+            top: -40%;
+            right: 10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 70%);
             border-radius: 50%;
             filter: blur(80px);
             z-index: 0;
@@ -447,24 +448,20 @@
         #stats::after {
             content: '';
             position: absolute;
-            bottom: -30%;
-            left: 10%;
-            width: 450px;
-            height: 450px;
-            background: radial-gradient(circle, rgba(16, 185, 129, 0.06) 0%, transparent 70%);
+            bottom: -20%;
+            left: 5%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
             border-radius: 50%;
             filter: blur(80px);
             z-index: 0;
         }
 
-        #stats>* {
-            position: relative;
-            z-index: 1;
-        }
-
         /* Roles Section Background */
         #roles {
-            background: linear-gradient(to bottom, rgba(15, 23, 42, 0.4), rgba(15, 23, 42, 0.7));
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0) 0%, rgba(37, 99, 235, 0.03) 50%, rgba(15, 23, 42, 0.5) 100%),
+                linear-gradient(135deg, #0f172a 0%, #1a2f50 100%);
             position: relative;
             overflow: hidden;
         }
@@ -481,19 +478,14 @@
         #roles::after {
             content: '';
             position: absolute;
-            top: 50%;
-            right: -200px;
+            top: -40%;
+            right: 5%;
             width: 600px;
             height: 600px;
-            background: radial-gradient(circle, rgba(56, 189, 248, 0.1) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 70%);
             border-radius: 50%;
-            filter: blur(100px);
+            filter: blur(80px);
             z-index: 0;
-        }
-
-        #roles>* {
-            position: relative;
-            z-index: 1;
         }
 
         /* Button Group Alignment */
@@ -507,7 +499,8 @@
 
         /* CTA Section Enhancement */
         #contact {
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.6) 0%, rgba(15, 23, 42, 0.8) 50%, rgba(15, 23, 42, 0.6) 100%);
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0) 0%, rgba(37, 99, 235, 0.03) 50%, rgba(15, 23, 42, 0.5) 100%),
+                linear-gradient(135deg, #0f172a 0%, #1a2f50 100%);
             position: relative;
             overflow: hidden;
             border-top: 1px solid rgba(56, 189, 248, 0.1);
@@ -520,7 +513,8 @@
 
         /* Footer */
         footer {
-            background: linear-gradient(to bottom, rgba(15, 23, 42, 0.5), rgba(15, 23, 42, 0.8));
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0) 0%, rgba(37, 99, 235, 0.03) 50%, rgba(15, 23, 42, 0.5) 100%),
+                linear-gradient(135deg, #0f172a 0%, #1a2f50 100%);
             border-top: 1px solid rgba(56, 189, 248, 0.1);
             position: relative;
             overflow: hidden;
@@ -756,12 +750,41 @@
 
         /* Features Section Background */
         #features {
-            background: linear-gradient(to bottom, rgba(15, 23, 42, 0.4), rgba(15, 23, 42, 0.7));
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0) 0%, rgba(37, 99, 235, 0.03) 50%, rgba(15, 23, 42, 0.5) 100%),
+                linear-gradient(135deg, #0f172a 0%, #1a2f50 100%);
             position: relative;
+            overflow: hidden;
+        }
+
+        #features::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: 10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+        }
+
+        #features::after {
+            content: '';
+            position: absolute;
+            bottom: -20%;
+            left: 5%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
         }
 
         .py-28.bg-white {
-            background: linear-gradient(to bottom, rgba(15, 23, 42, 0.4), rgba(15, 23, 42, 0.7)) !important;
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0) 0%, rgba(37, 99, 235, 0.03) 50%, rgba(15, 23, 42, 0.5) 100%),
+                linear-gradient(135deg, #0f172a 0%, #1a2f50 100%) !important;
         }
 
         /* Roles Section Background */
@@ -1084,8 +1107,9 @@
     </section>
 
     <!-- Stats Section -->
-    <section id="stats" class="py-24">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="stats" class="py-24 relative overflow-hidden">
+        <div class="absolute inset-0 pointer-events-none z-0"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="grid md:grid-cols-4 gap-8">
                 <div class="stat-box">
                     <div class="stat-number">500+</div>
@@ -1167,8 +1191,9 @@
     </section>
 
     <!-- Roles Section -->
-    <section id="roles" class="py-28">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="roles" class="py-28 relative overflow-hidden">
+        <div class="absolute inset-0 pointer-events-none z-0"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="section-title">
                 <h2>Built for Everyone</h2>
                 <p>Tailored features for each user role</p>
