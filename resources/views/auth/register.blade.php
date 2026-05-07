@@ -1,51 +1,55 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('register') }}" class="space-y-6">
+    <div class="auth-card-title">Create Account</div>
+    <div class="auth-card-subtitle">Join thousands of farmers managing electricity efficiently</div>
+
+    <form method="POST" action="{{ route('register') }}">
         @csrf
 
         <!-- Name -->
-        <div>
-            <label for="name" class="glassmorphic-label block mb-2">{{ __('Full Name') }}</label>
-            <input id="name" class="glassmorphic-input block w-full" type="text" name="name" :value="old('name')"
-                required autofocus autocomplete="name" placeholder="Enter your full name" />
+        <div class="form-group">
+            <label for="name" class="glassmorphic-label">{{ __('Full Name') }}</label>
+            <input id="name" class="glassmorphic-input" type="text" name="name" :value="old('name')" required autofocus
+                autocomplete="name" placeholder="John Farmer" />
             <x-input-error :messages="$errors->get('name')" class="glassmorphic-error" />
         </div>
 
         <!-- Email Address -->
-        <div>
-            <label for="email" class="glassmorphic-label block mb-2">{{ __('Email Address') }}</label>
-            <input id="email" class="glassmorphic-input block w-full" type="email" name="email" :value="old('email')"
-                required autocomplete="username" placeholder="Enter your email" />
+        <div class="form-group">
+            <label for="email" class="glassmorphic-label">{{ __('Email Address') }}</label>
+            <input id="email" class="glassmorphic-input" type="email" name="email" :value="old('email')" required
+                autocomplete="username" placeholder="name@farmgrid.com" />
             <x-input-error :messages="$errors->get('email')" class="glassmorphic-error" />
         </div>
 
         <!-- Password -->
-        <div>
-            <label for="password" class="glassmorphic-label block mb-2">{{ __('Password') }}</label>
-            <input id="password" class="glassmorphic-input block w-full" type="password" name="password" required
-                autocomplete="new-password" placeholder="Create a password" />
+        <div class="form-group">
+            <label for="password" class="glassmorphic-label">{{ __('Password') }}</label>
+            <input id="password" class="glassmorphic-input" type="password" name="password" required
+                autocomplete="new-password" placeholder="••••••••" />
             <x-input-error :messages="$errors->get('password')" class="glassmorphic-error" />
         </div>
 
         <!-- Confirm Password -->
-        <div>
-            <label for="password_confirmation"
-                class="glassmorphic-label block mb-2">{{ __('Confirm Password') }}</label>
-            <input id="password_confirmation" class="glassmorphic-input block w-full" type="password"
-                name="password_confirmation" required autocomplete="new-password" placeholder="Confirm your password" />
+        <div class="form-group">
+            <label for="password_confirmation" class="glassmorphic-label">{{ __('Confirm Password') }}</label>
+            <input id="password_confirmation" class="glassmorphic-input" type="password" name="password_confirmation"
+                required autocomplete="new-password" placeholder="••••••••" />
             <x-input-error :messages="$errors->get('password_confirmation')" class="glassmorphic-error" />
         </div>
 
-        <!-- Submit Button -->
-        <button type="submit" class="glassmorphic-button w-full justify-center text-center mt-8">
+        <!-- Create Account Button -->
+        <button type="submit" class="glassmorphic-button">
             {{ __('Create Account') }}
         </button>
 
-        <!-- Login Link -->
-        <div class="text-center pt-4 border-t border-white border-opacity-10">
-            <span class="text-white text-opacity-80 text-sm">{{ __('Already have an account?') }}</span>
-            <a class="glassmorphic-link ml-2" href="{{ route('login') }}">
-                {{ __('Sign in') }}
-            </a>
+        <!-- Sign In Link -->
+        <div class="form-link-section">
+            <span class="form-link-text">
+                {{ __('Already have an account?') }}
+                <a class="glassmorphic-link" href="{{ route('login') }}">
+                    {{ __('Sign in') }}
+                </a>
+            </span>
         </div>
     </form>
 </x-guest-layout>
