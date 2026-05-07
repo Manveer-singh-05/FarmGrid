@@ -527,6 +527,8 @@
             border-top: 1px solid rgba(56, 189, 248, 0.2);
             border-bottom: 1px solid rgba(34, 197, 94, 0.2);
             box-shadow: 0 -20px 60px rgba(37, 99, 235, 0.1);
+            padding-top: 80px;
+            padding-bottom: 80px;
         }
 
         #contact::before {
@@ -559,12 +561,45 @@
             color: #f1f5f9;
             position: relative;
             z-index: 1;
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 24px;
+            letter-spacing: -0.5px;
         }
 
-        #contact p,
+        #contact p {
+            position: relative;
+            z-index: 1;
+            font-size: 1.1rem;
+            color: #cbd5e1;
+            margin-bottom: 32px;
+            line-height: 1.8;
+        }
+
         #contact .button-group {
             position: relative;
             z-index: 1;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 768px) {
+            #contact h3 {
+                font-size: 2rem;
+                margin-bottom: 16px;
+            }
+
+            #contact p {
+                font-size: 1rem;
+                margin-bottom: 24px;
+            }
+
+            #contact {
+                padding-top: 60px;
+                padding-bottom: 60px;
+            }
         }
 
         /* Footer */
@@ -604,6 +639,35 @@
             z-index: 1;
         }
 
+        /* Footer Main Grid Container */
+        footer .grid {
+            display: grid;
+            grid-auto-flow: row;
+            width: 100%;
+            align-items: start;
+        }
+
+        @media (min-width: 1024px) {
+            footer .grid {
+                grid-template-columns: 1fr 1fr 1fr 1fr;
+                gap: 48px;
+            }
+        }
+
+        @media (min-width: 768px) and (max-width: 1023px) {
+            footer .grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 40px;
+            }
+        }
+
+        @media (max-width: 767px) {
+            footer .grid {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+        }
+
         footer h4 {
             color: #f1f5f9 !important;
             font-weight: 700;
@@ -635,6 +699,11 @@
         }
 
         /* Footer Logo Section */
+        .footer-logo-section {
+            display: flex;
+            flex-direction: column;
+        }
+
         .footer-logo-section h3 {
             font-size: 1.25rem;
             font-weight: 700;
@@ -649,8 +718,8 @@
             font-size: 0.9rem;
             color: #cbd5e1;
             line-height: 1.6;
-            margin-bottom: 16px;
-            max-width: 240px;
+            margin-bottom: 12px;
+            max-width: 280px;
         }
 
         /* Social Icons */
@@ -687,6 +756,7 @@
         .footer-column {
             display: flex;
             flex-direction: column;
+            justify-content: flex-start;
         }
 
         .footer-column ul {
@@ -694,11 +764,22 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
+            margin-top: 8px;
+        }
+
+        .footer-column li {
+            list-style: none;
         }
 
         .footer-column li a {
             font-size: 0.9rem;
             color: #cbd5e1;
+            display: block;
+            padding-bottom: 2px;
+        }
+
+        .footer-column li a:hover {
+            color: #38BDF8;
         }
 
         /* Footer Bottom */
@@ -1095,7 +1176,13 @@
             }
 
             .footer-column {
-                margin-top: 12px;
+                margin-top: 24px;
+            }
+
+            .footer-logo-section {
+                margin-bottom: 12px;
+                border-bottom: 1px solid rgba(56, 189, 248, 0.15);
+                padding-bottom: 24px;
             }
 
             .footer-social {
@@ -1462,18 +1549,11 @@
     </section>
 
     <!-- CTA Section -->
-    <div id="contact" class="py-32 relative overflow-hidden">
-        <div class="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-emerald-600/10 to-blue-600/10 backdrop-blur">
-        </div>
-        <div class="absolute inset-0">
-            <div class="absolute top-0 right-1/4 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl"></div>
-            <div class="absolute bottom-0 left-1/4 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl"></div>
-        </div>
-        <div class="max-w-4xl mx-auto text-center px-4 relative z-10">
-            <h3 class="text-5xl md:text-6xl font-800 mb-8 leading-tight">Transform Your Farm Today</h3>
-            <p class="text-xl mb-12 text-slate-300 max-w-2xl mx-auto">Join thousands of farmers benefiting from
-                intelligent electricity management. Experience real-time monitoring, fair distribution, and seamless
-                complaint resolution.</p>
+    <div id="contact" class="relative overflow-hidden">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h3>Transform Your Farm Today</h3>
+            <p class="max-w-3xl mx-auto">Join thousands of farmers benefiting from intelligent electricity management.
+                Experience real-time monitoring, fair distribution, and seamless complaint resolution.</p>
             <div class="button-group">
                 @guest
                     <a href="{{ route('register') }}" class="btn-primary">🚀 Start Free Now</a>
