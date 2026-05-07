@@ -115,14 +115,17 @@
             cursor: pointer;
             position: relative;
             overflow: hidden;
-            background: rgba(255, 255, 255, 0.08) !important;
-            border: 1px solid rgba(255, 255, 255, 0.15) !important;
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.07) !important;
+            border: 1px solid rgba(56, 189, 248, 0.2) !important;
+            backdrop-filter: blur(20px);
             height: 100%;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.27);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.27),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
             color: #f1f5f9;
+            border-radius: 20px;
+            padding: 32px !important;
         }
 
         .feature-card::before {
@@ -144,39 +147,48 @@
             transform: translateY(-12px);
             background: rgba(255, 255, 255, 0.12) !important;
             border-color: rgba(56, 189, 248, 0.5) !important;
-            box-shadow: 0 20px 50px rgba(37, 99, 235, 0.3);
+            box-shadow: 0 20px 60px rgba(37, 99, 235, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
         }
 
         .feature-card h4 {
             color: #f1f5f9 !important;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 12px;
         }
 
         .feature-card p {
             color: #cbd5e1 !important;
+            font-size: 0.95rem;
+            line-height: 1.7;
         }
 
         .feature-card-icon {
             font-size: 3.5rem;
-            margin-bottom: 16px;
+            margin-bottom: 24px;
             transition: transform 0.3s ease;
             display: block;
             text-align: center;
+            filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.2));
         }
 
         .feature-card:hover .feature-card-icon {
             transform: scale(1.15) rotate(5deg);
+            filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.4));
         }
 
         /* Stats Counter Animation */
         .stat-box {
             text-align: center;
             padding: 40px 24px;
-            background: rgba(255, 255, 255, 0.08) !important;
-            border: 1px solid rgba(255, 255, 255, 0.15) !important;
-            border-radius: 16px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.27);
-            transition: all 0.4s ease;
+            background: rgba(255, 255, 255, 0.07) !important;
+            border: 1px solid rgba(56, 189, 248, 0.2) !important;
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.27),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
             color: #f1f5f9;
@@ -200,10 +212,11 @@
         }
 
         .stat-box:hover {
-            transform: translateY(-8px);
+            transform: translateY(-12px);
             background: rgba(255, 255, 255, 0.12) !important;
             border-color: rgba(56, 189, 248, 0.5) !important;
-            box-shadow: 0 15px 40px rgba(37, 99, 235, 0.3);
+            box-shadow: 0 20px 60px rgba(37, 99, 235, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
         }
 
         .stat-number {
@@ -221,18 +234,19 @@
 
         /* Role Cards */
         .role-card {
-            transition: all 0.4s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
-            border-radius: 16px;
-            padding: 32px;
+            border-radius: 20px;
+            padding: 40px;
             height: 100%;
             display: flex;
             flex-direction: column;
-            background: rgba(255, 255, 255, 0.08) !important;
-            border: 1px solid rgba(255, 255, 255, 0.15) !important;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.27);
+            background: rgba(255, 255, 255, 0.07) !important;
+            border: 1px solid rgba(56, 189, 248, 0.2) !important;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.27),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
 
         .role-card::after {
@@ -249,10 +263,11 @@
         }
 
         .role-card:hover {
-            transform: translateY(-8px);
+            transform: translateY(-12px);
             background: rgba(255, 255, 255, 0.12) !important;
             border-color: rgba(56, 189, 248, 0.5) !important;
-            box-shadow: 0 20px 50px rgba(37, 99, 235, 0.3);
+            box-shadow: 0 20px 60px rgba(37, 99, 235, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
         }
 
         .role-card:hover::after {
@@ -266,10 +281,14 @@
 
         .role-card h4 {
             color: #f1f5f9 !important;
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 24px;
         }
 
         .role-card li {
             color: #cbd5e1 !important;
+            font-size: 0.95rem;
         }
 
         /* CTA Button Animations */
@@ -362,7 +381,8 @@
 
         .section-title {
             text-align: center;
-            margin-bottom: 60px;
+            margin-bottom: 80px;
+            animation: fadeInUp 0.8s ease-out;
         }
 
         .section-title h2 {
@@ -386,15 +406,94 @@
 
         .feature-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 24px;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 32px;
             margin-bottom: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .feature-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
         }
 
         .role-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
             gap: 28px;
+        }
+
+        /* Stats Section Background */
+        #stats {
+            background: linear-gradient(to bottom, rgba(15, 23, 42, 0.5), rgba(15, 23, 42, 0.8));
+            position: relative;
+            overflow: hidden;
+        }
+
+        #stats::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: 5%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+        }
+
+        #stats::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: 10%;
+            width: 450px;
+            height: 450px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.06) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+        }
+
+        #stats>* {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Roles Section Background */
+        #roles {
+            background: linear-gradient(to bottom, rgba(15, 23, 42, 0.4), rgba(15, 23, 42, 0.7));
+            position: relative;
+            overflow: hidden;
+        }
+
+        #roles::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.02) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        #roles::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -200px;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: 0;
+        }
+
+        #roles>* {
+            position: relative;
+            z-index: 1;
         }
 
         /* Button Group Alignment */
@@ -404,6 +503,95 @@
             gap: 12px;
             align-items: center;
             justify-content: center;
+        }
+
+        /* CTA Section Enhancement */
+        #contact {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.6) 0%, rgba(15, 23, 42, 0.8) 50%, rgba(15, 23, 42, 0.6) 100%);
+            position: relative;
+            overflow: hidden;
+            border-top: 1px solid rgba(56, 189, 248, 0.1);
+            border-bottom: 1px solid rgba(16, 185, 129, 0.1);
+        }
+
+        #contact h3 {
+            color: #f1f5f9;
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to bottom, rgba(15, 23, 42, 0.5), rgba(15, 23, 42, 0.8));
+            border-top: 1px solid rgba(56, 189, 248, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.02) 0%, transparent 100%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        footer::after {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: -200px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.05) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+        }
+
+        footer>* {
+            position: relative;
+            z-index: 1;
+        }
+
+        footer h4 {
+            color: #f1f5f9 !important;
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        footer p {
+            color: #cbd5e1 !important;
+        }
+
+        footer a {
+            color: #cbd5e1;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        footer a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #38BDF8, #10B981);
+            transition: width 0.3s ease;
+        }
+
+        footer a:hover {
+            color: #38BDF8;
+        }
+
+        footer a:hover::after {
+            width: 100%;
+        }
+
+        footer .border-t {
+            border-top-color: rgba(56, 189, 248, 0.1) !important;
         }
 
         /* Hero Content Container */
@@ -567,6 +755,11 @@
         }
 
         /* Features Section Background */
+        #features {
+            background: linear-gradient(to bottom, rgba(15, 23, 42, 0.4), rgba(15, 23, 42, 0.7));
+            position: relative;
+        }
+
         .py-28.bg-white {
             background: linear-gradient(to bottom, rgba(15, 23, 42, 0.4), rgba(15, 23, 42, 0.7)) !important;
         }
@@ -915,50 +1108,55 @@
     </section>
 
     <!-- Features Section -->
-    <section id="features" class="py-28">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="features" class="py-28 relative overflow-hidden">
+        <div
+            class="absolute inset-0 bg-gradient-to-b from-transparent via-blue-600/5 to-transparent pointer-events-none z-0">
+        </div>
+        <div class="absolute -left-96 top-1/4 w-96 h-96 bg-emerald-600/10 rounded-full blur-3xl z-0"></div>
+        <div class="absolute -right-96 bottom-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl z-0"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="section-title">
                 <h2>Powerful Features</h2>
                 <p>Everything you need to manage agricultural electricity efficiently</p>
             </div>
 
             <div class="feature-grid">
-                <div class="feature-card p-8 rounded-2xl">
+                <div class="feature-card p-8">
                     <div class="feature-card-icon">📊</div>
                     <h4 class="text-xl font-bold mb-3">Smart Scheduling</h4>
                     <p class="leading-relaxed">Zone-wise electricity allocation with automated scheduling
                         to prevent overloading and ensure fair distribution.</p>
                 </div>
 
-                <div class="feature-card p-8 rounded-2xl">
+                <div class="feature-card p-8">
                     <div class="feature-card-icon">👨‍🌾</div>
                     <h4 class="text-xl font-bold mb-3">Farmer Portal</h4>
                     <p class="leading-relaxed">Easy application management, schedule viewing, and
                         real-time connection status updates at your fingertips.</p>
                 </div>
 
-                <div class="feature-card p-8 rounded-2xl">
+                <div class="feature-card p-8">
                     <div class="feature-card-icon">⚙️</div>
                     <h4 class="text-xl font-bold mb-3">Fast Resolution</h4>
                     <p class="leading-relaxed">Quick complaint filing and tracking with admin response
                         system for electricity issues.</p>
                 </div>
 
-                <div class="feature-card p-8 rounded-2xl">
+                <div class="feature-card p-8">
                     <div class="feature-card-icon">📈</div>
                     <h4 class="text-xl font-bold mb-3">Usage Analytics</h4>
                     <p class="leading-relaxed">Real-time power consumption monitoring, billing details,
                         and usage history at a glance.</p>
                 </div>
 
-                <div class="feature-card p-8 rounded-2xl">
+                <div class="feature-card p-8">
                     <div class="feature-card-icon">🔐</div>
                     <h4 class="text-xl font-bold mb-3">Secure Access</h4>
                     <p class="leading-relaxed">Role-based dashboards for Farmers, Admins, and Government
                         with enterprise-grade security.</p>
                 </div>
 
-                <div class="feature-card p-8 rounded-2xl">
+                <div class="feature-card p-8">
                     <div class="feature-card-icon">📱</div>
                     <h4 class="text-xl font-bold mb-3">Responsive Design</h4>
                     <p class="leading-relaxed">Fully responsive interface works seamlessly on desktop,
@@ -1083,7 +1281,7 @@
     </section>
 
     <!-- CTA Section -->
-    <div class="py-32 relative overflow-hidden" id="contact">
+    <div id="contact" class="py-32 relative overflow-hidden">
         <div class="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-emerald-600/10 to-blue-600/10 backdrop-blur">
         </div>
         <div class="absolute inset-0">
