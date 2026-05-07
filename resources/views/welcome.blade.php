@@ -184,16 +184,17 @@
             cursor: pointer;
             position: relative;
             overflow: hidden;
-            background: rgba(255, 255, 255, 0.07) !important;
-            border: 1px solid rgba(56, 189, 248, 0.2) !important;
+            background: rgba(20, 40, 70, 0.4) !important;
+            border: 1px solid rgba(34, 197, 94, 0.25) !important;
             backdrop-filter: blur(20px);
             height: 100%;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.27),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.15),
+                0 8px 32px rgba(31, 38, 135, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
             color: #f1f5f9;
-            border-radius: 20px;
+            border-radius: 24px;
             padding: 32px !important;
             text-align: center;
             justify-content: center;
@@ -207,7 +208,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.1), transparent);
+            background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.08), transparent);
             transition: left 0.5s;
         }
 
@@ -216,18 +217,23 @@
         }
 
         .stat-box:hover {
-            transform: translateY(-12px);
-            background: rgba(255, 255, 255, 0.12) !important;
-            border-color: rgba(56, 189, 248, 0.5) !important;
-            box-shadow: 0 20px 60px rgba(37, 99, 235, 0.4),
-                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            transform: translateY(-8px);
+            background: rgba(20, 40, 70, 0.6) !important;
+            border-color: rgba(34, 197, 94, 0.6) !important;
+            box-shadow: 0 0 35px rgba(34, 197, 94, 0.35),
+                0 15px 50px rgba(34, 197, 94, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.12);
         }
 
         .stat-number {
-            color: #f1f5f9 !important;
+            background: linear-gradient(135deg, #38BDF8 0%, #10B981 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             font-size: 2.75rem;
             font-weight: 700;
             margin-bottom: 12px;
+            filter: drop-shadow(0 0 12px rgba(34, 197, 94, 0.3));
         }
 
         .stat-box p {
@@ -518,28 +524,64 @@
                 linear-gradient(135deg, #0f172a 0%, #1a2f50 100%);
             position: relative;
             overflow: hidden;
-            border-top: 1px solid rgba(56, 189, 248, 0.1);
-            border-bottom: 1px solid rgba(16, 185, 129, 0.1);
+            border-top: 1px solid rgba(56, 189, 248, 0.2);
+            border-bottom: 1px solid rgba(34, 197, 94, 0.2);
+            box-shadow: 0 -20px 60px rgba(37, 99, 235, 0.1);
+        }
+
+        #contact::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: 10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.12) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+        }
+
+        #contact::after {
+            content: '';
+            position: absolute;
+            bottom: -20%;
+            left: 5%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
         }
 
         #contact h3 {
             color: #f1f5f9;
+            position: relative;
+            z-index: 1;
+        }
+
+        #contact p,
+        #contact .button-group {
+            position: relative;
+            z-index: 1;
         }
 
         /* Footer */
         footer {
-            background: linear-gradient(180deg, rgba(15, 23, 42, 0) 0%, rgba(37, 99, 235, 0.03) 50%, rgba(15, 23, 42, 0.5) 100%),
-                linear-gradient(135deg, #0f172a 0%, #1a2f50 100%);
-            border-top: 1px solid rgba(56, 189, 248, 0.1);
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(20, 35, 60, 0.9) 100%);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(56, 189, 248, 0.25);
             position: relative;
             overflow: hidden;
+            box-shadow: 0 -20px 60px rgba(37, 99, 235, 0.1);
         }
 
         footer::before {
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(135deg, rgba(37, 99, 235, 0.02) 0%, transparent 100%);
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(16, 185, 129, 0.02) 100%);
             pointer-events: none;
             z-index: 0;
         }
@@ -549,9 +591,9 @@
             position: absolute;
             top: -100px;
             right: -200px;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(56, 189, 248, 0.05) 0%, transparent 70%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.1) 0%, transparent 70%);
             border-radius: 50%;
             filter: blur(80px);
             z-index: 0;
@@ -568,6 +610,7 @@
             font-size: 0.95rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            margin-bottom: 16px;
         }
 
         footer p {
@@ -578,29 +621,101 @@
             color: #cbd5e1;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
-        }
-
-        footer a::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: linear-gradient(90deg, #38BDF8, #10B981);
-            transition: width 0.3s ease;
+            display: inline-block;
         }
 
         footer a:hover {
             color: #38BDF8;
-        }
-
-        footer a:hover::after {
-            width: 100%;
+            transform: translateY(-2px);
+            text-shadow: 0 0 12px rgba(56, 189, 248, 0.5);
         }
 
         footer .border-t {
-            border-top-color: rgba(56, 189, 248, 0.1) !important;
+            border-top-color: rgba(56, 189, 248, 0.2) !important;
+        }
+
+        /* Footer Logo Section */
+        .footer-logo-section h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-description {
+            font-size: 0.9rem;
+            color: #cbd5e1;
+            line-height: 1.6;
+            margin-bottom: 16px;
+            max-width: 240px;
+        }
+
+        /* Social Icons */
+        .footer-social {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .social-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            border-radius: 8px;
+            color: #cbd5e1;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 1.1rem;
+            text-decoration: none;
+        }
+
+        .social-icon:hover {
+            background: rgba(56, 189, 248, 0.2);
+            border-color: rgba(34, 197, 94, 0.5);
+            color: #38BDF8;
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+            transform: translateY(-4px);
+        }
+
+        /* Footer Links Column */
+        .footer-column {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .footer-column ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .footer-column li a {
+            font-size: 0.9rem;
+            color: #cbd5e1;
+        }
+
+        /* Footer Bottom */
+        .footer-bottom {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(56, 189, 248, 0.15);
+            margin-top: 24px;
+        }
+
+        .footer-bottom p {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            text-align: center;
         }
 
         /* Hero Content Container */
@@ -969,11 +1084,35 @@
             .hero-grid {
                 grid-template-columns: 1fr;
             }
+
+            /* Footer responsive */
+            footer h4 {
+                margin-top: 20px;
+            }
+
+            footer h4:first-of-type {
+                margin-top: 0;
+            }
+
+            .footer-column {
+                margin-top: 12px;
+            }
+
+            .footer-social {
+                flex-wrap: wrap;
+            }
         }
 
         @media (min-width: 769px) {
             .mobile-menu {
                 display: none;
+            }
+        }
+
+        /* Footer medium screens */
+        @media (max-width: 1024px) {
+            .footer-description {
+                max-width: 100%;
             }
         }
     </style>
@@ -1088,7 +1227,7 @@
                 </div>
 
                 <!-- Dashboard Preview Card -->
-                <div class="dashboard-preview">
+                <!-- <div class="dashboard-preview">
                     <div class="dashboard-card">
                         <div class="dashboard-inner">
                             <div class="dashboard-header">
@@ -1111,7 +1250,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
     </section>
@@ -1347,53 +1486,63 @@
     </div>
 
     <!-- Footer -->
-    <footer class="py-16 border-t border-white/10">
+    <footer class="py-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid md:grid-cols-4 gap-12 mb-12">
-                <div>
-                    <div class="flex items-center space-x-3 mb-4">
+            <!-- Main Footer Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-12">
+                <!-- Column 1: Logo & Description -->
+                <div class="footer-logo-section">
+                    <div class="flex items-center space-x-3 mb-3">
                         <div
                             class="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/30">
                             <span class="text-white text-lg font-bold">⚡</span>
                         </div>
-                        <span class="font-bold text-white text-lg">FarmGrid</span>
+                        <h3>FarmGrid</h3>
                     </div>
-                    <p class="text-sm text-slate-400 leading-relaxed">Smart Agricultural Electricity Distribution System
-                        for sustainable farming solutions.</p>
+                    <p class="footer-description">Smart Agricultural Electricity Distribution System for sustainable
+                        farming solutions.</p>
+                    <!-- Social Icons -->
+                    <div class="footer-social">
+                        <a href="#" class="social-icon" title="Facebook">f</a>
+                        <a href="#" class="social-icon" title="Twitter">𝕏</a>
+                        <a href="#" class="social-icon" title="LinkedIn">in</a>
+                    </div>
                 </div>
-                <div>
-                    <h4 class="text-white font-semibold mb-6">Product</h4>
-                    <ul class="space-y-3 text-sm">
-                        <li><a href="#" class="text-slate-400 hover:text-cyan-400 transition">Scheduling</a></li>
-                        <li><a href="#" class="text-slate-400 hover:text-cyan-400 transition">Complaints</a></li>
-                        <li><a href="#" class="text-slate-400 hover:text-cyan-400 transition">Analytics</a></li>
+
+                <!-- Column 2: Product -->
+                <div class="footer-column">
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="#">Scheduling</a></li>
+                        <li><a href="#">Complaints</a></li>
+                        <li><a href="#">Analytics</a></li>
                     </ul>
                 </div>
-                <div>
-                    <h4 class="text-white font-semibold mb-6">Company</h4>
-                    <ul class="space-y-3 text-sm">
-                        <li><a href="#" class="text-slate-400 hover:text-cyan-400 transition">About Us</a></li>
-                        <li><a href="#" class="text-slate-400 hover:text-cyan-400 transition">Contact</a></li>
-                        <li><a href="#" class="text-slate-400 hover:text-cyan-400 transition">Support</a></li>
+
+                <!-- Column 3: Company -->
+                <div class="footer-column">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="#">Support</a></li>
                     </ul>
                 </div>
-                <div>
-                    <h4 class="text-white font-semibold mb-6">Legal</h4>
-                    <ul class="space-y-3 text-sm">
-                        <li><a href="#" class="text-slate-400 hover:text-cyan-400 transition">Privacy Policy</a></li>
-                        <li><a href="#" class="text-slate-400 hover:text-cyan-400 transition">Terms & Conditions</a>
-                        </li>
-                        <li><a href="#" class="text-slate-400 hover:text-cyan-400 transition">Security</a></li>
+
+                <!-- Column 4: Legal -->
+                <div class="footer-column">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms & Conditions</a></li>
+                        <li><a href="#">Security</a></li>
                     </ul>
                 </div>
             </div>
-            <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-6">
-                <p class="text-sm text-slate-400">© 2026 FarmGrid. All rights reserved. Built with ❤️ for farmers.</p>
-                <div class="flex space-x-8 text-sm">
-                    <a href="#" class="text-slate-400 hover:text-cyan-400 transition">Facebook</a>
-                    <a href="#" class="text-slate-400 hover:text-cyan-400 transition">Twitter</a>
-                    <a href="#" class="text-slate-400 hover:text-cyan-400 transition">LinkedIn</a>
-                </div>
+
+            <!-- Footer Bottom -->
+            <div class="footer-bottom">
+                <p>© 2026 FarmGrid. All rights reserved. Built with ❤️ for farmers.</p>
             </div>
         </div>
     </footer>
