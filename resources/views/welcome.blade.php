@@ -21,14 +21,14 @@
 
         /* Navbar Styling */
         nav {
-            background: rgba(15, 23, 42, 0.75) !important;
-            backdrop-filter: blur(10px) !important;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1) !important;
+            background: rgba(15, 23, 42, 0.5) !important;
+            backdrop-filter: blur(8px) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
         }
 
         nav a {
-            color: #e2e8f0 !important;
+            color: #cbd5e1 !important;
         }
 
         nav a:hover {
@@ -36,54 +36,76 @@
         }
 
         nav .text-gray-700 {
-            color: #e2e8f0 !important;
+            color: #cbd5e1 !important;
+        }
+
+        nav .h-16 {
+            height: 72px !important;
         }
 
         /* Hero Gradient */
         .hero-gradient {
-            background: linear-gradient(135deg, rgba(37, 99, 235, 0.15) 0%, rgba(16, 185, 129, 0.1) 50%, rgba(15, 23, 42, 0.3) 100%),
-                linear-gradient(to bottom, #0f172a 0%, #1a2f50 100%);
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0) 0%, rgba(37, 99, 235, 0.03) 50%, rgba(15, 23, 42, 0.5) 100%),
+                linear-gradient(135deg, #0f172a 0%, #1a2f50 100%);
             color: white;
             position: relative;
-            overflow: hidden;
+            overflow: visible;
         }
 
         .hero-gradient::before {
             content: '';
             position: absolute;
-            top: -50%;
-            right: -10%;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(56, 189, 248, 0.2) 0%, transparent 70%);
+            top: -40%;
+            right: 10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 70%);
             border-radius: 50%;
-            filter: blur(60px);
+            filter: blur(80px);
+            z-index: 0;
         }
 
         .hero-gradient::after {
             content: '';
             position: absolute;
-            bottom: -30%;
-            left: -15%;
+            bottom: -20%;
+            left: 5%;
             width: 500px;
             height: 500px;
-            background: radial-gradient(circle, rgba(16, 185, 129, 0.2) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
             border-radius: 50%;
-            filter: blur(60px);
+            filter: blur(80px);
+            z-index: 0;
         }
 
-        /* Hero Grid Alignment */
+        /* Hero Grid Alignment - Centered Layout */
         .hero-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            display: flex;
+            flex-direction: column;
             gap: 48px;
             align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            padding-top: 120px;
+            padding-bottom: 80px;
         }
 
         @media (max-width: 1024px) {
             .hero-grid {
-                grid-template-columns: 1fr;
-                gap: 32px;
+                gap: 40px;
+                min-height: auto;
+                padding-top: 100px;
+                padding-bottom: 60px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-grid {
+                padding-top: 80px;
+                padding-bottom: 40px;
             }
         }
 
@@ -384,27 +406,149 @@
             justify-content: center;
         }
 
-        /* Hero Emoji Section */
-        .hero-emoji-section {
+        /* Hero Content Container */
+        .hero-content {
+            max-width: 820px;
+            margin: 0 auto;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .hero-content h2 {
+            font-size: 3.75rem;
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -1px;
+            margin-bottom: 24px;
+        }
+
+        .hero-content>p {
+            font-size: 1.25rem;
+            color: #cbd5e1;
+            line-height: 1.8;
+            margin-bottom: 40px;
+            max-width: 100%;
+        }
+
+        /* Dashboard Preview Card */
+        .dashboard-preview {
+            max-width: 900px;
+            margin: 80px auto 0;
+            position: relative;
+            z-index: 2;
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+
+        .dashboard-card {
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 25px 80px rgba(37, 99, 235, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            animation: floatCard 3s ease-in-out infinite;
+        }
+
+        @keyframes floatCard {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        .dashboard-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.4), transparent);
+        }
+
+        .dashboard-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(56, 189, 248, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);
+            border-radius: 20px;
+            pointer-events: none;
+        }
+
+        .dashboard-inner {
+            position: relative;
+            z-index: 2;
+        }
+
+        .dashboard-header {
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
+            margin-bottom: 32px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .dashboard-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #f1f5f9;
+        }
+
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
             gap: 24px;
+        }
+
+        .stat-item {
             text-align: center;
         }
 
-        .emoji-container {
-            position: relative;
-            display: inline-block;
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #38BDF8 0%, #10B981 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
         }
 
-        .emoji-glow {
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle, rgba(56, 189, 248, 0.3), transparent 70%);
-            border-radius: 50%;
-            filter: blur(20px);
+        .stat-label {
+            font-size: 0.875rem;
+            color: #94a3b8;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-card {
+                padding: 24px;
+            }
+
+            .dashboard-stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+
+            .hero-content h2 {
+                font-size: 2.5rem;
+            }
+
+            .hero-content>p {
+                font-size: 1.125rem;
+            }
+
+            .dashboard-preview {
+                margin-top: 60px;
+            }
         }
 
         /* Background adjustments */
@@ -453,7 +597,131 @@
         }
 
         /* Accessibility */
+        /* Navigation Links */
+        .nav-links {
+            display: flex;
+            gap: 48px;
+            align-items: center;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .nav-links a {
+            position: relative;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #38BDF8, #10B981);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #38BDF8 !important;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-links a.active {
+            color: #38BDF8 !important;
+            text-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+        }
+
+        .nav-links a.active::after {
+            width: 100%;
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-button {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #e2e8f0;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-button:hover {
+            color: #38BDF8;
+            transform: scale(1.1);
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: 72px;
+            right: 0;
+            width: 100%;
+            max-width: 280px;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: -8px 0 32px rgba(0, 0, 0, 0.3);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 40;
+            max-height: calc(100vh - 72px);
+            overflow-y: auto;
+        }
+
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+
+        .mobile-menu-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            padding: 24px 0;
+        }
+
+        .mobile-menu-links a {
+            display: block;
+            padding: 12px 24px;
+            text-decoration: none;
+            color: #e2e8f0;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .mobile-menu-links a:hover,
+        .mobile-menu-links a.active {
+            background: rgba(56, 189, 248, 0.1);
+            color: #38BDF8;
+            border-left-color: #38BDF8;
+        }
+
+        /* Navbar scroll enhancement */
+        nav.scrolled {
+            background: rgba(15, 23, 42, 0.95) !important;
+            backdrop-filter: blur(16px) !important;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4) !important;
+            border-bottom-color: rgba(56, 189, 248, 0.2) !important;
+        }
+
+        /* Mobile responsive */
         @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-button {
+                display: block;
+            }
+
             .section-title h2 {
                 font-size: 2rem;
             }
@@ -476,15 +744,22 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        @media (min-width: 769px) {
+            .mobile-menu {
+                display: none;
+            }
+        }
     </style>
 </head>
 
 <body>
     <!-- Navigation -->
-    <nav class="fixed top-0 w-full z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav class="fixed top-0 w-full z-50" x-data="{ mobileMenuOpen: false }">
+        <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
-                <a href="#" class="flex items-center space-x-2 hover:opacity-80 transition group">
+                <!-- Logo -->
+                <a href="#home" class="flex items-center space-x-2 hover:opacity-80 transition group">
                     <div
                         class="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:shadow-blue-500/50 transition">
                         <span class="text-white text-lg font-bold">⚡</span>
@@ -493,20 +768,70 @@
                         class="text-2xl font-800 bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent">
                         FarmGrid</h1>
                 </a>
-                <div class="flex gap-6">
+
+                <!-- Desktop Navigation Links -->
+                <div class="nav-links" id="navLinks">
+                    <a href="#home" class="nav-link active" data-section="home">Home</a>
+                    <a href="#features" class="nav-link" data-section="features">Features</a>
+                    <a href="#stats" class="nav-link" data-section="stats">Statistics</a>
+                    <a href="#roles" class="nav-link" data-section="roles">Roles</a>
+                    <a href="#contact" class="nav-link" data-section="contact">Contact</a>
+                </div>
+
+                <!-- Auth Buttons & Mobile Menu Toggle -->
+                <div class="flex gap-4 items-center">
+                    <div class="hidden sm:flex gap-4">
+                        @auth
+                            <a href="{{ url('/dashboard') }}"
+                                class="text-slate-300 hover:text-cyan-400 transition font-semibold">Dashboard</a>
+                            <form action="{{ route('logout') }}" method="POST" class="inline">
+                                @csrf
+                                <button type="submit"
+                                    class="text-slate-300 hover:text-red-400 transition font-semibold">Logout</button>
+                            </form>
+                        @else
+                            <a href="{{ route('login') }}"
+                                class="text-slate-300 hover:text-cyan-400 transition font-semibold px-4 py-2">Log In</a>
+                            <a href="{{ route('register') }}"
+                                class="px-5 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-lg hover:shadow-lg hover:shadow-blue-500/30 transition font-semibold">Sign
+                                Up</a>
+                        @endauth
+                    </div>
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="mobile-menu-button"
+                        aria-label="Toggle menu">
+                        <span x-show="!mobileMenuOpen">☰</span>
+                        <span x-show="mobileMenuOpen">✕</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" :class="{ 'open': mobileMenuOpen }">
+            <div class="mobile-menu-links">
+                <a href="#home" class="mobile-nav-link active" data-section="home"
+                    @click="mobileMenuOpen = false">Home</a>
+                <a href="#features" class="mobile-nav-link" data-section="features"
+                    @click="mobileMenuOpen = false">Features</a>
+                <a href="#stats" class="mobile-nav-link" data-section="stats"
+                    @click="mobileMenuOpen = false">Statistics</a>
+                <a href="#roles" class="mobile-nav-link" data-section="roles" @click="mobileMenuOpen = false">Roles</a>
+                <a href="#contact" class="mobile-nav-link" data-section="contact"
+                    @click="mobileMenuOpen = false">Contact</a>
+                <div class="border-t border-white/10 mt-4 pt-4 px-6 flex flex-col gap-3 sm:hidden">
                     @auth
                         <a href="{{ url('/dashboard') }}"
                             class="text-slate-300 hover:text-cyan-400 transition font-semibold">Dashboard</a>
                         <form action="{{ route('logout') }}" method="POST" class="inline">
                             @csrf
                             <button type="submit"
-                                class="text-slate-300 hover:text-red-400 transition font-semibold">Logout</button>
+                                class="text-slate-300 hover:text-red-400 transition font-semibold w-full text-left">Logout</button>
                         </form>
                     @else
                         <a href="{{ route('login') }}"
-                            class="text-slate-300 hover:text-cyan-400 transition font-semibold px-4 py-2">Log In</a>
+                            class="text-slate-300 hover:text-cyan-400 transition font-semibold">Log In</a>
                         <a href="{{ route('register') }}"
-                            class="px-5 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-lg hover:shadow-lg hover:shadow-blue-500/30 transition font-semibold">Sign
+                            class="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-lg hover:shadow-lg hover:shadow-blue-500/30 transition font-semibold text-center">Sign
                             Up</a>
                     @endauth
                 </div>
@@ -515,45 +840,58 @@
     </nav>
 
     <!-- Hero Section -->
-    <div class="hero-gradient text-white pt-36 pb-28 mt-16 relative">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="home" class="hero-gradient text-white relative">
+        <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
             <div class="hero-grid">
-                <div class="space-y-8">
-                    <div>
-                        <span
-                            class="inline-block px-4 py-2 bg-gradient-to-r from-cyan-500/20 to-emerald-500/20 backdrop-blur border border-cyan-400/30 rounded-full text-cyan-100 font-semibold text-sm mb-6">
-                            🚀 Smart Agriculture Solution
-                        </span>
-                        <h2 class="text-5xl md:text-6xl font-800 mb-6 leading-tight text-white">Smart Agricultural
-                            Electricity
-                            Distribution</h2>
-                        <p class="text-lg text-slate-200 leading-relaxed max-w-lg">FarmGrid revolutionizes agricultural
-                            power management with intelligent zone-wise electricity scheduling, real-time monitoring,
-                            and complaint resolution for sustainable farming.</p>
-                    </div>
-                    <div class="button-group sm:justify-start">
+                <div class="hero-content">
+                    <span
+                        class="inline-block px-4 py-2 bg-gradient-to-r from-cyan-500/20 to-emerald-500/20 backdrop-blur border border-cyan-400/30 rounded-full text-cyan-100 font-semibold text-sm mb-8">
+                        ⚡ AI Powered Agricultural Energy Platform
+                    </span>
+                    <h2 class="text-white">Smart Agricultural Electricity Distribution</h2>
+                    <p>FarmGrid revolutionizes agricultural power management with intelligent zone-wise electricity
+                        scheduling, real-time monitoring, and complaint resolution for sustainable farming.</p>
+                    <div class="button-group">
                         @guest
-                            <a href="{{ route('login') }}" class="btn-primary">🔓 Login Now</a>
-                            <a href="{{ route('register') }}" class="btn-secondary">✨ Get Started Free</a>
+                            <a href="{{ route('login') }}" class="btn-primary">Get Started Free</a>
+                            <a href="{{ route('register') }}" class="btn-secondary">Login to Dashboard</a>
                         @else
-                            <a href="{{ url('/dashboard') }}" class="btn-primary">📊 Go to Dashboard</a>
+                            <a href="{{ url('/dashboard') }}" class="btn-primary">Go to Dashboard</a>
                         @endguest
                     </div>
                 </div>
-                <div class="hero-emoji-section">
-                    <div class="emoji-container">
-                        <div class="emoji-glow"></div>
-                        <div class="text-9xl animate-bounce relative z-10">⚡</div>
+
+                <!-- Dashboard Preview Card -->
+                <div class="dashboard-preview">
+                    <div class="dashboard-card">
+                        <div class="dashboard-inner">
+                            <div class="dashboard-header">
+                                <div class="dashboard-title">System Overview</div>
+                                <div style="font-size: 1.5rem;">📊</div>
+                            </div>
+                            <div class="dashboard-stats">
+                                <div class="stat-item">
+                                    <div class="stat-value">500+</div>
+                                    <div class="stat-label">Farmers Active</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">24/7</div>
+                                    <div class="stat-label">Monitoring</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">99%</div>
+                                    <div class="stat-label">Uptime</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="text-8xl">🌾</div>
-                    <p class="text-2xl font-bold text-slate-200">Efficient Power for Better Farming</p>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
     <!-- Stats Section -->
-    <div class="py-24">
+    <section id="stats" class="py-24">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid md:grid-cols-4 gap-8">
                 <div class="stat-box">
@@ -574,10 +912,10 @@
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
     <!-- Features Section -->
-    <div class="py-28">
+    <section id="features" class="py-28">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="section-title">
                 <h2>Powerful Features</h2>
@@ -628,10 +966,10 @@
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
     <!-- Roles Section -->
-    <div class="py-28">
+    <section id="roles" class="py-28">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="section-title">
                 <h2>Built for Everyone</h2>
@@ -742,10 +1080,10 @@
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
     <!-- CTA Section -->
-    <div class="py-32 relative overflow-hidden">
+    <div class="py-32 relative overflow-hidden" id="contact">
         <div class="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-emerald-600/10 to-blue-600/10 backdrop-blur">
         </div>
         <div class="absolute inset-0">
@@ -821,6 +1159,7 @@
     </footer>
 
     <script>
+        // Animation Observer
         const observerOptions = {
             threshold: 0.1,
             rootMargin: '0px 0px -100px 0px'
@@ -837,6 +1176,65 @@
 
         document.querySelectorAll('.feature-card, .stat-box, .role-card').forEach(el => {
             observer.observe(el);
+        });
+
+        // Smooth Scroll Navigation
+        document.addEventListener('DOMContentLoaded', function () {
+            const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
+            const navBar = document.querySelector('nav');
+            const sections = document.querySelectorAll('section, [id]');
+
+            // Smooth scroll on link click
+            navLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const sectionId = this.getAttribute('href').substring(1);
+                    const section = document.getElementById(sectionId);
+                    if (section) {
+                        section.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+
+            // Update active nav link on scroll
+            function updateActiveNav() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (pageYOffset >= sectionTop - 100) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('data-section') === current) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+
+            // Navbar scroll effect
+            function updateNavbarOnScroll() {
+                if (window.pageYOffset > 10) {
+                    navBar.classList.add('scrolled');
+                } else {
+                    navBar.classList.remove('scrolled');
+                }
+            }
+
+            // Debounced scroll handler
+            let scrollTimeout;
+            window.addEventListener('scroll', function () {
+                clearTimeout(scrollTimeout);
+                updateActiveNav();
+                updateNavbarOnScroll();
+            }, { passive: true });
+
+            // Initial call
+            updateActiveNav();
+            updateNavbarOnScroll();
         });
     </script>
 </body>
