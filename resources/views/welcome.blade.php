@@ -180,35 +180,39 @@
 
         /* Stats Counter Animation */
         .stat-box {
-            text-align: center;
-            padding: 40px 24px;
-            background: rgba(255, 255, 255, 0.07) !important;
-            border: 1px solid rgba(56, 189, 248, 0.2) !important;
-            border-radius: 20px;
-            backdrop-filter: blur(20px);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.27),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
             position: relative;
             overflow: hidden;
+            background: rgba(255, 255, 255, 0.07) !important;
+            border: 1px solid rgba(56, 189, 248, 0.2) !important;
+            backdrop-filter: blur(20px);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.27),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
             color: #f1f5f9;
+            border-radius: 20px;
+            padding: 32px !important;
+            text-align: center;
+            justify-content: center;
+            align-items: center;
         }
 
         .stat-box::before {
             content: '';
             position: absolute;
             top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, #38BDF8, #10B981);
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.4s ease;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.1), transparent);
+            transition: left 0.5s;
         }
 
         .stat-box:hover::before {
-            transform: scaleX(1);
+            left: 100%;
         }
 
         .stat-box:hover {
@@ -220,16 +224,16 @@
         }
 
         .stat-number {
+            color: #f1f5f9 !important;
             font-size: 2.75rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #38BDF8 0%, #10B981 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-weight: 700;
+            margin-bottom: 12px;
         }
 
         .stat-box p {
             color: #cbd5e1 !important;
+            font-size: 0.95rem;
+            line-height: 1.7;
         }
 
         /* Role Cards */
@@ -411,8 +415,19 @@
             margin-bottom: 40px;
         }
 
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 32px;
+        }
+
         @media (max-width: 768px) {
             .feature-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
+            .stats-grid {
                 grid-template-columns: 1fr;
                 gap: 24px;
             }
@@ -741,11 +756,6 @@
 
         body.bg-white {
             background: linear-gradient(to br, #0f172a 0%, #1a2f50 50%, #0f172a 100%) !important;
-        }
-
-        /* Stats Section Background */
-        .py-24 {
-            background: linear-gradient(to bottom, rgba(15, 23, 42, 0.5), rgba(15, 23, 42, 0.8)) !important;
         }
 
         /* Features Section Background */
@@ -1107,25 +1117,32 @@
     </section>
 
     <!-- Stats Section -->
-    <section id="stats" class="py-24 relative overflow-hidden">
-        <div class="absolute inset-0 pointer-events-none z-0"></div>
+    <section id="stats" class="py-28 relative overflow-hidden">
+        <div
+            class="absolute inset-0 bg-gradient-to-b from-transparent via-blue-600/5 to-transparent pointer-events-none z-0">
+        </div>
+        <div class="absolute -left-96 top-1/4 w-96 h-96 bg-emerald-600/10 rounded-full blur-3xl z-0"></div>
+        <div class="absolute -right-96 bottom-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl z-0"></div>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="grid md:grid-cols-4 gap-8">
+            <div class="stats-grid">
                 <div class="stat-box">
                     <div class="stat-number">500+</div>
-                    <p class="mt-3 font-medium">Farmers Connected</p>
+                    <p>Farmers Connected</p>
                 </div>
+
                 <div class="stat-box">
                     <div class="stat-number">24/7</div>
-                    <p class="mt-3 font-medium">System Monitoring</p>
+                    <p>System Monitoring</p>
                 </div>
+
                 <div class="stat-box">
                     <div class="stat-number">15+</div>
-                    <p class="mt-3 font-medium">Districts Covered</p>
+                    <p>Districts Covered</p>
                 </div>
+
                 <div class="stat-box">
                     <div class="stat-number">99%</div>
-                    <p class="mt-3 font-medium">Uptime Guarantee</p>
+                    <p>Uptime Guarantee</p>
                 </div>
             </div>
         </div>
