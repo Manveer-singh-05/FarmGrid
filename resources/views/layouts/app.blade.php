@@ -18,7 +18,7 @@
 
 <body class="font-sans antialiased bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 min-h-screen">
     <div class="min-h-screen relative">
-        @include('layouts.navigation')
+       
 
         <!-- Page Heading -->
         @isset($header)
