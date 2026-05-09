@@ -2,156 +2,196 @@
 
 @section('main-content')
     <style>
-        /* Enhanced hover effects */
-        .hover-lift {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+        }
+        @keyframes pulse-glow {
+            0%, 100% { filter: drop-shadow(0 0 5px rgba(56, 189, 248, 0.4)); }
+            50% { filter: drop-shadow(0 0 15px rgba(56, 189, 248, 0.7)); }
+        }
+        @keyframes shine {
+            0% { left: -100%; }
+            100% { left: 100%; }
         }
 
-        .hover-lift:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 30px 60px rgba(37, 99, 235, 0.25), 0 0 40px rgba(34, 197, 94, 0.2);
+        .float-animation {
+            animation: float 6s ease-in-out infinite;
         }
 
-        .hover-glow {
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        .glass-card {
+            background: rgba(15, 23, 42, 0.6) !important;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 
+                        inset 0 1px 1px rgba(255, 255, 255, 0.05);
         }
 
-        .hover-glow:hover {
-            border-color: rgba(56, 189, 248, 0.5);
-            box-shadow: 0 0 30px rgba(56, 189, 248, 0.3);
-        }
-
-        .smooth-transition {
+        .glass-input {
+            background: rgba(2, 6, 23, 0.4) !important;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            color: #f8fafc !important;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Custom form styling to match dashboard */
-        .glassmorphic-input {
-            @apply bg-slate-900/40 backdrop-blur-md border border-cyan-500/20 rounded-2xl text-white placeholder:text-slate-400;
+        .glass-input:focus {
+            background: rgba(2, 6, 23, 0.6) !important;
+            border-color: #38bdf8 !important;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.2), inset 0 0 10px rgba(56, 189, 248, 0.1);
+            outline: none;
+            transform: scale(1.01);
         }
 
-        .glassmorphic-input:focus {
-            @apply border-cyan-400 ring ring-cyan-500/20 outline-none;
+        .glass-input::placeholder {
+            color: rgba(148, 163, 184, 0.6);
+        }
+
+        .btn-shine {
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-shine::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -100%;
+            width: 100%;
+            height: 200%;
+            background: linear-gradient(
+                to right,
+                transparent,
+                rgba(255, 255, 255, 0.3),
+                transparent
+            );
+            transform: rotate(30deg);
+            animation: shine 4s infinite;
+        }
+
+        .hover-lift {
+            transition: all 0.3s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-5px);
+            filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.3));
+        }
+
+        select option {
+            background-color: #0f172a;
+            color: white;
         }
     </style>
-    <div class="max-w-4xl mx-auto">
-        <!-- Premium Glass Card -->
-        <div class="rounded-3xl p-8 smooth-transition"
-            style="background: rgba(20, 35, 60, 0.4); backdrop-filter: blur(20px); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 24px; box-shadow: 0 0 30px rgba(34, 197, 94, 0.15), 0 25px 80px rgba(37, 99, 235, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1);">
 
-            <!-- Header -->
-            <div class="flex items-center gap-4 mb-8">
-                <div class="w-14 h-14 rounded-2xl flex items-center justify-center"
-                    style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.2) 0%, rgba(34, 197, 94, 0.2) 100%); border: 1px solid rgba(56, 189, 248, 0.4);">
-                    <span class="text-2xl">⚡</span>
+    <div class="max-w-4xl mx-auto py-8">
+        <!-- Main Form Card -->
+        <div class="glass-card rounded-[32px] p-10 float-animation">
+            
+            <!-- Header Section -->
+            <div class="flex flex-col md:flex-row items-center gap-6 mb-12 border-b border-white/5 pb-10">
+                <div class="w-20 h-20 rounded-3xl flex items-center justify-center text-4xl shadow-2xl pulse-glow"
+                     style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.2) 0%, rgba(16, 185, 129, 0.2) 100%); border: 1px solid rgba(56, 189, 248, 0.4);">
+                    ⚡
                 </div>
-                <div>
-                    <h1
-                        class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">
-                        Apply for Electricity Connection
+                <div class="text-center md:text-left">
+                    <h1 class="text-4xl font-extrabold tracking-tight text-white mb-3">
+                        Apply for <span style="background: linear-gradient(135deg, #38bdf8 0%, #10b981 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Connection</span>
                     </h1>
-                    <p class="text-slate-400 mt-2">
-                        Submit your agricultural power connection request. Fill in the details below.
+                    <p class="text-slate-400 text-lg max-w-xl">
+                        Powering your agricultural growth. Submit your smart-grid connection request through our secure portal.
                     </p>
                 </div>
             </div>
 
-            <!-- Form -->
-            <form action="{{ route('farmer.store') }}" method="POST" class="space-y-10">
+            <form action="{{ route('farmer.store') }}" method="POST" class="space-y-8">
                 @csrf
 
-                <!-- Grid Layout -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <!-- Village Name -->
-                    <div>
-                        <label class="block text-white/90 mb-4 font-medium flex items-center gap-3">
-                            <span
-                                class="w-7 h-7 rounded-full bg-cyan-500/20 flex items-center justify-center text-cyan-400 text-sm">📍</span>
-                            <span class="text-lg">Village Name</span>
+                    <div class="space-y-3">
+                        <label class="flex items-center gap-2 text-slate-300 font-semibold text-sm uppercase tracking-wider ml-1">
+                            <span class="text-sky-400">📍</span> Village / Location
                         </label>
                         <input type="text" name="village" required
-                            class="w-full px-5 py-4 bg-slate-900/40 backdrop-blur-md border border-cyan-500/20 rounded-2xl text-white placeholder:text-slate-400 focus:border-cyan-400 focus:ring focus:ring-cyan-500/20 focus:outline-none transition-all duration-300"
-                            placeholder="Enter your village name">
+                               class="glass-input w-full px-6 py-4 rounded-2xl text-lg"
+                               placeholder="e.g., Green Valley Village">
                     </div>
 
                     <!-- Land Area -->
-                    <div>
-                        <label class="block text-white/90 mb-4 font-medium flex items-center gap-3">
-                            <span
-                                class="w-7 h-7 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-sm">🌾</span>
-                            <span class="text-lg">Land Area (acres)</span>
+                    <div class="space-y-3">
+                        <label class="flex items-center gap-2 text-slate-300 font-semibold text-sm uppercase tracking-wider ml-1">
+                            <span class="text-emerald-400">🌾</span> Total Land Area (Acres)
                         </label>
                         <input type="number" step="0.1" name="land_area" required
-                            class="w-full px-5 py-4 bg-slate-900/40 backdrop-blur-md border border-cyan-500/20 rounded-2xl text-white placeholder:text-slate-400 focus:border-cyan-400 focus:ring focus:ring-cyan-500/20 focus:outline-none transition-all duration-300"
-                            placeholder="e.g., 5.2">
+                               class="glass-input w-full px-6 py-4 rounded-2xl text-lg"
+                               placeholder="e.g., 12.5">
                     </div>
 
                     <!-- Connection Number -->
-                    <div>
-                        <label class="block text-white/90 mb-4 font-medium flex items-center gap-3">
-                            <span
-                                class="w-7 h-7 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 text-sm">🔢</span>
-                            <span class="text-lg">Connection Number</span>
+                    <div class="space-y-3">
+                        <label class="flex items-center gap-2 text-slate-300 font-semibold text-sm uppercase tracking-wider ml-1">
+                            <span class="text-blue-400">🔢</span> Target Connection ID
                         </label>
                         <input type="text" name="connection_no" required
-                            class="w-full px-5 py-4 bg-slate-900/40 backdrop-blur-md border border-cyan-500/20 rounded-2xl text-white placeholder:text-slate-400 focus:border-cyan-400 focus:ring focus:ring-cyan-500/20 focus:outline-none transition-all duration-300"
-                            placeholder="Enter connection number">
+                               class="glass-input w-full px-6 py-4 rounded-2xl text-lg"
+                               placeholder="Enter your system ID">
                     </div>
 
                     <!-- Water Source -->
-                    <div class="relative">
-                        <label class="block text-white/90 mb-4 font-medium flex items-center gap-3">
-                            <span
-                                class="w-7 h-7 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 text-sm">💧</span>
-                            <span class="text-lg">Water Source</span>
+                    <div class="space-y-3">
+                        <label class="flex items-center gap-2 text-slate-300 font-semibold text-sm uppercase tracking-wider ml-1">
+                            <span class="text-cyan-400">💧</span> Primary Water Source
                         </label>
-                        <select name="water_source" required
-                            class="w-full px-5 py-4 bg-slate-900/40 backdrop-blur-md border border-cyan-500/20 rounded-2xl text-white focus:border-cyan-400 focus:ring focus:ring-cyan-500/20 focus:outline-none transition-all duration-300 appearance-none">
-                            <option value="" class="bg-slate-900 text-white">Select water source...</option>
-                            <option value="tube_well" class="bg-slate-900 text-white">Tube Well</option>
-                            <option value="borewell" class="bg-slate-900 text-white">Borewell</option>
-                            <option value="canal" class="bg-slate-900 text-white">Canal</option>
-                        </select>
-                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-cyan-400/80">
-                            <span class="text-sm">▼</span>
+                        <div class="relative">
+                            <select name="water_source" required
+                                    class="glass-input w-full px-6 py-4 rounded-2xl text-lg appearance-none cursor-pointer">
+                                <option value="" disabled selected>Select Source...</option>
+                                <option value="tube_well">Tube Well</option>
+                                <option value="borewell">Borewell</option>
+                                <option value="canal">Canal Irrigation</option>
+                                <option value="other">Other Sources</option>
+                            </select>
+                            <div class="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-sky-400">
+                                ⌵
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Additional Notes -->
-                <div>
-                    <label class="block text-white/90 mb-4 font-medium flex items-center gap-3">
-                        <span
-                            class="w-7 h-7 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400 text-sm">📝</span>
-                        <span class="text-lg">Additional Notes (Optional)</span>
+                <div class="space-y-3">
+                    <label class="flex items-center gap-2 text-slate-300 font-semibold text-sm uppercase tracking-wider ml-1">
+                        <span class="text-amber-400">📝</span> Application Context (Optional)
                     </label>
                     <textarea name="notes" rows="4"
-                        class="w-full px-5 py-4 bg-slate-900/40 backdrop-blur-md border border-cyan-500/20 rounded-2xl text-white placeholder:text-slate-400 focus:border-cyan-400 focus:ring focus:ring-cyan-500/20 focus:outline-none transition-all duration-300 resize-none"
-                        placeholder="Any additional information about your application..."></textarea>
+                              class="glass-input w-full px-6 py-4 rounded-2xl text-lg resize-none"
+                              placeholder="Describe your power requirements or any special requests..."></textarea>
                 </div>
 
-                <!-- Buttons -->
-                <div class="flex flex-wrap gap-6 pt-10 border-t border-slate-800/50">
-                    <button type="submit"
-                        class="px-12 py-5 rounded-xl font-bold text-white bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600 shadow-2xl shadow-cyan-500/30 hover:shadow-cyan-500/50 transition-all duration-300 flex items-center gap-3 group hover:translate-y-[-4px] hover:scale-[1.02] smooth-transition">
-                        <span class="text-xl">✓</span>
-                        <span>Submit Application</span>
-                        <span class="group-hover:translate-x-1 transition-transform">→</span>
-                    </button>
-                    <a href="{{ route('farmer.dashboard') }}"
-                        class="px-12 py-5 rounded-xl font-bold text-white border border-cyan-500/30 bg-slate-900/40 backdrop-blur-md hover:bg-slate-900/60 hover:border-cyan-400/50 hover:shadow-lg hover:shadow-cyan-500/20 transition-all duration-300 flex items-center gap-3 smooth-transition">
-                        <span>←</span>
-                        <span>Cancel</span>
+                <!-- Footer Actions -->
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-6 pt-12 border-t border-white/5 mt-10">
+                    <a href="{{ route('farmer.dashboard') }}" 
+                       class="order-2 sm:order-1 flex items-center gap-2 text-slate-400 hover:text-white font-bold transition-all duration-300 group">
+                        <span class="group-hover:-translate-x-1 transition-transform">←</span> Return to Dashboard
                     </a>
+
+                    <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto order-1 sm:order-2">
+                        <button type="submit" 
+                                class="btn-shine px-10 py-5 rounded-2xl font-black text-white bg-gradient-to-r from-sky-500 to-emerald-500 hover:from-sky-400 hover:to-emerald-400 shadow-[0_0_20px_rgba(56,189,248,0.3)] hover:shadow-[0_0_35px_rgba(56,189,248,0.5)] transition-all duration-300 flex items-center justify-center gap-3 hover:-translate-y-1">
+                            <span>Submit Application</span>
+                            <span class="text-xl">➔</span>
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
 
-        <!-- Helper Text -->
-        <div
-            class="mt-10 p-6 text-center text-slate-300 text-base rounded-2xl bg-slate-900/30 backdrop-blur-md border border-cyan-500/10">
-            <p class="font-medium">Your application will be reviewed within 3–5 working days. You'll receive a notification
-                once approved.</p>
+        <!-- System Message -->
+        <div class="mt-8 p-6 rounded-3xl glass-card flex items-start gap-4 border-dashed border-sky-500/20">
+            <div class="text-2xl text-sky-400">💡</div>
+            <p class="text-slate-400 text-sm leading-relaxed">
+                <strong class="text-white">Smart Audit Information:</strong> Applications are processed by the regional grid controllers. Verification typically completes within <span class="text-emerald-400">72 hours</span>. Ensure your land area matches the records on your assets.
+            </p>
         </div>
     </div>
 @endsection
