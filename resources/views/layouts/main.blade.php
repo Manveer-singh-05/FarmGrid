@@ -15,27 +15,84 @@
 
         <!-- Navigation -->
         <nav class="sticky top-0 z-50 backdrop-blur-md"
-            style="background: linear-gradient(135deg, rgba(20, 35, 60, 0.6) 0%, rgba(25, 50, 80, 0.5) 100%); border-bottom: 1px solid rgba(56, 189, 248, 0.2); box-shadow: 0 8px 32px rgba(37, 99, 235, 0.1);">
+            style="background: linear-gradient(135deg, rgba(20, 35, 60, 0.7) 0%, rgba(25, 50, 80, 0.6) 100%); border-bottom: 1px solid rgba(56, 189, 248, 0.25); box-shadow: 0 8px 32px rgba(37, 99, 235, 0.15);">
             <div class="max-w-7xl mx-auto px-6 py-4 relative z-10">
                 <div class="flex justify-between items-center">
-                    <a href="{{ route('dashboard') }}" class="flex items-center gap-3 group">
-                        <div style="width: 42px; height: 42px; background: linear-gradient(135deg, rgba(56, 189, 248, 0.2) 0%, rgba(34, 197, 94, 0.2) 100%); border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 8px 32px rgba(56, 189, 248, 0.15); transition: all 0.3s ease; cursor: pointer;"
-                            class="group-hover:scale-110">⚡</div>
-                        <h1
-                            style="font-size: 1.5rem; font-weight: 800; background: linear-gradient(135deg, #38BDF8 0%, #10B981 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-                            FarmGrid</h1>
-                    </a>
+                    <div class="flex items-center gap-8">
+                        <a href="{{ route('dashboard') }}" class="flex items-center gap-3 group">
+                            <div style="width: 42px; height: 42px; background: linear-gradient(135deg, rgba(56, 189, 248, 0.2) 0%, rgba(34, 197, 94, 0.2) 100%); border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 8px 32px rgba(56, 189, 248, 0.15); transition: all 0.3s ease; cursor: pointer;"
+                                class="group-hover:scale-110">⚡</div>
+                            <h1
+                                style="font-size: 1.5rem; font-weight: 800; background: linear-gradient(135deg, #38BDF8 0%, #10B981 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                                FarmGrid</h1>
+                        </a>
+                        <div class="hidden md:block">
+                            <h2 class="text-lg font-bold text-white"
+                                style="text-shadow: 0 2px 10px rgba(56, 189, 248, 0.3);">
+                                @yield('page-title', 'Dashboard')
+                            </h2>
+                            <p class="text-sm text-slate-300 mt-1">
+                                @yield('page-subtitle', 'Smart Agricultural Electricity Distribution')
+                            </p>
+                        </div>
+                    </div>
                     <div class="flex items-center gap-6">
-                        <span style="color: #cbd5e1; font-weight: 500;">{{ Auth::user()->name }}</span>
-                        <form action="{{ route('logout') }}" method="POST" class="inline">
-                            @csrf
-                            <button
-                                style="background: linear-gradient(135deg, #38BDF8 0%, #10B981 100%); color: white; font-weight: 700; padding: 10px 20px; border-radius: 10px; border: none; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 0 20px rgba(34, 197, 94, 0.25); font-size: 0.9rem;"
-                                onmouseover="this.style.boxShadow='0 15px 40px rgba(34, 197, 94, 0.35)'; this.style.transform='translateY(-2px)'"
-                                onmouseout="this.style.boxShadow='0 0 20px rgba(34, 197, 94, 0.25)'; this.style.transform='translateY(0)'">
-                                Logout
+                        <!-- Notification Bell -->
+                        <button
+                            class="relative flex items-center justify-center p-2 rounded-xl transition-all duration-300 hover:bg-white/10"
+                            style="border: 1px solid rgba(56, 189, 248, 0.2); backdrop-filter: blur(10px); height: 44px; width: 44px;"
+                            onmouseover="this.style.boxShadow='0 0 20px rgba(56, 189, 248, 0.3)'; this.style.borderColor='rgba(56, 189, 248, 0.4)'"
+                            onmouseout="this.style.boxShadow='none'; this.style.borderColor='rgba(56, 189, 248, 0.2)'">
+                            <span style="color: #38BDF8; font-size: 1.2rem;">🔔</span>
+                            <span
+                                class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">3</span>
+                        </button>
+
+                        <!-- Profile Dropdown -->
+                        <div class="relative group" x-data="{ open: false }" @click.outside="open = false">
+                            <button @click="open = !open"
+                                class="flex items-center gap-3 p-2 rounded-xl transition-all duration-300 hover:bg-white/10"
+                                style="border: 1px solid rgba(56, 189, 248, 0.2); backdrop-filter: blur(10px);"
+                                onmouseover="this.style.boxShadow='0 0 20px rgba(56, 189, 248, 0.3)'; this.style.borderColor='rgba(56, 189, 248, 0.4)'"
+                                onmouseout="this.style.boxShadow='none'; this.style.borderColor='rgba(56, 189, 248, 0.2)'">
+                                <div class="w-10 h-10 rounded-full flex items-center justify-center"
+                                    style="background: linear-gradient(135deg, #38BDF8 0%, #10B981 100%);">
+                                    <span
+                                        class="text-white font-bold">{{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}</span>
+                                </div>
+                                <div class="block text-left">
+                                    <p class="text-white font-semibold text-sm">{{ Auth::user()->name ?? 'User' }}</p>
+                                    <p class="text-slate-300 text-xs">{{ ucfirst(Auth::user()->role ?? 'user') }}</p>
+                                </div>
+                                <span class="text-slate-300 transition-transform duration-300"
+                                    :class="{ 'rotate-180': open }">▼</span>
                             </button>
-                        </form>
+                            <div x-show="open" x-transition:enter="transition ease-out duration-200"
+                                x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                                x-transition:leave="transition ease-in duration-150"
+                                x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+                                class="absolute right-0 top-full mt-2 w-48 z-50" style="display: none;">
+                                <div
+                                    class="bg-slate-900/90 backdrop-blur-xl border border-slate-700/50 rounded-2xl shadow-2xl p-2">
+                                    <a href="{{ route('profile.edit') }}"
+                                        class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-white text-sm transition-colors">
+                                        <span>👤</span> Profile
+                                    </a>
+                                    <a href="#"
+                                        class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-white text-sm transition-colors">
+                                        <span>⚙️</span> Settings
+                                    </a>
+                                    <div class="border-t border-slate-700/50 my-2"></div>
+                                    <form action="{{ route('logout') }}" method="POST">
+                                        @csrf
+                                        <button type="submit"
+                                            class="flex items-center gap-3 p-3 rounded-xl hover:bg-red-500/20 text-red-300 text-sm w-full text-left transition-colors">
+                                            <span>🚪</span> Logout
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -70,9 +127,9 @@
                                 ⚡ Schedule
                             </a>
                             <a href="{{ route('farmer.complaints') }}"
-                                style="display: block; padding: 12px 16px; border-radius: 12px; color: {{ request()->routeIs('farmer.complaints') || request()->routeIs('farmer.create-complaint') || request()->routeIs('farmer.edit-complaint') || request()->routeIs('farmer.complaint-detail') ? '#38BDF8' : '#cbd5e1' }}; text-decoration: none; transition: all 0.3s ease; border: 1px solid {{ request()->routeIs('farmer.complaints') || request()->routeIs('farmer.create-complaint') || request()->routeIs('farmer.edit-complaint') || request()->routeIs('farmer.complaint-detail') ? 'rgba(56, 189, 248, 0.5)' : 'rgba(56, 189, 248, 0.15)' }}; background: {{ request()->routeIs('farmer.complaints') || request()->routeIs('farmer.create-complaint') || request()->routeIs('farmer.edit-complaint') || request()->routeIs('farmer.complaint-detail') ? 'rgba(56, 189, 248, 0.1)' : 'transparent' }}; font-weight: {{ request()->routeIs('farmer.complaints') || request()->routeIs('farmer.create-complaint') || request()->routeIs('farmer.edit-complaint') || request()->routeIs('farmer.complaint-detail') ? '600' : '500' }}; box-shadow: {{ request()->routeIs('farmer.complaints') || request()->routeIs('farmer.create-complaint') || request()->routeIs('farmer.edit-complaint') || request()->routeIs('farmer.complaint-detail') ? '0 0 15px rgba(56, 189, 248, 0.2)' : 'none' }};"
+                                style="display: block; padding: 12px 16px; border-radius: 12px; color: {{ request()->routeIs('farmer.complaints') || request()->routeIs('farmer.complaint.create') || request()->routeIs('farmer.complaint.edit') || request()->routeIs('farmer.complaint.show') ? '#38BDF8' : '#cbd5e1' }}; text-decoration: none; transition: all 0.3s ease; border: 1px solid {{ request()->routeIs('farmer.complaints') || request()->routeIs('farmer.complaint.create') || request()->routeIs('farmer.complaint.edit') || request()->routeIs('farmer.complaint.show') ? 'rgba(56, 189, 248, 0.5)' : 'rgba(56, 189, 248, 0.15)' }}; background: {{ request()->routeIs('farmer.complaints') || request()->routeIs('farmer.complaint.create') || request()->routeIs('farmer.complaint.edit') || request()->routeIs('farmer.complaint.show') ? 'rgba(56, 189, 248, 0.1)' : 'transparent' }}; font-weight: {{ request()->routeIs('farmer.complaints') || request()->routeIs('farmer.complaint.create') || request()->routeIs('farmer.complaint.edit') || request()->routeIs('farmer.complaint.show') ? '600' : '500' }}; box-shadow: {{ request()->routeIs('farmer.complaints') || request()->routeIs('farmer.complaint.create') || request()->routeIs('farmer.complaint.edit') || request()->routeIs('farmer.complaint.show') ? '0 0 15px rgba(56, 189, 248, 0.2)' : 'none' }};"
                                 onmouseover="this.style.background='rgba(56, 189, 248, 0.1)'; this.style.borderColor='rgba(56, 189, 248, 0.4)'; this.style.color='#38BDF8';"
-                                onmouseout="this.style.background='{{ request()->routeIs('farmer.complaints') || request()->routeIs('farmer.create-complaint') || request()->routeIs('farmer.edit-complaint') || request()->routeIs('farmer.complaint-detail') ? 'rgba(56, 189, 248, 0.1)' : 'transparent' }}'; this.style.borderColor='rgba(56, 189, 248, 0.15)'; this.style.color='{{ request()->routeIs('farmer.complaints') || request()->routeIs('farmer.create-complaint') || request()->routeIs('farmer.edit-complaint') || request()->routeIs('farmer.complaint-detail') ? '#38BDF8' : '#cbd5e1' }}';">
+                                onmouseout="this.style.background='{{ request()->routeIs('farmer.complaints') || request()->routeIs('farmer.complaint.create') || request()->routeIs('farmer.complaint.edit') || request()->routeIs('farmer.complaint.show') ? 'rgba(56, 189, 248, 0.1)' : 'transparent' }}'; this.style.borderColor='rgba(56, 189, 248, 0.15)'; this.style.color='{{ request()->routeIs('farmer.complaints') || request()->routeIs('farmer.complaint.create') || request()->routeIs('farmer.complaint.edit') || request()->routeIs('farmer.complaint.show') ? '#38BDF8' : '#cbd5e1' }}';">
                                 🔧 Complaints
                             </a>
                             <a href="{{ route('farmer.usage') }}"
