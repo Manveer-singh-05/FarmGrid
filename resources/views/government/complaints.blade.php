@@ -1,87 +1,53 @@
-@extends('layouts.app')
+@extends('layouts.main')
 
-@section('content')
-    <div class="min-h-screen bg-gray-100">
-        <nav class="bg-white shadow-sm">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between h-16">
-                    <div class="flex items-center">
-                        <h1 class="text-2xl font-bold text-purple-600">🏛️ FarmGrid Government</h1>
-                    </div>
-                    <div class="flex items-center space-x-4">
-                        <span>{{ Auth::user()->name }} (Government)</span>
-                        <form action="{{ route('logout') }}" method="POST" class="inline">
-                            @csrf
-                            <button class="text-red-600 hover:text-red-900">Logout</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </nav>
+@section('main-content')
+    <div style="display: flex; flex-direction: column; gap: 28px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 style="font-size: 2rem; font-weight: 800; color: #f1f5f9;">🔧 Complaints <span style="background: linear-gradient(135deg, #EF4444 0%, #EC4899 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Monitoring</span></h2>
+        </div>
 
-        <div class="flex max-w-7xl mx-auto">
-            <aside class="w-64 bg-white shadow-md p-6">
-                <div class="space-y-4">
-                    <a href="{{ route('government.dashboard') }}" class="block px-4 py-2 rounded hover:bg-gray-100">📊
-                        Dashboard</a>
-                    <a href="{{ route('government.farmers') }}" class="block px-4 py-2 rounded hover:bg-gray-100">👨‍🌾
-                        Farmers</a>
-                    <a href="{{ route('government.complaints') }}" class="block px-4 py-2 rounded bg-purple-100">🔧
-                        Complaints</a>
-                    <a href="{{ route('government.power-usage') }}" class="block px-4 py-2 rounded hover:bg-gray-100">⚡
-                        Power Usage</a>
-                    <a href="{{ route('government.schedules') }}" class="block px-4 py-2 rounded hover:bg-gray-100">⏰
-                        Schedules</a>
-                    <a href="{{ route('government.reports') }}" class="block px-4 py-2 rounded hover:bg-gray-100">📈
-                        Reports</a>
-                </div>
-            </aside>
-
-            <main class="flex-1 p-8">
-                <h2 class="text-3xl font-bold mb-8">Complaints Monitoring</h2>
-
-                <div class="bg-white rounded-lg shadow overflow-hidden">
-                    <table class="w-full">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-sm font-semibold">Subject</th>
-                                <th class="px-6 py-3 text-left text-sm font-semibold">Farmer</th>
-                                <th class="px-6 py-3 text-left text-sm font-semibold">Description</th>
-                                <th class="px-6 py-3 text-left text-sm font-semibold">Status</th>
-                                <th class="px-6 py-3 text-left text-sm font-semibold">Date</th>
+        <div style="background: rgba(20, 35, 60, 0.4); backdrop-filter: blur(20px); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 24px; padding: 32px; box-shadow: 0 25px 80px rgba(37, 99, 235, 0.1); overflow: hidden;">
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: separate; border-spacing: 0;">
+                    <thead>
+                        <tr>
+                            <th style="padding: 16px; text-align: left; color: #94a3b8; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; border-bottom: 1px solid rgba(56, 189, 248, 0.1);">Subject</th>
+                            <th style="padding: 16px; text-align: left; color: #94a3b8; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; border-bottom: 1px solid rgba(56, 189, 248, 0.1);">Farmer</th>
+                            <th style="padding: 16px; text-align: left; color: #94a3b8; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; border-bottom: 1px solid rgba(56, 189, 248, 0.1);">Description</th>
+                            <th style="padding: 16px; text-align: left; color: #94a3b8; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; border-bottom: 1px solid rgba(56, 189, 248, 0.1);">Date</th>
+                            <th style="padding: 16px; text-align: left; color: #94a3b8; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; border-bottom: 1px solid rgba(56, 189, 248, 0.1);">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($complaints as $complaint)
+                            <tr style="transition: background 0.3s ease;" onmouseover="this.style.background='rgba(239, 68, 68, 0.05)'" onmouseout="this.style.background='transparent'">
+                                <td style="padding: 16px; color: #f1f5f9; font-weight: 600; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ $complaint->subject }}</td>
+                                <td style="padding: 16px; color: #cbd5e1; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ $complaint->user->name ?? 'N/A' }}</td>
+                                <td style="padding: 16px; color: #cbd5e1; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ Str::limit($complaint->description, 50) }}</td>
+                                <td style="padding: 16px; color: #94a3b8; font-size: 0.85rem; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ $complaint->created_at->format('M d, Y') }}</td>
+                                <td style="padding: 16px; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">
+                                    @php
+                                        $statusColor = $complaint->status === 'resolved' ? '#10B981' : ($complaint->status === 'pending' ? '#F59E0B' : '#EF4444');
+                                        $statusBg = $complaint->status === 'resolved' ? 'rgba(16, 185, 129, 0.1)' : ($complaint->status === 'pending' ? 'rgba(245, 158, 11, 0.1)' : 'rgba(239, 68, 68, 0.1)');
+                                    @endphp
+                                    <span style="background: {{ $statusBg }}; color: {{ $statusColor }}; padding: 6px 12px; border-radius: 100px; font-size: 0.75rem; font-weight: 700; border: 1px solid {{ $statusColor }}40; text-transform: uppercase; letter-spacing: 0.5px;">
+                                        {{ ucfirst($complaint->status) }}
+                                    </span>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody class="divide-y">
-                            @forelse ($complaints as $complaint)
-                                <tr>
-                                    <td class="px-6 py-3">{{ $complaint->subject }}</td>
-                                    <td class="px-6 py-3">{{ $complaint->user->name ?? 'N/A' }}</td>
-                                    <td class="px-6 py-3">{{ Str::limit($complaint->description, 50) }}</td>
-                                    <td class="px-6 py-3">
-                                        <span class="px-3 py-1 rounded-full text-sm font-semibold
-                                                    @if($complaint->status === 'resolved') bg-green-100 text-green-800
-                                                    @elseif($complaint->status === 'pending') bg-yellow-100 text-yellow-800
-                                                    @else bg-red-100 text-red-800
-                                                    @endif">
-                                            {{ ucfirst($complaint->status) }}
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-3">{{ $complaint->created_at->format('Y-m-d') }}</td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="5" class="px-6 py-3 text-center text-gray-500">No complaints found.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+                        @empty
+                            <tr>
+                                <td colspan="5" style="padding: 32px; text-align: center; color: #94a3b8; font-style: italic;">No complaints found for monitoring.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
 
-                    <!-- Pagination -->
-                    <div class="p-4">
-                        {{ $complaints->links() }}
-                    </div>
-                </div>
-            </main>
+            <!-- Pagination -->
+            <div style="margin-top: 24px; padding: 16px; border-top: 1px solid rgba(56, 189, 248, 0.1);">
+                {{ $complaints->links() }}
+            </div>
         </div>
     </div>
 @endsection

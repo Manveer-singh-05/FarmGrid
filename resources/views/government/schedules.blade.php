@@ -1,86 +1,53 @@
-@extends('layouts.app')
+@extends('layouts.main')
 
-@section('content')
-    <div class="min-h-screen bg-gray-100">
-        <nav class="bg-white shadow-sm">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between h-16">
-                    <div class="flex items-center">
-                        <h1 class="text-2xl font-bold text-purple-600">🏛️ FarmGrid Government</h1>
-                    </div>
-                    <div class="flex items-center space-x-4">
-                        <span>{{ Auth::user()->name }} (Government)</span>
-                        <form action="{{ route('logout') }}" method="POST" class="inline">
-                            @csrf
-                            <button class="text-red-600 hover:text-red-900">Logout</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </nav>
+@section('main-content')
+    <div style="display: flex; flex-direction: column; gap: 28px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 style="font-size: 2rem; font-weight: 800; color: #f1f5f9;">⏰ Electricity <span style="background: linear-gradient(135deg, #10B981 0%, #38BDF8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Schedules</span></h2>
+        </div>
 
-        <div class="flex max-w-7xl mx-auto">
-            <aside class="w-64 bg-white shadow-md p-6">
-                <div class="space-y-4">
-                    <a href="{{ route('government.dashboard') }}" class="block px-4 py-2 rounded hover:bg-gray-100">📊
-                        Dashboard</a>
-                    <a href="{{ route('government.farmers') }}" class="block px-4 py-2 rounded hover:bg-gray-100">👨‍🌾
-                        Farmers</a>
-                    <a href="{{ route('government.complaints') }}" class="block px-4 py-2 rounded hover:bg-gray-100">🔧
-                        Complaints</a>
-                    <a href="{{ route('government.power-usage') }}" class="block px-4 py-2 rounded hover:bg-gray-100">⚡
-                        Power Usage</a>
-                    <a href="{{ route('government.schedules') }}" class="block px-4 py-2 rounded bg-purple-100">⏰
-                        Schedules</a>
-                    <a href="{{ route('government.reports') }}" class="block px-4 py-2 rounded hover:bg-gray-100">📈
-                        Reports</a>
-                </div>
-            </aside>
-
-            <main class="flex-1 p-8">
-                <h2 class="text-3xl font-bold mb-8">Electricity Schedules</h2>
-
-                <div class="bg-white rounded-lg shadow overflow-hidden">
-                    <table class="w-full">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-sm font-semibold">Schedule Name</th>
-                                <th class="px-6 py-3 text-left text-sm font-semibold">Start Time</th>
-                                <th class="px-6 py-3 text-left text-sm font-semibold">End Time</th>
-                                <th class="px-6 py-3 text-left text-sm font-semibold">Status</th>
-                                <th class="px-6 py-3 text-left text-sm font-semibold">Created</th>
+        <div style="background: rgba(20, 35, 60, 0.4); backdrop-filter: blur(20px); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 24px; padding: 32px; box-shadow: 0 25px 80px rgba(37, 99, 235, 0.1); overflow: hidden;">
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: separate; border-spacing: 0;">
+                    <thead>
+                        <tr>
+                            <th style="padding: 16px; text-align: left; color: #94a3b8; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; border-bottom: 1px solid rgba(56, 189, 248, 0.1);">Schedule Name</th>
+                            <th style="padding: 16px; text-align: left; color: #94a3b8; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; border-bottom: 1px solid rgba(56, 189, 248, 0.1);">Start Time</th>
+                            <th style="padding: 16px; text-align: left; color: #94a3b8; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; border-bottom: 1px solid rgba(56, 189, 248, 0.1);">End Time</th>
+                            <th style="padding: 16px; text-align: left; color: #94a3b8; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; border-bottom: 1px solid rgba(56, 189, 248, 0.1);">Status</th>
+                            <th style="padding: 16px; text-align: left; color: #94a3b8; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; border-bottom: 1px solid rgba(56, 189, 248, 0.1);">Created</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($schedules as $schedule)
+                            <tr style="transition: background 0.3s ease;" onmouseover="this.style.background='rgba(56, 189, 248, 0.05)'" onmouseout="this.style.background='transparent'">
+                                <td style="padding: 16px; color: #f1f5f9; font-weight: 600; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ $schedule->schedule_name }}</td>
+                                <td style="padding: 16px; color: #38BDF8; font-weight: 700; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ $schedule->start_time }}</td>
+                                <td style="padding: 16px; color: #38BDF8; font-weight: 700; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ $schedule->end_time }}</td>
+                                <td style="padding: 16px; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">
+                                    @php
+                                        $statusColor = $schedule->status === 'active' ? '#10B981' : '#94a3b8';
+                                        $statusBg = $schedule->status === 'active' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(148, 163, 184, 0.1)';
+                                    @endphp
+                                    <span style="background: {{ $statusBg }}; color: {{ $statusColor }}; padding: 6px 12px; border-radius: 100px; font-size: 0.75rem; font-weight: 700; border: 1px solid {{ $statusColor }}40; text-transform: uppercase; letter-spacing: 0.5px;">
+                                        {{ ucfirst($schedule->status ?? 'active') }}
+                                    </span>
+                                </td>
+                                <td style="padding: 16px; color: #64748b; font-size: 0.85rem; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ $schedule->created_at->format('M d, Y') }}</td>
                             </tr>
-                        </thead>
-                        <tbody class="divide-y">
-                            @forelse ($schedules as $schedule)
-                                <tr>
-                                    <td class="px-6 py-3">{{ $schedule->schedule_name }}</td>
-                                    <td class="px-6 py-3">{{ $schedule->start_time }}</td>
-                                    <td class="px-6 py-3">{{ $schedule->end_time }}</td>
-                                    <td class="px-6 py-3">
-                                        <span class="px-3 py-1 rounded-full text-sm font-semibold
-                                                    @if($schedule->status === 'active') bg-green-100 text-green-800
-                                                    @else bg-gray-100 text-gray-800
-                                                    @endif">
-                                            {{ ucfirst($schedule->status ?? 'active') }}
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-3">{{ $schedule->created_at->format('Y-m-d') }}</td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="5" class="px-6 py-3 text-center text-gray-500">No schedules found.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+                        @empty
+                            <tr>
+                                <td colspan="5" style="padding: 32px; text-align: center; color: #94a3b8; font-style: italic;">No schedules found for monitoring.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
 
-                    <!-- Pagination -->
-                    <div class="p-4">
-                        {{ $schedules->links() }}
-                    </div>
-                </div>
-            </main>
+            <!-- Pagination -->
+            <div style="margin-top: 24px; padding: 16px; border-top: 1px solid rgba(56, 189, 248, 0.1);">
+                {{ $schedules->links() }}
+            </div>
         </div>
     </div>
 @endsection

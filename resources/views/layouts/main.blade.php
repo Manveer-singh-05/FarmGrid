@@ -62,7 +62,7 @@
                                 </div>
                                 <div class="block text-left">
                                     <p class="text-white font-semibold text-sm">{{ Auth::user()->name ?? 'User' }}</p>
-                                    <p class="text-slate-300 text-xs">{{ ucfirst(Auth::user()->role ?? 'user') }}</p>
+                                    <p class="text-slate-300 text-xs">{{ Auth::user()->role === 'government' ? 'Government Official' : ucfirst(Auth::user()->role ?? 'user') }}</p>
                                 </div>
                                 <span class="text-slate-300 transition-transform duration-300"
                                     :class="{ 'rotate-180': open }">▼</span>
@@ -170,6 +170,45 @@
                                 onmouseover="this.style.background='rgba(56, 189, 248, 0.1)'; this.style.borderColor='rgba(56, 189, 248, 0.4)'; this.style.color='#38BDF8';"
                                 onmouseout="this.style.background='{{ request()->routeIs('admin.reports') ? 'rgba(56, 189, 248, 0.1)' : 'transparent' }}'; this.style.borderColor='rgba(56, 189, 248, 0.15)'; this.style.color='{{ request()->routeIs('admin.reports') ? '#38BDF8' : '#cbd5e1' }}';">
                                 📈 Reports
+                            </a>
+                        </div>
+                    @elseif(Auth::user()->role === 'government')
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <a href="{{ route('government.dashboard') }}"
+                                style="display: block; padding: 12px 16px; border-radius: 12px; color: {{ request()->routeIs('government.dashboard') ? '#38BDF8' : '#cbd5e1' }}; text-decoration: none; transition: all 0.3s ease; border: 1px solid {{ request()->routeIs('government.dashboard') ? 'rgba(56, 189, 248, 0.5)' : 'rgba(56, 189, 248, 0.15)' }}; background: {{ request()->routeIs('government.dashboard') ? 'rgba(56, 189, 248, 0.1)' : 'transparent' }}; font-weight: {{ request()->routeIs('government.dashboard') ? '600' : '500' }}; box-shadow: {{ request()->routeIs('government.dashboard') ? '0 0 15px rgba(56, 189, 248, 0.2)' : 'none' }};"
+                                onmouseover="this.style.background='rgba(56, 189, 248, 0.1)'; this.style.borderColor='rgba(56, 189, 248, 0.4)'; this.style.color='#38BDF8';"
+                                onmouseout="this.style.background='{{ request()->routeIs('government.dashboard') ? 'rgba(56, 189, 248, 0.1)' : 'transparent' }}'; this.style.borderColor='rgba(56, 189, 248, 0.15)'; this.style.color='{{ request()->routeIs('government.dashboard') ? '#38BDF8' : '#cbd5e1' }}';">
+                                📊 Dashboard
+                            </a>
+                            <a href="{{ route('government.farmers') }}"
+                                style="display: block; padding: 12px 16px; border-radius: 12px; color: {{ request()->routeIs('government.farmers') ? '#38BDF8' : '#cbd5e1' }}; text-decoration: none; transition: all 0.3s ease; border: 1px solid {{ request()->routeIs('government.farmers') ? 'rgba(56, 189, 248, 0.5)' : 'rgba(56, 189, 248, 0.15)' }}; background: {{ request()->routeIs('government.farmers') ? 'rgba(56, 189, 248, 0.1)' : 'transparent' }}; font-weight: {{ request()->routeIs('government.farmers') ? '600' : '500' }}; box-shadow: {{ request()->routeIs('government.farmers') ? '0 0 15px rgba(56, 189, 248, 0.2)' : 'none' }};"
+                                onmouseover="this.style.background='rgba(56, 189, 248, 0.1)'; this.style.borderColor='rgba(56, 189, 248, 0.4)'; this.style.color='#38BDF8';"
+                                onmouseout="this.style.background='{{ request()->routeIs('government.farmers') ? 'rgba(56, 189, 248, 0.1)' : 'transparent' }}'; this.style.borderColor='rgba(56, 189, 248, 0.15)'; this.style.color='{{ request()->routeIs('government.farmers') ? '#38BDF8' : '#cbd5e1' }}';">
+                                👨‍🌾 Farmers
+                            </a>
+                            <a href="{{ route('government.power-usage') }}"
+                                style="display: block; padding: 12px 16px; border-radius: 12px; color: {{ request()->routeIs('government.power-usage') ? '#38BDF8' : '#cbd5e1' }}; text-decoration: none; transition: all 0.3s ease; border: 1px solid {{ request()->routeIs('government.power-usage') ? 'rgba(56, 189, 248, 0.5)' : 'rgba(56, 189, 248, 0.15)' }}; background: {{ request()->routeIs('government.power-usage') ? 'rgba(56, 189, 248, 0.1)' : 'transparent' }}; font-weight: {{ request()->routeIs('government.power-usage') ? '600' : '500' }}; box-shadow: {{ request()->routeIs('government.power-usage') ? '0 0 15px rgba(56, 189, 248, 0.2)' : 'none' }};"
+                                onmouseover="this.style.background='rgba(56, 189, 248, 0.1)'; this.style.borderColor='rgba(56, 189, 248, 0.4)'; this.style.color='#38BDF8';"
+                                onmouseout="this.style.background='{{ request()->routeIs('government.power-usage') ? 'rgba(56, 189, 248, 0.1)' : 'transparent' }}'; this.style.borderColor='rgba(56, 189, 248, 0.15)'; this.style.color='{{ request()->routeIs('government.power-usage') ? '#38BDF8' : '#cbd5e1' }}';">
+                                ⚡ Power Usage
+                            </a>
+                            <a href="{{ route('government.reports') }}"
+                                style="display: block; padding: 12px 16px; border-radius: 12px; color: {{ request()->routeIs('government.reports') ? '#38BDF8' : '#cbd5e1' }}; text-decoration: none; transition: all 0.3s ease; border: 1px solid {{ request()->routeIs('government.reports') ? 'rgba(56, 189, 248, 0.5)' : 'rgba(56, 189, 248, 0.15)' }}; background: {{ request()->routeIs('government.reports') ? 'rgba(56, 189, 248, 0.1)' : 'transparent' }}; font-weight: {{ request()->routeIs('government.reports') ? '600' : '500' }}; box-shadow: {{ request()->routeIs('government.reports') ? '0 0 15px rgba(56, 189, 248, 0.2)' : 'none' }};"
+                                onmouseover="this.style.background='rgba(56, 189, 248, 0.1)'; this.style.borderColor='rgba(56, 189, 248, 0.4)'; this.style.color='#38BDF8';"
+                                onmouseout="this.style.background='{{ request()->routeIs('government.reports') ? 'rgba(56, 189, 248, 0.1)' : 'transparent' }}'; this.style.borderColor='rgba(56, 189, 248, 0.15)'; this.style.color='{{ request()->routeIs('government.reports') ? '#38BDF8' : '#cbd5e1' }}';">
+                                📈 Reports
+                            </a>
+                            <a href="{{ route('government.complaints') }}"
+                                style="display: block; padding: 12px 16px; border-radius: 12px; color: {{ request()->routeIs('government.complaints') ? '#38BDF8' : '#cbd5e1' }}; text-decoration: none; transition: all 0.3s ease; border: 1px solid {{ request()->routeIs('government.complaints') ? 'rgba(56, 189, 248, 0.5)' : 'rgba(56, 189, 248, 0.15)' }}; background: {{ request()->routeIs('government.complaints') ? 'rgba(56, 189, 248, 0.1)' : 'transparent' }}; font-weight: {{ request()->routeIs('government.complaints') ? '600' : '500' }}; box-shadow: {{ request()->routeIs('government.complaints') ? '0 0 15px rgba(56, 189, 248, 0.2)' : 'none' }};"
+                                onmouseover="this.style.background='rgba(56, 189, 248, 0.1)'; this.style.borderColor='rgba(56, 189, 248, 0.4)'; this.style.color='#38BDF8';"
+                                onmouseout="this.style.background='{{ request()->routeIs('government.complaints') ? 'rgba(56, 189, 248, 0.1)' : 'transparent' }}'; this.style.borderColor='rgba(56, 189, 248, 0.15)'; this.style.color='{{ request()->routeIs('government.complaints') ? '#38BDF8' : '#cbd5e1' }}';">
+                                📋 Complaints
+                            </a>
+                            <a href="{{ route('government.schedules') }}"
+                                style="display: block; padding: 12px 16px; border-radius: 12px; color: {{ request()->routeIs('government.schedules') ? '#38BDF8' : '#cbd5e1' }}; text-decoration: none; transition: all 0.3s ease; border: 1px solid {{ request()->routeIs('government.schedules') ? 'rgba(56, 189, 248, 0.5)' : 'rgba(56, 189, 248, 0.15)' }}; background: {{ request()->routeIs('government.schedules') ? 'rgba(56, 189, 248, 0.1)' : 'transparent' }}; font-weight: {{ request()->routeIs('government.schedules') ? '600' : '500' }}; box-shadow: {{ request()->routeIs('government.schedules') ? '0 0 15px rgba(56, 189, 248, 0.2)' : 'none' }};"
+                                onmouseover="this.style.background='rgba(56, 189, 248, 0.1)'; this.style.borderColor='rgba(56, 189, 248, 0.4)'; this.style.color='#38BDF8';"
+                                onmouseout="this.style.background='{{ request()->routeIs('government.schedules') ? 'rgba(56, 189, 248, 0.1)' : 'transparent' }}'; this.style.borderColor='rgba(56, 189, 248, 0.15)'; this.style.color='{{ request()->routeIs('government.schedules') ? '#38BDF8' : '#cbd5e1' }}';">
+                                ⏰ Schedules
                             </a>
                         </div>
                     @endif
