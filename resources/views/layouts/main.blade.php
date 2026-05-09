@@ -98,7 +98,7 @@
             </div>
         </nav>
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex gap-6 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex gap-4 relative z-10">
             <!-- Sidebar -->
             <aside style="width: 280px; flex-shrink: 0; position: sticky; top: 84px; height: fit-content;">
                 <div
