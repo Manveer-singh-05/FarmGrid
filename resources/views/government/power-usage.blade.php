@@ -33,7 +33,7 @@
                         @forelse ($powerUsage as $usage)
                             <tr style="transition: background 0.3s ease;" onmouseover="this.style.background='rgba(245, 158, 11, 0.05)'" onmouseout="this.style.background='transparent'">
                                 <td style="padding: 16px; color: #f1f5f9; font-weight: 600; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ $usage->farmer->user->name ?? 'N/A' }}</td>
-                                <td style="padding: 16px; color: #F59E0B; font-weight: 700; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ $usage->units_used }}</td>
+                                <td style="padding: 16px; color: #F59E0B; font-weight: 700; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ $usage->units_consumed }}</td>
                                 <td style="padding: 16px; color: #cbd5e1; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ $usage->meter_reading }} kWh</td>
                                 <td style="padding: 16px; color: #94a3b8; font-size: 0.85rem; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ $usage->created_at->format('M d, Y') }}</td>
                             </tr>

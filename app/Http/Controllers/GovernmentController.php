@@ -21,7 +21,7 @@ class GovernmentController extends Controller
         $totalComplaints = Complaint::count();
         $resolvedComplaints = Complaint::where('status', 'resolved')->count();
         $schedules = ElectricitySchedule::all();
-        $totalPowerUsage = PowerUsage::sum('units_used');
+        $totalPowerUsage = PowerUsage::sum('units_consumed');
 
         return view('government.dashboard', compact(
             'totalFarmers',
@@ -57,8 +57,8 @@ class GovernmentController extends Controller
     public function powerUsage()
     {
         $powerUsage = PowerUsage::with('farmer')->paginate(15);
-        $totalUsage = PowerUsage::sum('units_used');
-        $avgUsage = PowerUsage::avg('units_used');
+        $totalUsage = PowerUsage::sum('units_consumed');
+        $avgUsage = PowerUsage::avg('units_consumed');
 
         return view('government.power-usage', compact('powerUsage', 'totalUsage', 'avgUsage'));
     }
@@ -86,8 +86,8 @@ class GovernmentController extends Controller
         $pendingComplaints = Complaint::where('status', 'pending')->count();
         $resolvedComplaints = Complaint::where('status', 'resolved')->count();
 
-        $totalPowerUsage = PowerUsage::sum('units_used');
-        $avgPowerUsage = PowerUsage::avg('units_used');
+        $totalPowerUsage = PowerUsage::sum('units_consumed');
+        $avgPowerUsage = PowerUsage::avg('units_consumed');
 
         return view('government.reports', compact(
             'totalFarmers',

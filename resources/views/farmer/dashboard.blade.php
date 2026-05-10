@@ -251,7 +251,7 @@
                         @if($powerUsage)
                             <p
                                 style="font-size: 2rem; font-weight: 800; background: linear-gradient(135deg, #38BDF8 0%, #3B82F6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 4px;">
-                                {{ $powerUsage->units_used }} <span style="font-size: 1.25rem;">kWh</span></p>
+                                {{ $powerUsage->units_consumed }} <span style="font-size: 1.25rem;">kWh</span></p>
                             <p style="color: #64748b; font-size: 0.85rem; font-weight: 500;">Bill:
                                 ₹{{ $powerUsage->bill_amount }}</p>
                         @else
@@ -645,7 +645,7 @@
                                     Month</p>
                                 <p
                                     style="font-size: 1.5rem; font-weight: 800; background: linear-gradient(135deg, #38BDF8 0%, #10B981 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-                                    {{ $powerUsage ? $powerUsage->units_used : '85' }} kWh</p>
+                                    {{ $powerUsage ? $powerUsage->units_consumed : '85' }} kWh</p>
                             </div>
                             <div>
                                 <p style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">
