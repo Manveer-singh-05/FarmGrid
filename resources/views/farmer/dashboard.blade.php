@@ -487,7 +487,7 @@
                                             </div>
                                         @endif
                                     </div>
-                                    <a href="{{ route('farmer.complaint-detail', $complaint) }}"
+                                    <a href="{{ route('farmer.complaint.show', $complaint->id) }}"
                                         style="color: #38BDF8; font-size: 0.85rem; font-weight: 600; text-decoration: none; padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(56, 189, 248, 0.3); transition: all 0.3s ease;"
                                         onmouseover="this.style.background='rgba(56, 189, 248, 0.1)'"
                                         onmouseout="this.style.background='transparent'">View Details →</a>
@@ -628,7 +628,7 @@
                         <div style="display: flex; align-items: center; gap: 8px;">
                             <span
                                 style="display: inline-block; width: 12px; height: 12px; border-radius: 2px; background: #F59E0B;"></span>
-                            <span style="color: #cbd5e1; font-size: 0.85rem;">Low Usage (<70kWh)< /span>
+                            <span style="color: #cbd5e1; font-size: 0.85rem;">Low Usage (<70kWh)</span>
                         </div>
                     </div>
                 </div>

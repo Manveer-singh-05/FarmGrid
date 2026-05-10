@@ -176,6 +176,14 @@
                                     <span style="width: 6px; height: 6px; background: currentColor; border-radius: 50%; box-shadow: 0 0 10px currentColor;"></span>
                                     {{ ucfirst(str_replace('_', ' ', $complaint->status)) }}
                                 </div>
+                                @php
+                                    $priorityClass = 'status-pending'; 
+                                    if($complaint->priority === 'high') $priorityClass = 'status-rejected'; 
+                                    if($complaint->priority === 'low') $priorityClass = 'status-resolved'; 
+                                @endphp
+                                <div class="status-badge {{ $priorityClass }}" style="opacity: 0.8;">
+                                    {{ ucfirst($complaint->priority ?? 'medium') }}
+                                </div>
                             </div>
                             <div style="display: flex; align-items: center; gap: 12px; color: #94a3b8; font-size: 0.85rem; font-weight: 600;">
                                 <span style="display: flex; align-items: center; gap: 6px;">

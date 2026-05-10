@@ -13,6 +13,7 @@ class Complaint extends Model
         'issue_type',
         'description',
         'status',
+        'priority',
         'admin_notes',
     ];
 

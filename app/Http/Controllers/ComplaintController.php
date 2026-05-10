@@ -40,14 +40,21 @@ class ComplaintController extends Controller
     {
         $farmer = Auth::user()->farmer;
 
+        if (!$farmer) {
+            return redirect()->route('farmer.apply')
+                ->with('error', 'You must have an active connection to file a complaint.');
+        }
+
         $validated = $request->validate([
-            'issue_type' => 'required|in:no_electricity,voltage_issue,transformer_problem,line_fault,other',
+            'complaint_type' => 'required|string|max:50',
+            'priority' => 'required|in:low,medium,high',
             'description' => 'required|string|min:10|max:1000',
         ]);
 
         Complaint::create([
             'farmer_id' => $farmer->id,
-            'issue_type' => $validated['issue_type'],
+            'issue_type' => $validated['complaint_type'],
+            'priority' => $validated['priority'],
             'description' => $validated['description'],
             'status' => 'pending',
         ]);
@@ -105,11 +112,16 @@ class ComplaintController extends Controller
         }
 
         $validated = $request->validate([
-            'issue_type' => 'required|in:no_electricity,voltage_issue,transformer_problem,line_fault,other',
+            'complaint_type' => 'required|string|max:50',
+            'priority' => 'required|in:low,medium,high',
             'description' => 'required|string|min:10|max:1000',
         ]);
 
-        $complaint->update($validated);
+        $complaint->update([
+            'issue_type' => $validated['complaint_type'],
+            'priority' => $validated['priority'],
+            'description' => $validated['description'],
+        ]);
 
         return redirect()->route('farmer.complaints')
             ->with('success', 'Complaint updated successfully!');

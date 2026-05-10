@@ -167,6 +167,7 @@
                         <tr>
                             <th>Submission Date</th>
                             <th>Service Category</th>
+                            <th>Urgency</th>
                             <th>Summary</th>
                             <th>Current Status</th>
                             <th>Action</th>
@@ -179,7 +180,17 @@
                                     {{ $complaint->created_at->format('M d, Y') }}
                                 </td>
                                 <td style="font-weight: 700; color: #38BDF8;">
-                                    {{ ucfirst(str_replace('_', ' ', $complaint->complaint_type)) }}
+                                    {{ ucfirst(str_replace('_', ' ', $complaint->issue_type)) }}
+                                </td>
+                                <td>
+                                    @php
+                                        $priorityClass = 'status-pending'; // default gold
+                                        if($complaint->priority === 'high') $priorityClass = 'status-rejected'; // red
+                                        if($complaint->priority === 'low') $priorityClass = 'status-resolved'; // green
+                                    @endphp
+                                    <div class="status-badge {{ $priorityClass }}" style="font-size: 0.65rem; padding: 4px 10px;">
+                                        {{ ucfirst($complaint->priority ?? 'medium') }}
+                                    </div>
                                 </td>
                                 <td style="color: #f1f5f9; max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                     {{ $complaint->description }}
@@ -203,7 +214,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" style="padding: 0;">
+                                <td colspan="6" style="padding: 0;">
                                     <div style="padding: 100px 20px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 24px;">
                                         <div class="float-animation" style="width: 120px; height: 120px; background: rgba(56, 189, 248, 0.05); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(56, 189, 248, 0.1);">
                                             <span style="font-size: 4rem; filter: drop-shadow(0 0 20px rgba(56, 189, 248, 0.4));">🛡️</span>
