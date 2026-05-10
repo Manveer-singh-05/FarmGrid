@@ -944,78 +944,122 @@
             }
         }
 
-        /* Background adjustments */
+        /* Global Background Continuity */
         body {
-            background: linear-gradient(to br, #0f172a 0%, #1a2f50 50%, #0f172a 100%) !important;
-            background-attachment: fixed !important;
-        }
-
-        body.bg-white {
-            background: linear-gradient(to br, #0f172a 0%, #1a2f50 50%, #0f172a 100%) !important;
-        }
-
-        /* Features Section Background */
-        #features {
-            background: linear-gradient(180deg, rgba(15, 23, 42, 0) 0%, rgba(37, 99, 235, 0.03) 50%, rgba(15, 23, 42, 0.5) 100%),
-                linear-gradient(135deg, #0f172a 0%, #1a2f50 100%);
+            background: #0f172a !important;
+            overflow-x: hidden;
             position: relative;
+        }
+
+        .bg-fixed-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 50% 50%, #1a2f50 0%, #0f172a 100%);
             overflow: hidden;
         }
 
-        #features::before {
-            content: '';
+        .glow-blob {
             position: absolute;
-            top: -40%;
-            right: 10%;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 70%);
             border-radius: 50%;
-            filter: blur(80px);
-            z-index: 0;
+            filter: blur(100px);
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: -1;
+            animation: pulse-glow 15s infinite alternate;
         }
 
-        #features::after {
-            content: '';
-            position: absolute;
-            bottom: -20%;
-            left: 5%;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
-            border-radius: 50%;
-            filter: blur(80px);
-            z-index: 0;
+        @keyframes pulse-glow {
+            0% { transform: scale(1) translate(0, 0); opacity: 0.15; }
+            50% { transform: scale(1.2) translate(10%, 5%); opacity: 0.2; }
+            100% { transform: scale(0.9) translate(-5%, 10%); opacity: 0.15; }
+        }
+
+        /* Hero Gradient Removal */
+        .hero-gradient {
+            background: transparent !important;
+        }
+
+        .hero-gradient::before, .hero-gradient::after {
+            display: none !important;
+        }
+
+        /* Features Section Transparency */
+        #features {
+            background: transparent !important;
+        }
+
+        #features::before, #features::after {
+            display: none !important;
         }
 
         .py-28.bg-white {
-            background: linear-gradient(180deg, rgba(15, 23, 42, 0) 0%, rgba(37, 99, 235, 0.03) 50%, rgba(15, 23, 42, 0.5) 100%),
-                linear-gradient(135deg, #0f172a 0%, #1a2f50 100%) !important;
+            background: transparent !important;
         }
 
-        /* Roles Section Background */
+        /* Stats Section Transparency */
+        #stats {
+            background: transparent !important;
+        }
+
+        #stats::before, #stats::after {
+            display: none !important;
+        }
+
+        /* Roles Section Transparency */
+        #roles {
+            background: transparent !important;
+        }
+
+        #roles::before, #roles::after {
+            display: none !important;
+        }
+
         .py-28.bg-gradient-to-b {
-            background: linear-gradient(to bottom, rgba(15, 23, 42, 0.5), rgba(15, 23, 42, 0.8)) !important;
+            background: transparent !important;
         }
 
-        /* CTA Section */
-        .bg-gradient-to-r.from-green-600 {
-            background: linear-gradient(135deg, rgba(37, 99, 235, 0.8) 0%, rgba(16, 185, 129, 0.6) 100%) !important;
+        /* Contact Section Transparency */
+        #contact {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
         }
 
-        /* Footer */
-        .bg-gray-950 {
-            background: rgba(15, 23, 42, 0.9) !important;
-            backdrop-filter: blur(10px);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        #contact::before, #contact::after {
+            display: none !important;
         }
 
-        .text-gray-400 {
-            color: #cbd5e1 !important;
+        /* Footer Transparency & Blending */
+        footer {
+            background: transparent !important;
+            border-top: none !important;
+            box-shadow: none !important;
+            position: relative;
         }
 
-        .text-gray-500 {
-            color: #94a3b8 !important;
+        footer::before, footer::after {
+            display: none !important;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(56, 189, 248, 0.1) !important;
+        }
+
+        /* Section Transition Glows */
+        .section-glow {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 400px;
+            background: radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+            filter: blur(60px);
         }
 
         /* Accessibility */
@@ -1206,6 +1250,12 @@
 </head>
 
 <body>
+    <!-- Continuous Background Container -->
+    <div class="bg-fixed-container">
+        <div class="glow-blob" style="width: 800px; height: 800px; top: -10%; left: -10%; background: radial-gradient(circle, rgba(56, 189, 248, 0.2) 0%, transparent 70%); animation-delay: 0s;"></div>
+        <div class="glow-blob" style="width: 600px; height: 600px; top: 40%; right: -5%; background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%); animation-delay: -5s;"></div>
+        <div class="glow-blob" style="width: 700px; height: 700px; bottom: -10%; left: 20%; background: radial-gradient(circle, rgba(37, 99, 235, 0.15) 0%, transparent 70%); animation-delay: -10s;"></div>
+    </div>
     <!-- Navigation -->
     <nav class="fixed top-0 w-full z-50" x-data="{ mobileMenuOpen: false }">
         <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
@@ -1343,12 +1393,9 @@
     </section>
 
     <!-- Stats Section -->
-    <section id="stats" class="py-28 relative overflow-hidden">
-        <div
-            class="absolute inset-0 bg-gradient-to-b from-transparent via-blue-600/5 to-transparent pointer-events-none z-0">
-        </div>
-        <div class="absolute -left-96 top-1/4 w-96 h-96 bg-emerald-600/10 rounded-full blur-3xl z-0"></div>
-        <div class="absolute -right-96 bottom-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl z-0"></div>
+    <section id="stats" class="py-28 relative">
+        <div class="section-glow" style="top: -200px;"></div>
+
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="stats-grid">
                 <div class="stat-box">
@@ -1375,12 +1422,9 @@
     </section>
 
     <!-- Features Section -->
-    <section id="features" class="py-28 relative overflow-hidden">
-        <div
-            class="absolute inset-0 bg-gradient-to-b from-transparent via-blue-600/5 to-transparent pointer-events-none z-0">
-        </div>
-        <div class="absolute -left-96 top-1/4 w-96 h-96 bg-emerald-600/10 rounded-full blur-3xl z-0"></div>
-        <div class="absolute -right-96 bottom-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl z-0"></div>
+    <section id="features" class="py-28 relative">
+        <div class="section-glow" style="top: -200px; background: radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, transparent 70%);"></div>
+
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="section-title">
                 <h2>Powerful Features</h2>
@@ -1434,8 +1478,8 @@
     </section>
 
     <!-- Roles Section -->
-    <section id="roles" class="py-28 relative overflow-hidden">
-        <div class="absolute inset-0 pointer-events-none z-0"></div>
+    <section id="roles" class="py-28 relative">
+        <div class="section-glow" style="top: -200px;"></div>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="section-title">
                 <h2>Built for Everyone</h2>
@@ -1549,7 +1593,8 @@
     </section>
 
     <!-- CTA Section -->
-    <div id="contact" class="relative overflow-hidden">
+    <div id="contact" class="py-28 relative">
+        <div class="section-glow" style="top: -200px; background: radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, transparent 70%);"></div>
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h3>Transform Your Farm Today</h3>
             <p class="max-w-3xl mx-auto">Join thousands of farmers benefiting from intelligent electricity management.
