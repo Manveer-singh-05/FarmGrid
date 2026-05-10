@@ -70,15 +70,29 @@
 
     <div style="display: flex; flex-direction: column; gap: 32px;">
         <!-- Header -->
-        <div style="display: flex; flex-direction: column; gap: 8px;">
-            <div style="display: flex; align-items: center; gap: 16px;">
-                <span class="pulse-glow" style="font-size: 2.5rem;">⚡</span>
-                <h2 style="font-size: 2.5rem; font-weight: 900; color: #f1f5f9; margin: 0; letter-spacing: -0.5px;">
-                    Electricity <span style="background: linear-gradient(135deg, #38BDF8 0%, #10B981 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Schedules</span>
-                </h2>
+            <div style="display: flex; flex-direction: column; md:flex-row justify-content: space-between; align-items: flex-start; md:items-center gap: 20px;">
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <span class="pulse-glow" style="font-size: 2.5rem;">⚡</span>
+                    <h2 style="font-size: 2.5rem; font-weight: 900; color: #f1f5f9; margin: 0; letter-spacing: -0.5px;">
+                        Electricity <span style="background: linear-gradient(135deg, #38BDF8 0%, #10B981 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Schedules</span>
+                    </h2>
+                </div>
+
+                @if($connections->count() > 1)
+                    <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(56, 189, 248, 0.3); padding: 8px 20px; border-radius: 16px; display: flex; align-items: center; gap: 12px; backdrop-filter: blur(10px);">
+                        <span style="color: #94a3b8; font-size: 0.8rem; font-weight: 700;">CONNECTION:</span>
+                        <select onchange="window.location.href='?connection_id='+this.value" 
+                                style="background: transparent; color: #38BDF8; border: none; font-weight: 800; font-size: 0.9rem; cursor: pointer; outline: none;">
+                            @foreach($connections as $conn)
+                                <option value="{{ $conn->id }}" {{ $farmer->id == $conn->id ? 'selected' : '' }} style="background: #0f172a; color: #f1f5f9;">
+                                    {{ $conn->connection_no }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                @endif
             </div>
-            <p style="color: #94a3b8; font-size: 1.1rem; margin-left: 56px;">Monitor your assigned agricultural electricity timings and grid allocations.</p>
-        </div>
+            <p style="color: #94a3b8; font-size: 1.1rem; margin-left: 56px;">Monitor assigned agricultural electricity timings for: <span style="color: #38BDF8;">{{ $farmer->connection_no }} ({{ $farmer->village }})</span></p>
 
         <!-- Main Schedule Container -->
         <div class="glass-container">
@@ -86,7 +100,7 @@
                 <table class="schedule-table" style="width: 100%; border-collapse: separate; border-spacing: 0;">
                     <thead>
                         <tr>
-                            <th>Grid Zone</th>
+                            <th>Target Connection</th>
                             <th>Active Day</th>
                             <th>Start Time</th>
                             <th>End Time</th>
@@ -96,7 +110,16 @@
                     <tbody>
                         @forelse ($schedules as $schedule)
                             <tr class="schedule-row">
-                                <td style="font-weight: 700; color: #38BDF8;">{{ $schedule->zone }}</td>
+                                <td style="font-weight: 700; color: #38BDF8;">
+                                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                                        <span>{{ $schedule->zone }}</span>
+                                        @if($schedule->farmer_id)
+                                            <span style="font-size: 0.7rem; color: #10B981; font-weight: 500;">Connection: {{ $schedule->farmer->connection_no }}</span>
+                                        @else
+                                            <span style="font-size: 0.7rem; color: #64748b; font-weight: 500;">Universal Grid Zone</span>
+                                        @endif
+                                    </div>
+                                </td>
                                 <td style="color: #f1f5f9;">{{ $schedule->day_of_week }}</td>
                                 <td style="color: #f1f5f9; font-weight: 600;">{{ $schedule->start_time }}</td>
                                 <td style="color: #f1f5f9; font-weight: 600;">{{ $schedule->end_time }}</td>

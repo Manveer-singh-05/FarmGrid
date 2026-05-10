@@ -128,8 +128,22 @@
                 <p style="color: #cbd5e1; font-size: 1.2rem; margin-bottom: 32px; max-width: 800px;">Manage your
                     agricultural electricity efficiently with FarmGrid's smart distribution system.</p>
 
-                <!-- Status Badges -->
-                <div style="display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
+                <!-- Status Badges & Connection Switcher -->
+                <div style="display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; align-items: center;">
+                    @if($connections->count() > 1)
+                        <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(56, 189, 248, 0.3); padding: 8px 16px; border-radius: 16px; display: flex; align-items: center; gap: 12px; backdrop-filter: blur(10px);">
+                            <span style="color: #94a3b8; font-size: 0.85rem; font-weight: 700;">SWITCH CONNECTION:</span>
+                            <select onchange="window.location.href='?connection_id='+this.value" 
+                                    style="background: transparent; color: #38BDF8; border: none; font-weight: 800; font-size: 0.95rem; cursor: pointer; outline: none;">
+                                @foreach($connections as $conn)
+                                    <option value="{{ $conn->id }}" {{ $farmer->id == $conn->id ? 'selected' : '' }} style="background: #0f172a; color: #f1f5f9;">
+                                        {{ $conn->connection_no }} ({{ $conn->village }})
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    @endif
+
                     @if($farmer)
                         <div style="background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.4); padding: 12px 20px; border-radius: 16px; display: flex; align-items: center; gap: 10px; transition: all 0.3s ease;"
                             onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 10px 30px rgba(56, 189, 248, 0.3)'"
@@ -162,7 +176,7 @@
                         <div>
                             <p style="font-size: 0.9rem; font-weight: 600; color: #f1f5f9; margin: 0;">Active Schedule</p>
                             <p style="font-size: 1rem; font-weight: 700; color: #F59E0B; margin: 0;">
-                                {{ $schedules->where('status', 'active')->count() }} Active</p>
+                                {{ $schedules->where('zone', $farmer->village)->where('status', 'active')->count() }} Active</p>
                         </div>
                     </div>
 
@@ -360,7 +374,13 @@
                                             <div>
                                                 <h4
                                                     style="font-size: 1.1rem; font-weight: 700; color: #f1f5f9; margin-bottom: 4px;">
-                                                    {{ $schedule->zone }} Zone</h4>
+                                                    {{ $schedule->zone }} 
+                                                    @if($schedule->farmer_id)
+                                                        <span style="font-size: 0.7rem; color: #38BDF8; font-weight: 500;">(Conn: {{ $schedule->farmer->connection_no }})</span>
+                                                    @else
+                                                        <span style="font-size: 0.7rem; color: #94a3b8; font-weight: 500;">(Grid Zone)</span>
+                                                    @endif
+                                                </h4>
                                                 <p style="color: #94a3b8; font-size: 0.9rem; font-weight: 500;">
                                                     {{ $schedule->start_time }} - {{ $schedule->end_time }}</p>
                                             </div>

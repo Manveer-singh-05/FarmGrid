@@ -142,6 +142,18 @@
             <form action="{{ route('farmer.complaint.store') }}" method="POST" style="display: flex; flex-direction: column; gap: 32px;">
                 @csrf
 
+                <!-- Connection Selection -->
+                <div>
+                    <label class="form-label">
+                        <span style="color: #38BDF8; font-size: 1rem; margin-right: 6px;">🔌</span> Select Connection
+                    </label>
+                    <select name="farmer_id" required class="glass-field" style="cursor: pointer;">
+                        @foreach($connections as $conn)
+                            <option value="{{ $conn->id }}">{{ $conn->connection_no }} ({{ $conn->village }})</option>
+                        @endforeach
+                    </select>
+                </div>
+
                 <!-- Complaint Type -->
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
                     <div>

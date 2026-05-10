@@ -34,4 +34,9 @@ class Farmer extends Model
     {
         return $this->hasMany(PowerUsage::class);
     }
+
+    public function schedules(): HasMany
+    {
+        return $this->hasMany(ElectricitySchedule::class);
+    }
 }

@@ -117,18 +117,34 @@
 
     <div style="display: flex; flex-direction: column; gap: 56px; padding: 12px 0;">
         
-        <!-- Header Hero Section -->
-        <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 8px;">
-            <div style="display: flex; align-items: center; gap: 28px;">
-                <div class="pulse-glow" style="width: 80px; height: 80px; background: rgba(56, 189, 248, 0.1); border-radius: 26px; border: 1px solid rgba(56, 189, 248, 0.3); display: flex; align-items: center; justify-content: center; font-size: 2.8rem;">
-                    ⚡
+        <!-- Header Hero Section & Connection Switcher -->
+        <div style="display: flex; flex-direction: column; gap: 24px; margin-bottom: 8px;">
+            <div style="display: flex; flex-direction: column; md:flex-row justify-content: space-between; align-items: flex-start; md:items-center gap: 20px;">
+                <div style="display: flex; align-items: center; gap: 28px;">
+                    <div class="pulse-glow" style="width: 80px; height: 80px; background: rgba(56, 189, 248, 0.1); border-radius: 26px; border: 1px solid rgba(56, 189, 248, 0.3); display: flex; align-items: center; justify-content: center; font-size: 2.8rem;">
+                        ⚡
+                    </div>
+                    <div>
+                        <h2 style="font-size: 3.2rem; font-weight: 950; color: #f1f5f9; margin: 0; letter-spacing: -1.5px; line-height: 1.1;">
+                            Power Usage <span style="background: linear-gradient(135deg, #38BDF8 0%, #10B981 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">& Billing</span>
+                        </h2>
+                        <p style="color: #64748b; font-size: 1.25rem; margin-top: 8px; font-weight: 500; letter-spacing: 0.2px;">Real-time energy consumption analytics for: <span style="color: #38BDF8;">{{ $farmer->connection_no }}</span></p>
+                    </div>
                 </div>
-                <div>
-                    <h2 style="font-size: 3.2rem; font-weight: 950; color: #f1f5f9; margin: 0; letter-spacing: -1.5px; line-height: 1.1;">
-                        Power Usage <span style="background: linear-gradient(135deg, #38BDF8 0%, #10B981 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">& Billing</span>
-                    </h2>
-                    <p style="color: #64748b; font-size: 1.25rem; margin-top: 8px; font-weight: 500; letter-spacing: 0.2px;">Real-time energy consumption analytics and billing oversight.</p>
-                </div>
+
+                @if($connections->count() > 1)
+                    <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(56, 189, 248, 0.3); padding: 12px 24px; border-radius: 20px; display: flex; align-items: center; gap: 15px; backdrop-filter: blur(10px); align-self: flex-end;">
+                        <span style="color: #94a3b8; font-size: 0.9rem; font-weight: 700;">SELECT CONNECTION:</span>
+                        <select onchange="window.location.href='?connection_id='+this.value" 
+                                style="background: transparent; color: #38BDF8; border: none; font-weight: 800; font-size: 1.1rem; cursor: pointer; outline: none;">
+                            @foreach($connections as $conn)
+                                <option value="{{ $conn->id }}" {{ $farmer->id == $conn->id ? 'selected' : '' }} style="background: #0f172a; color: #f1f5f9;">
+                                    {{ $conn->connection_no }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                @endif
             </div>
         </div>
 

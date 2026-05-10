@@ -14,14 +14,33 @@ class FarmerController extends Controller
     /**
      * Show farmer dashboard
      */
-    public function dashboard()
+    public function dashboard(Request $request)
     {
-        $farmer = Auth::user()->farmer;
-        if (!$farmer) {
+        $connections = Auth::user()->farmers;
+        
+        if ($connections->isEmpty()) {
             return redirect()->route('farmer.apply');
         }
 
-        $schedules = ElectricitySchedule::all();
+        // Determine active connection
+        $connectionId = $request->get('connection_id');
+        $farmer = $connectionId 
+            ? $connections->firstWhere('id', $connectionId) 
+            : $connections->first();
+
+        if (!$farmer) {
+            $farmer = $connections->first();
+        }
+
+        $connectionIds = $connections->pluck('id')->toArray();
+        $villages = $connections->pluck('village')->unique()->toArray();
+
+        // Fetch schedules matching either the farmer_id OR the village zone for ANY owned connection
+        $schedules = ElectricitySchedule::whereIn('farmer_id', $connectionIds)
+            ->orWhereIn('zone', $villages)
+            ->latest()
+            ->get();
+
         $complaints = $farmer->complaints()->latest()->get();
         $powerUsage = $farmer->powerUsages()->latest()->first();
 
@@ -85,6 +104,7 @@ class FarmerController extends Controller
 
         return view('farmer.dashboard', compact(
             'farmer', 
+            'connections',
             'schedules', 
             'complaints', 
             'powerUsage',
@@ -136,10 +156,29 @@ class FarmerController extends Controller
     /**
      * View electricity schedules
      */
-    public function index()
+    public function index(Request $request)
     {
-        $schedules = ElectricitySchedule::where('status', 'active')->get();
-        return view('farmer.schedules', compact('schedules'));
+        $connections = Auth::user()->farmers;
+        if ($connections->isEmpty()) {
+            return redirect()->route('farmer.apply');
+        }
+
+        $connectionIds = $connections->pluck('id')->toArray();
+        $villages = $connections->pluck('village')->unique()->toArray();
+
+        // Fetch schedules matching either the farmer_id OR the village zone
+        $schedules = ElectricitySchedule::whereIn('farmer_id', $connectionIds)
+            ->orWhereIn('zone', $villages)
+            ->latest()
+            ->get();
+        
+        // Pick active connection for UI labels, but show all schedules
+        $connectionId = $request->get('connection_id');
+        $farmer = $connectionId 
+            ? $connections->firstWhere('id', $connectionId) 
+            : $connections->first();
+
+        return view('farmer.schedules', compact('schedules', 'connections', 'farmer'));
     }
 
     /**
@@ -147,23 +186,28 @@ class FarmerController extends Controller
      */
     public function show(string $id)
     {
-        $farmer = Auth::user()->farmer;
-        $complaint = $farmer->complaints()->findOrFail($id);
+        $connectionIds = Auth::user()->farmers->pluck('id')->toArray();
+        $complaint = Complaint::whereIn('farmer_id', $connectionIds)->findOrFail($id);
         return view('farmer.complaint-detail', compact('complaint'));
     }
 
     /**
      * View power usage
      */
-    public function usage()
+    public function usage(Request $request)
     {
-        $farmer = Auth::user()->farmer;
-        if (!$farmer) {
+        $connections = Auth::user()->farmers;
+        if ($connections->isEmpty()) {
             return redirect()->route('farmer.apply');
         }
 
+        $connectionId = $request->get('connection_id');
+        $farmer = $connectionId 
+            ? $connections->firstWhere('id', $connectionId) 
+            : $connections->first();
+
         $usages = $farmer->powerUsages()->latest()->get();
-        return view('farmer.usage', compact('usages'));
+        return view('farmer.usage', compact('usages', 'connections', 'farmer'));
     }
 
     /**
@@ -171,7 +215,8 @@ class FarmerController extends Controller
      */
     public function updateProfile(Request $request)
     {
-        $farmer = Auth::user()->farmer;
+        $farmer = Auth::user()->farmers->first();
+        if (!$farmer) return back()->with('error', 'No connection found.');
 
         $validated = $request->validate([
             'village' => 'required|string',
@@ -188,7 +233,7 @@ class FarmerController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $farmer = Auth::user()->farmer;
+        $farmer = Auth::user()->farmers()->findOrFail($id);
 
         $validated = $request->validate([
             'village' => 'required|string',

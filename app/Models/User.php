@@ -55,10 +55,10 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the farmer associated with the user.
+     * Get the farmer connections associated with the user.
      */
-    public function farmer(): HasOne
+    public function farmers(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasOne(Farmer::class);
+        return $this->hasMany(Farmer::class);
     }
 }

@@ -14,15 +14,17 @@ class ComplaintController extends Controller
      */
     public function index()
     {
-        $farmer = Auth::user()->farmer;
+        $connections = Auth::user()->farmers;
 
-        if (!$farmer) {
+        if ($connections->isEmpty()) {
             return redirect()->route('farmer.apply')
                 ->with('info', 'Please apply for a connection first before viewing complaints.');
         }
 
-        $complaints = $farmer->complaints()->latest()->paginate(10);
-        return view('farmer.complaints', compact('complaints'));
+        $connectionIds = $connections->pluck('id')->toArray();
+        $complaints = Complaint::whereIn('farmer_id', $connectionIds)->latest()->paginate(10);
+        
+        return view('farmer.complaints', compact('complaints', 'connections'));
     }
 
     /**
@@ -30,7 +32,8 @@ class ComplaintController extends Controller
      */
     public function create()
     {
-        return view('farmer.create-complaint');
+        $connections = Auth::user()->farmers;
+        return view('farmer.create-complaint', compact('connections'));
     }
 
     /**
@@ -38,21 +41,21 @@ class ComplaintController extends Controller
      */
     public function store(Request $request)
     {
-        $farmer = Auth::user()->farmer;
-
-        if (!$farmer) {
-            return redirect()->route('farmer.apply')
-                ->with('error', 'You must have an active connection to file a complaint.');
-        }
-
         $validated = $request->validate([
+            'farmer_id' => 'required|exists:farmers,id',
             'complaint_type' => 'required|string|max:50',
             'priority' => 'required|in:low,medium,high',
             'description' => 'required|string|min:10|max:1000',
         ]);
 
+        // Security check: Ensure the farmer_id belongs to the user
+        $connections = Auth::user()->farmers->pluck('id')->toArray();
+        if (!in_array($validated['farmer_id'], $connections)) {
+            abort(403);
+        }
+
         Complaint::create([
-            'farmer_id' => $farmer->id,
+            'farmer_id' => $validated['farmer_id'],
             'issue_type' => $validated['complaint_type'],
             'priority' => $validated['priority'],
             'description' => $validated['description'],
@@ -71,7 +74,8 @@ class ComplaintController extends Controller
         $complaint = Complaint::with('farmer.user')->findOrFail($id);
 
         // Check authorization
-        if ($complaint->farmer_id !== Auth::user()->farmer->id && Auth::user()->role !== 'admin') {
+        $connectionIds = Auth::user()->farmers->pluck('id')->toArray();
+        if (!in_array($complaint->farmer_id, $connectionIds) && Auth::user()->role !== 'admin') {
             abort(403);
         }
 
@@ -85,7 +89,8 @@ class ComplaintController extends Controller
     {
         $complaint = Complaint::findOrFail($id);
 
-        if ($complaint->farmer_id !== Auth::user()->farmer->id) {
+        $connectionIds = Auth::user()->farmers->pluck('id')->toArray();
+        if (!in_array($complaint->farmer_id, $connectionIds)) {
             abort(403);
         }
 
@@ -103,7 +108,8 @@ class ComplaintController extends Controller
     {
         $complaint = Complaint::findOrFail($id);
 
-        if ($complaint->farmer_id !== Auth::user()->farmer->id) {
+        $connectionIds = Auth::user()->farmers->pluck('id')->toArray();
+        if (!in_array($complaint->farmer_id, $connectionIds)) {
             abort(403);
         }
 
@@ -134,7 +140,8 @@ class ComplaintController extends Controller
     {
         $complaint = Complaint::findOrFail($id);
 
-        if ($complaint->farmer_id !== Auth::user()->farmer->id) {
+        $connectionIds = Auth::user()->farmers->pluck('id')->toArray();
+        if (!in_array($complaint->farmer_id, $connectionIds)) {
             abort(403);
         }
 

@@ -148,6 +148,24 @@
             <form action="{{ route('admin.schedule.store') }}" method="POST" style="display: flex; flex-direction: column; gap: 32px;">
                 @csrf
 
+                <!-- Farmer Connection (Optional) -->
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <label for="farmer_id" class="field-label">
+                        <span style="color: #F59E0B;">👤</span> Linked Farmer Connection (Optional)
+                    </label>
+                    <select id="farmer_id" name="farmer_id" class="glass-field">
+                        <option value="">-- Universal Zone Schedule --</option>
+                        @foreach($farmers as $farmer)
+                            <option value="{{ $farmer->id }}" {{ old('farmer_id') == $farmer->id ? 'selected' : '' }}>
+                                {{ $farmer->user->name }} - {{ $farmer->connection_no }} ({{ $farmer->village }})
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('farmer_id')
+                        <p style="color: #EF4444; font-size: 0.8rem; font-weight: 600; margin-top: 4px;">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 <!-- Zone Name -->
                 <div style="display: flex; flex-direction: column; gap: 8px;">
                     <label for="zone" class="field-label">

@@ -71,7 +71,8 @@ class AdminController extends Controller
     public function editSchedule($id)
     {
         $schedule = ElectricitySchedule::findOrFail($id);
-        return view('admin.edit-schedule', compact('schedule'));
+        $farmers = Farmer::with('user')->get();
+        return view('admin.edit-schedule', compact('schedule', 'farmers'));
     }
 
     /**
@@ -79,7 +80,8 @@ class AdminController extends Controller
      */
     public function createSchedule()
     {
-        return view('admin.create-schedule');
+        $farmers = Farmer::with('user')->get();
+        return view('admin.create-schedule', compact('farmers'));
     }
 
     /**
@@ -88,6 +90,7 @@ class AdminController extends Controller
     public function storeSchedule(Request $request)
     {
         $validated = $request->validate([
+            'farmer_id' => 'nullable|exists:farmers,id',
             'zone' => 'required|string',
             'start_time' => 'required|date_format:H:i',
             'end_time' => 'required|date_format:H:i|after:start_time',
@@ -108,6 +111,7 @@ class AdminController extends Controller
         $schedule = ElectricitySchedule::findOrFail($id);
 
         $validated = $request->validate([
+            'farmer_id' => 'nullable|exists:farmers,id',
             'zone' => 'required|string',
             'start_time' => 'required|date_format:H:i',
             'end_time' => 'required|date_format:H:i|after:start_time',

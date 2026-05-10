@@ -58,6 +58,24 @@
                         @method('PATCH')
 
                         <div>
+                            <label for="farmer_id" class="block text-sm font-semibold text-gray-700 mb-2">
+                                👤 Linked Farmer Connection <span class="text-gray-400 font-normal">(Optional)</span>
+                            </label>
+                            <select id="farmer_id" name="farmer_id"
+                                class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500 @error('farmer_id') border-red-400 @enderror">
+                                <option value="">-- Universal Zone Schedule --</option>
+                                @foreach($farmers as $farmer)
+                                    <option value="{{ $farmer->id }}" {{ old('farmer_id', $schedule->farmer_id) == $farmer->id ? 'selected' : '' }}>
+                                        {{ $farmer->user->name }} - {{ $farmer->connection_no }} ({{ $farmer->village }})
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('farmer_id')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
                             <label for="zone" class="block text-sm font-semibold text-gray-700 mb-2">
                                 ⚡ Zone Name <span class="text-red-500">*</span>
                             </label>
