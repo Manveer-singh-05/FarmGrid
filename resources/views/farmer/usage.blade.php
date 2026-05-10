@@ -96,7 +96,14 @@
             box-shadow: 0 0 15px rgba(16, 185, 129, 0.1);
         }
 
-        .status-unpaid {
+        .status-pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: #F59E0B;
+            border-color: rgba(245, 158, 11, 0.3);
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.1);
+        }
+
+        .status-overdue {
             background: rgba(239, 68, 68, 0.1);
             color: #EF4444;
             border-color: rgba(239, 68, 68, 0.3);
@@ -139,7 +146,7 @@
                     </div>
                     <h3 style="color: #64748b; font-size: 0.85rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px;">Monthly Consumption</h3>
                     <p class="stat-glow" style="font-size: 3.2rem; font-weight: 950; color: #38BDF8; margin: 0; line-height: 1;">
-                        {{ count($usages) > 0 ? $usages->first()->units : '--' }} <span style="font-size: 1.4rem; font-weight: 700; color: #475569; margin-left: 4px;">kWh</span>
+                        {{ count($usages) > 0 ? $usages->first()->units_consumed : '--' }} <span style="font-size: 1.4rem; font-weight: 700; color: #475569; margin-left: 4px;">kWh</span>
                     </p>
                 </div>
             </div>
@@ -153,7 +160,7 @@
                     </div>
                     <h3 style="color: #64748b; font-size: 0.85rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px;">Outstanding Balance</h3>
                     <p class="stat-glow" style="font-size: 3.2rem; font-weight: 950; color: #10B981; margin: 0; line-height: 1;">
-                        <span style="font-size: 1.8rem; vertical-align: middle; margin-right: 2px;">₹</span>{{ count($usages) > 0 ? $usages->first()->amount : '--' }}
+                        <span style="font-size: 1.8rem; vertical-align: middle; margin-right: 2px;">₹</span>{{ count($usages) > 0 ? $usages->where('payment_status', '!=', 'paid')->sum('bill_amount') : '--' }}
                     </p>
                 </div>
             </div>
@@ -166,7 +173,7 @@
                     </div>
                     <h3 style="color: #64748b; font-size: 0.85rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px;">Recent Status</h3>
                     <p class="stat-glow" style="font-size: 2.2rem; font-weight: 950; color: #F59E0B; margin: 0; line-height: 1.1;">
-                        {{ count($usages) > 1 ? ucfirst($usages->skip(1)->first()->status) : 'No Records' }}
+                        {{ count($usages) > 0 ? ucfirst($usages->first()->payment_status) : 'No Records' }}
                     </p>
                 </div>
                 <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.05);">
@@ -201,16 +208,16 @@
                     <tbody>
                         @forelse($usages as $usage)
                             <tr class="usage-row">
-                                <td style="font-weight: 800; color: #f1f5f9;">{{ $usage->month }}</td>
-                                <td style="color: #38BDF8; font-weight: 900; font-size: 1.1rem;">{{ $usage->units }} <span style="font-size: 0.8rem; color: #475569; font-weight: 600;">kWh</span></td>
-                                <td style="color: #10B981; font-weight: 900; font-size: 1.1rem;">₹{{ $usage->amount }}</td>
+                                <td style="font-weight: 800; color: #f1f5f9;">{{ $usage->billing_month }}</td>
+                                <td style="color: #38BDF8; font-weight: 900; font-size: 1.1rem;">{{ $usage->units_consumed }} <span style="font-size: 0.8rem; color: #475569; font-weight: 600;">kWh</span></td>
+                                <td style="color: #10B981; font-weight: 900; font-size: 1.1rem;">₹{{ $usage->bill_amount }}</td>
                                 <td>
                                     @php
-                                        $statusClass = $usage->status === 'paid' ? 'status-paid' : 'status-unpaid';
+                                        $statusClass = 'status-' . $usage->payment_status;
                                     @endphp
                                     <div class="status-badge {{ $statusClass }}">
                                         <span style="width: 8px; height: 8px; background: currentColor; border-radius: 50%; box-shadow: 0 0 12px currentColor;"></span>
-                                        {{ ucfirst($usage->status) }}
+                                        {{ ucfirst($usage->payment_status) }}
                                     </div>
                                 </td>
                             </tr>

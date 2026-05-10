@@ -165,6 +165,12 @@
                                 onmouseout="this.style.background='{{ request()->routeIs('admin.complaints') ? 'rgba(56, 189, 248, 0.1)' : 'transparent' }}'; this.style.borderColor='rgba(56, 189, 248, 0.15)'; this.style.color='{{ request()->routeIs('admin.complaints') ? '#38BDF8' : '#cbd5e1' }}';">
                                 📋 Complaints
                             </a>
+                            <a href="{{ route('admin.usage') }}"
+                                style="display: block; padding: 12px 16px; border-radius: 12px; color: {{ request()->routeIs('admin.usage') ? '#38BDF8' : '#cbd5e1' }}; text-decoration: none; transition: all 0.3s ease; border: 1px solid {{ request()->routeIs('admin.usage') ? 'rgba(56, 189, 248, 0.5)' : 'rgba(56, 189, 248, 0.15)' }}; background: {{ request()->routeIs('admin.usage') ? 'rgba(56, 189, 248, 0.1)' : 'transparent' }}; font-weight: {{ request()->routeIs('admin.usage') ? '600' : '500' }}; box-shadow: {{ request()->routeIs('admin.usage') ? '0 0 15px rgba(56, 189, 248, 0.2)' : 'none' }};"
+                                onmouseover="this.style.background='rgba(56, 189, 248, 0.1)'; this.style.borderColor='rgba(56, 189, 248, 0.4)'; this.style.color='#38BDF8';"
+                                onmouseout="this.style.background='{{ request()->routeIs('admin.usage') ? 'rgba(56, 189, 248, 0.1)' : 'transparent' }}'; this.style.borderColor='rgba(56, 189, 248, 0.15)'; this.style.color='{{ request()->routeIs('admin.usage') ? '#38BDF8' : '#cbd5e1' }}';">
+                                ⚡ Electricity Usage
+                            </a>
                             <a href="{{ route('admin.reports') }}"
                                 style="display: block; padding: 12px 16px; border-radius: 12px; color: {{ request()->routeIs('admin.reports') ? '#38BDF8' : '#cbd5e1' }}; text-decoration: none; transition: all 0.3s ease; border: 1px solid {{ request()->routeIs('admin.reports') ? 'rgba(56, 189, 248, 0.5)' : 'rgba(56, 189, 248, 0.15)' }}; background: {{ request()->routeIs('admin.reports') ? 'rgba(56, 189, 248, 0.1)' : 'transparent' }}; font-weight: {{ request()->routeIs('admin.reports') ? '600' : '500' }}; box-shadow: {{ request()->routeIs('admin.reports') ? '0 0 15px rgba(56, 189, 248, 0.2)' : 'none' }};"
                                 onmouseover="this.style.background='rgba(56, 189, 248, 0.1)'; this.style.borderColor='rgba(56, 189, 248, 0.4)'; this.style.color='#38BDF8';"

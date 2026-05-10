@@ -9,19 +9,40 @@ class PowerUsage extends Model
 {
     protected $fillable = [
         'farmer_id',
-        'units_used',
+        'units_consumed',
         'bill_amount',
-        'month',
-        'year',
+        'meter_reading',
+        'billing_month',
+        'payment_status',
     ];
 
     protected $casts = [
-        'units_used' => 'decimal:2',
+        'units_consumed' => 'decimal:2',
         'bill_amount' => 'decimal:2',
+        'meter_reading' => 'decimal:2',
     ];
 
+    /**
+     * Get the farmer that owns the power usage.
+     */
     public function farmer(): BelongsTo
     {
         return $this->belongsTo(Farmer::class);
+    }
+
+    /**
+     * Get peak usage for a farmer
+     */
+    public static function getPeakUsage($farmerId)
+    {
+        return self::where('farmer_id', $farmerId)->max('units_consumed');
+    }
+
+    /**
+     * Get average usage for a farmer
+     */
+    public static function getAverageUsage($farmerId)
+    {
+        return self::where('farmer_id', $farmerId)->avg('units_consumed');
     }
 }

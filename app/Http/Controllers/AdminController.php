@@ -170,4 +170,43 @@ class AdminController extends Controller
 
         return view('admin.reports', compact('totalFarmers', 'approvedFarmers', 'totalComplaints', 'resolvedComplaints', 'totalUsageRecords'));
     }
+
+    /**
+     * View power usage management
+     */
+    public function usage()
+    {
+        $farmers = Farmer::with(['user', 'powerUsages' => function($query) {
+            $query->latest();
+        }])->where('status', 'approved')->paginate(15);
+        
+        return view('admin.usage', compact('farmers'));
+    }
+
+    /**
+     * Store new power usage
+     */
+    public function storeUsage(Request $request)
+    {
+        $validated = $request->validate([
+            'farmer_id' => 'required|exists:farmers,id',
+            'units_consumed' => 'required|numeric|min:0',
+            'meter_reading' => 'required|numeric|min:0',
+            'billing_month' => 'required|string',
+            'payment_status' => 'required|in:paid,pending,overdue',
+        ]);
+
+        $billAmount = $validated['units_consumed'] * 7;
+
+        PowerUsage::create([
+            'farmer_id' => $validated['farmer_id'],
+            'units_consumed' => $validated['units_consumed'],
+            'meter_reading' => $validated['meter_reading'],
+            'bill_amount' => $billAmount,
+            'billing_month' => $validated['billing_month'],
+            'payment_status' => $validated['payment_status'],
+        ]);
+
+        return back()->with('success', 'Usage record added and bill generated successfully!');
+    }
 }

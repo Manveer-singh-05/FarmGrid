@@ -83,6 +83,10 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
 
     // Reports
     Route::get('/reports', [AdminController::class, 'reports'])->name('admin.reports');
+
+    // Power Usage Management
+    Route::get('/usage', [AdminController::class, 'usage'])->name('admin.usage');
+    Route::post('/usage', [AdminController::class, 'storeUsage'])->name('admin.usage.store');
 });
 
 /**
