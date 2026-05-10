@@ -159,51 +159,107 @@
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px;">
                     <h3 style="font-size: 1.25rem; font-weight: 700; color: #f1f5f9;">📈 State-wide Consumption Trends</h3>
                     <div style="display: flex; gap: 10px;">
-                        <button style="background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.3); color: #38BDF8; padding: 6px 14px; border-radius: 8px; font-size: 0.8rem; font-weight: 600;">Monthly</button>
-                        <button style="background: transparent; border: 1px solid rgba(255,255,255,0.1); color: #94a3b8; padding: 6px 14px; border-radius: 8px; font-size: 0.8rem; font-weight: 600;">Daily</button>
+                        <button id="btn-monthly" onclick="showTrend('monthly')" style="background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.3); color: #38BDF8; padding: 6px 14px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">Monthly</button>
+                        <button id="btn-daily" onclick="showTrend('daily')" style="background: transparent; border: 1px solid rgba(255,255,255,0.1); color: #94a3b8; padding: 6px 14px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">Daily</button>
                     </div>
                 </div>
                 
-                <!-- Chart Mockup -->
-                <div style="height: 300px; width: 100%; position: relative; display: flex; align-items: flex-end; gap: 12px; padding: 20px 0;">
+                <!-- Chart Container -->
+                <div id="chart-monthly" style="height: 300px; width: 100%; position: relative; display: flex; align-items: flex-end; gap: 12px; padding: 20px 0;">
                     @php
-                        $data = [45, 62, 58, 75, 90, 82, 95, 88, 70, 85, 92, 78];
-                        $months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                        $maxTotal = $monthlyUsage->max('total') ?: 100;
                     @endphp
-                    @foreach($data as $index => $val)
+                    @foreach($monthlyUsage as $usage)
                         <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;">
-                            <div class="hover-lift" style="width: 100%; height: {{ $val }}%; background: linear-gradient(to top, rgba(56, 189, 248, 0.4), rgba(16, 185, 129, 0.4)); border-top: 2px solid #38BDF8; border-radius: 6px 6px 0 0;"></div>
-                            <span style="color: #64748b; font-size: 0.7rem; font-weight: 700;">{{ $months[$index] }}</span>
+                            <div class="hover-lift" style="width: 100%; height: {{ ($usage->total / $maxTotal) * 100 }}%; background: linear-gradient(to top, rgba(56, 189, 248, 0.4), rgba(16, 185, 129, 0.4)); border-top: 2px solid #38BDF8; border-radius: 6px 6px 0 0;" title="{{ number_format($usage->total) }} kWh"></div>
+                            <span style="color: #64748b; font-size: 0.7rem; font-weight: 700;">{{ $usage->billing_month }}</span>
                         </div>
                     @endforeach
                     
+                    @if($monthlyUsage->isEmpty())
+                        <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #64748b; font-style: italic;">No usage data recorded.</div>
+                    @endif
+
                     <!-- Y-Axis Mockup -->
                     <div style="position: absolute; left: -20px; top: 0; bottom: 40px; display: flex; flex-direction: column; justify-content: space-between; color: #475569; font-size: 0.65rem; font-weight: 700;">
-                        <span>100%</span>
-                        <span>75%</span>
-                        <span>50%</span>
-                        <span>25%</span>
-                        <span>0%</span>
+                        <span>{{ number_format($maxTotal) }}</span>
+                        <span>{{ number_format($maxTotal * 0.75) }}</span>
+                        <span>{{ number_format($maxTotal * 0.5) }}</span>
+                        <span>{{ number_format($maxTotal * 0.25) }}</span>
+                        <span>0</span>
                     </div>
                 </div>
+
+                <div id="chart-daily" style="height: 300px; width: 100%; position: relative; display: none; align-items: flex-end; gap: 8px; padding: 20px 0;">
+                    @php
+                        $maxDailyTotal = $dailyUsage->max('total') ?: 100;
+                    @endphp
+                    @foreach($dailyUsage as $usage)
+                        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                            <div class="hover-lift" style="width: 100%; height: {{ ($usage->total / $maxDailyTotal) * 100 }}%; background: linear-gradient(to top, rgba(16, 185, 129, 0.4), rgba(56, 189, 248, 0.4)); border-top: 2px solid #10B981; border-radius: 4px 4px 0 0;" title="{{ number_format($usage->total) }} kWh"></div>
+                            <span style="color: #64748b; font-size: 0.6rem; font-weight: 700; transform: rotate(-45deg); margin-top: 10px;">{{ \Carbon\Carbon::parse($usage->date)->format('M d') }}</span>
+                        </div>
+                    @endforeach
+
+                    @if($dailyUsage->isEmpty())
+                        <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #64748b; font-style: italic;">No daily data recorded.</div>
+                    @endif
+
+                    <!-- Y-Axis Mockup -->
+                    <div style="position: absolute; left: -20px; top: 0; bottom: 40px; display: flex; flex-direction: column; justify-content: space-between; color: #475569; font-size: 0.65rem; font-weight: 700;">
+                        <span>{{ number_format($maxDailyTotal) }}</span>
+                        <span>{{ number_format($maxDailyTotal * 0.5) }}</span>
+                        <span>0</span>
+                    </div>
+                </div>
+
+                <script>
+                    function showTrend(type) {
+                        const monthly = document.getElementById('chart-monthly');
+                        const daily = document.getElementById('chart-daily');
+                        const btnMonthly = document.getElementById('btn-monthly');
+                        const btnDaily = document.getElementById('btn-daily');
+
+                        if (type === 'monthly') {
+                            monthly.style.display = 'flex';
+                            daily.style.display = 'none';
+                            btnMonthly.style.background = 'rgba(56, 189, 248, 0.1)';
+                            btnMonthly.style.borderColor = 'rgba(56, 189, 248, 0.3)';
+                            btnMonthly.style.color = '#38BDF8';
+                            btnDaily.style.background = 'transparent';
+                            btnDaily.style.borderColor = 'rgba(255,255,255,0.1)';
+                            btnDaily.style.color = '#94a3b8';
+                        } else {
+                            monthly.style.display = 'none';
+                            daily.style.display = 'flex';
+                            btnDaily.style.background = 'rgba(56, 189, 248, 0.1)';
+                            btnDaily.style.borderColor = 'rgba(56, 189, 248, 0.3)';
+                            btnDaily.style.color = '#38BDF8';
+                            btnMonthly.style.background = 'transparent';
+                            btnMonthly.style.borderColor = 'rgba(255,255,255,0.1)';
+                            btnMonthly.style.color = '#94a3b8';
+                        }
+                    }
+                </script>
             </div>
 
             <!-- System Alerts / Monitoring -->
             <div style="background: rgba(20, 35, 60, 0.4); backdrop-filter: blur(20px); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 24px; padding: 32px; box-shadow: 0 25px 80px rgba(37, 99, 235, 0.1);">
                 <h3 style="font-size: 1.25rem; font-weight: 700; color: #f1f5f9; margin-bottom: 24px;">🚨 Critical Alerts</h3>
                 <div style="display: flex; flex-direction: column; gap: 16px;">
-                    <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 16px; padding: 16px; border-left: 4px solid #EF4444;">
-                        <p style="color: #fca5a5; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">Voltage Drop</p>
-                        <p style="color: #f1f5f9; font-size: 0.9rem; font-weight: 600; margin-top: 4px;">North District Sector 4 reported low voltage (180V).</p>
-                    </div>
-                    <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 16px; padding: 16px; border-left: 4px solid #F59E0B;">
-                        <p style="color: #fde68a; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">Demand Spike</p>
-                        <p style="color: #f1f5f9; font-size: 0.9rem; font-weight: 600; margin-top: 4px;">15% increase in irrigation demand in Southern Zone.</p>
-                    </div>
-                    <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 16px; padding: 16px; border-left: 4px solid #10B981;">
-                        <p style="color: #a7f3d0; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">Resolution Sync</p>
-                        <p style="color: #f1f5f9; font-size: 0.9rem; font-weight: 600; margin-top: 4px;">Complaints resolved in last 24h: 42 Issues.</p>
-                    </div>
+                    @forelse($alerts as $alert)
+                        <div style="background: {{ str_replace('1)', '0.1)', $alert['color']) }}; border: 1px solid {{ str_replace('1)', '0.3)', $alert['color']) }}; border-radius: 16px; padding: 16px; border-left: 4px solid {{ $alert['color'] }};">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                <p style="color: {{ $alert['color'] }}; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">{{ $alert['title'] }}</p>
+                                <span style="color: #64748b; font-size: 0.65rem; font-weight: 600;">{{ $alert['time'] }}</span>
+                            </div>
+                            <p style="color: #f1f5f9; font-size: 0.9rem; font-weight: 600;">{{ $alert['description'] }}</p>
+                        </div>
+                    @empty
+                        <div style="text-align: center; padding: 32px; background: rgba(255,255,255,0.03); border-radius: 16px; border: 1px solid rgba(255,255,255,0.05);">
+                            <p style="color: #94a3b8; font-size: 0.9rem; font-style: italic;">No critical alerts detected.</p>
+                        </div>
+                    @endforelse
                 </div>
                 <a href="{{ route('government.reports') }}" style="display: block; width: 100%; text-align: center; margin-top: 24px; color: #38BDF8; font-weight: 600; font-size: 0.9rem; text-decoration: none;" class="hover-glow">View Detailed Analytics →</a>
             </div>

@@ -23,13 +23,72 @@ class GovernmentController extends Controller
         $schedules = ElectricitySchedule::all();
         $totalPowerUsage = PowerUsage::sum('units_consumed');
 
+        // Monthly Trends Data (Last 12 Months)
+        $monthlyUsage = PowerUsage::selectRaw('SUM(units_consumed) as total, billing_month')
+            ->groupBy('billing_month')
+            ->orderByRaw('MIN(created_at) DESC')
+            ->limit(12)
+            ->get()
+            ->reverse();
+
+        // Daily Trends Data (Last 14 Days)
+        $dailyUsage = PowerUsage::selectRaw('SUM(units_consumed) as total, DATE(created_at) as date')
+            ->groupBy('date')
+            ->orderBy('date', 'DESC')
+            ->limit(14)
+            ->get()
+            ->reverse();
+
+        // Dynamic Alerts Logic
+        $alerts = [];
+        
+        // 1. Voltage Drop Alert (Critical) - High single usage or too many active schedules
+        $highUsage = PowerUsage::where('units_consumed', '>', 500)->latest()->first();
+        if ($highUsage) {
+            $alerts[] = [
+                'type' => 'critical',
+                'title' => 'Voltage Drop',
+                'description' => "High load detected: " . ($highUsage->farmer->user->name ?? 'Unknown') . " consumed {$highUsage->units_consumed} kWh.",
+                'time' => $highUsage->created_at->diffForHumans(),
+                'color' => '#EF4444'
+            ];
+        }
+
+        // 2. Demand Spike Alert (Warning) - Recent usage surge
+        $avgDaily = PowerUsage::avg('units_consumed') ?: 0;
+        $todayUsage = PowerUsage::whereDate('created_at', now())->sum('units_consumed');
+        if ($todayUsage > ($avgDaily * 1.5)) {
+            $alerts[] = [
+                'type' => 'warning',
+                'title' => 'Demand Spike',
+                'description' => "System-wide demand increased by " . round((($todayUsage / ($avgDaily ?: 1)) - 1) * 100) . "% today.",
+                'time' => 'Today',
+                'color' => '#F59E0B'
+            ];
+        }
+
+        // 3. Resolution Sync (Success) - Recently resolved complaints
+        $recentResolved = Complaint::where('status', 'resolved')->latest()->first();
+        if ($recentResolved) {
+            $alerts[] = [
+                'type' => 'success',
+                'title' => 'Resolution Sync',
+                'description' => "Issue #{$recentResolved->id} (" . ucfirst($recentResolved->issue_type) . ") successfully resolved.",
+                'time' => $recentResolved->updated_at->diffForHumans(),
+                'color' => '#10B981'
+            ];
+        }
+
         return view('government.dashboard', compact(
             'totalFarmers',
             'approvedFarmers',
             'totalComplaints',
             'resolvedComplaints',
             'schedules',
-            'totalPowerUsage'
+            'totalPowerUsage',
+            'monthlyUsage',
+            'dailyUsage',
+            'alerts'
         ));
     }
 
