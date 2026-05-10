@@ -557,78 +557,122 @@
                     style="font-size: 1.25rem; font-weight: 700; color: #f1f5f9; display: flex; align-items: center; gap: 10px;">
                     📊 Power Usage Analytics</h3>
                 <div style="display: flex; gap: 12px;">
-                    <button
-                        style="color: #38BDF8; font-size: 0.85rem; font-weight: 600; text-decoration: none; padding: 8px 16px; border-radius: 10px; border: 1px solid rgba(56, 189, 248, 0.3); background: rgba(56, 189, 248, 0.1); transition: all 0.3s ease;"
-                        onmouseover="this.style.background='rgba(56, 189, 248, 0.2)'; this.style.boxShadow='0 0 15px rgba(56, 189, 248, 0.3)'"
-                        onmouseout="this.style.background='rgba(56, 189, 248, 0.1)'; this.style.boxShadow='none'">Monthly</button>
-                    <button
-                        style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; text-decoration: none; padding: 8px 16px; border-radius: 10px; border: 1px solid rgba(56, 189, 248, 0.2); background: transparent; transition: all 0.3s ease;"
-                        onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.color='#38BDF8'"
-                        onmouseout="this.style.background='transparent'; this.style.color='#94a3b8'">Weekly</button>
-                    <button
-                        style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; text-decoration: none; padding: 8px 16px; border-radius: 10px; border: 1px solid rgba(56, 189, 248, 0.2); background: transparent; transition: all 0.3s ease;"
-                        onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.color='#38BDF8'"
-                        onmouseout="this.style.background='transparent'; this.style.color='#94a3b8'">Daily</button>
+                    <button id="btn-monthly" onclick="toggleAnalytics('monthly')"
+                        style="color: #38BDF8; font-size: 0.85rem; font-weight: 600; text-decoration: none; padding: 8px 16px; border-radius: 10px; border: 1px solid rgba(56, 189, 248, 0.3); background: rgba(56, 189, 248, 0.1); transition: all 0.3s ease; cursor: pointer;">Monthly</button>
+                    <button id="btn-weekly" onclick="toggleAnalytics('weekly')"
+                        style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; text-decoration: none; padding: 8px 16px; border-radius: 10px; border: 1px solid rgba(56, 189, 248, 0.2); background: transparent; transition: all 0.3s ease; cursor: pointer;">Weekly</button>
+                    <button id="btn-daily" onclick="toggleAnalytics('daily')"
+                        style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; text-decoration: none; padding: 8px 16px; border-radius: 10px; border: 1px solid rgba(56, 189, 248, 0.2); background: transparent; transition: all 0.3s ease; cursor: pointer;">Daily</button>
                 </div>
             </div>
 
             <div class="responsive-chart-grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: 28px;">
                 <!-- Chart Area -->
                 <div>
-                    <!-- Chart Container (Mockup) -->
-                    <div
-                        style="background: rgba(20, 35, 60, 0.3); border-radius: 18px; padding: 24px; border: 1px solid rgba(56, 189, 248, 0.2); height: 300px; position: relative; overflow: hidden;">
-                        <div
-                            style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: flex-end; gap: 20px; padding: 20px;">
-                            <!-- Chart bars -->
+                    <!-- Monthly Chart -->
+                    <div id="chart-monthly"
+                        style="background: rgba(20, 35, 60, 0.3); border-radius: 18px; padding: 24px; border: 1px solid rgba(56, 189, 248, 0.2); height: 300px; position: relative; overflow: hidden; display: flex; align-items: flex-end; gap: 20px;">
+                        @php
+                            $maxMonthly = $monthlyUsage->max('total') ?: 100;
+                        @endphp
+                        @foreach($monthlyUsage as $usage)
                             @php
-                                $months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'];
-                                $values = [65, 80, 75, 90, 85, 95, 70];
-                                $maxValue = max($values);
+                                $height = ($usage->total / $maxMonthly) * 200;
+                                $color = $usage->total > 100 ? '#10B981' : ($usage->total > 50 ? '#38BDF8' : '#F59E0B');
                             @endphp
-                            @foreach($months as $index => $month)
-                                @php
-                                    $height = ($values[$index] / $maxValue) * 200;
-                                    $color = $values[$index] > 80 ? '#10B981' : ($values[$index] > 70 ? '#38BDF8' : '#F59E0B');
-                                @endphp
-                                <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
-                                    <div
-                                        style="width: 30px; height: {{ $height }}px; background: linear-gradient(to top, {{ $color }}, {{ $color }}99); border-radius: 8px 8px 0 0; position: relative;">
-                                        <div
-                                            style="position: absolute; top: -25px; left: 50%; transform: translateX(-50%); color: #f1f5f9; font-size: 0.8rem; font-weight: 700;">
-                                            {{ $values[$index] }}kWh</div>
-                                    </div>
-                                    <div style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; margin-top: 12px;">
-                                        {{ $month }}</div>
+                            <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                                <div style="width: 30px; height: {{ $height }}px; background: linear-gradient(to top, {{ $color }}, {{ $color }}99); border-radius: 8px 8px 0 0; position: relative;" title="{{ number_format($usage->total) }} kWh">
+                                    <div style="position: absolute; top: -25px; left: 50%; transform: translateX(-50%); color: #f1f5f9; font-size: 0.8rem; font-weight: 700;">{{ number_format($usage->total) }}</div>
                                 </div>
-                            @endforeach
-                        </div>
-                        <!-- Grid lines -->
-                        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none;">
-                            @for($i = 0; $i <= 4; $i++)
-                                <div
-                                    style="position: absolute; left: 0; right: 0; height: 1px; top: {{ $i * 25 }}%; background: rgba(56, 189, 248, 0.1);">
-                                </div>
-                            @endfor
-                        </div>
+                                <div style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; margin-top: 12px;">{{ $usage->billing_month }}</div>
+                            </div>
+                        @endforeach
+                        
+                        @if($monthlyUsage->isEmpty())
+                            <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #64748b; font-style: italic;">No monthly records.</div>
+                        @endif
                     </div>
+
+                    <!-- Weekly Chart -->
+                    <div id="chart-weekly"
+                        style="background: rgba(20, 35, 60, 0.3); border-radius: 18px; padding: 24px; border: 1px solid rgba(56, 189, 248, 0.2); height: 300px; position: relative; overflow: hidden; display: none; align-items: flex-end; gap: 20px;">
+                        @php
+                            $maxWeekly = $weeklyUsage->max('total') ?: 100;
+                        @endphp
+                        @foreach($weeklyUsage as $usage)
+                            @php
+                                $height = ($usage->total / $maxWeekly) * 200;
+                                $color = $usage->total > 50 ? '#10B981' : ($usage->total > 25 ? '#38BDF8' : '#F59E0B');
+                            @endphp
+                            <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                                <div style="width: 30px; height: {{ $height }}px; background: linear-gradient(to top, {{ $color }}, {{ $color }}99); border-radius: 8px 8px 0 0; position: relative;" title="{{ number_format($usage->total) }} kWh">
+                                    <div style="position: absolute; top: -25px; left: 50%; transform: translateX(-50%); color: #f1f5f9; font-size: 0.8rem; font-weight: 700;">{{ number_format($usage->total) }}</div>
+                                </div>
+                                <div style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; margin-top: 12px;">Wk {{ $usage->week_no }}</div>
+                            </div>
+                        @endforeach
+
+                        @if($weeklyUsage->isEmpty())
+                            <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #64748b; font-style: italic;">No weekly records.</div>
+                        @endif
+                    </div>
+
+                    <!-- Daily Chart -->
+                    <div id="chart-daily"
+                        style="background: rgba(20, 35, 60, 0.3); border-radius: 18px; padding: 24px; border: 1px solid rgba(56, 189, 248, 0.2); height: 300px; position: relative; overflow: hidden; display: none; align-items: flex-end; gap: 20px;">
+                        @php
+                            $maxDaily = $dailyUsage->max('total') ?: 100;
+                        @endphp
+                        @foreach($dailyUsage as $usage)
+                            @php
+                                $height = ($usage->total / $maxDaily) * 200;
+                                $color = $usage->total > 20 ? '#10B981' : ($usage->total > 10 ? '#38BDF8' : '#F59E0B');
+                            @endphp
+                            <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                                <div style="width: 30px; height: {{ $height }}px; background: linear-gradient(to top, {{ $color }}, {{ $color }}99); border-radius: 8px 8px 0 0; position: relative;" title="{{ number_format($usage->total) }} kWh">
+                                    <div style="position: absolute; top: -25px; left: 50%; transform: translateX(-50%); color: #f1f5f9; font-size: 0.8rem; font-weight: 700;">{{ number_format($usage->total) }}</div>
+                                </div>
+                                <div style="color: #94a3b8; font-size: 0.75rem; font-weight: 600; margin-top: 12px;">{{ \Carbon\Carbon::parse($usage->date)->format('M d') }}</div>
+                            </div>
+                        @endforeach
+
+                        @if($dailyUsage->isEmpty())
+                            <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #64748b; font-style: italic;">No daily records.</div>
+                        @endif
+                    </div>
+
+                    <script>
+                        function toggleAnalytics(type) {
+                            const views = ['monthly', 'weekly', 'daily'];
+                            views.forEach(v => {
+                                document.getElementById('chart-' + v).style.display = (v === type) ? 'flex' : 'none';
+                                const btn = document.getElementById('btn-' + v);
+                                if (v === type) {
+                                    btn.style.color = '#38BDF8';
+                                    btn.style.background = 'rgba(56, 189, 248, 0.1)';
+                                    btn.style.borderColor = 'rgba(56, 189, 248, 0.3)';
+                                } else {
+                                    btn.style.color = '#94a3b8';
+                                    btn.style.background = 'transparent';
+                                    btn.style.borderColor = 'rgba(56, 189, 248, 0.2)';
+                                }
+                            });
+                        }
+                    </script>
 
                     <!-- Chart Legend -->
                     <div style="display: flex; justify-content: center; gap: 24px; margin-top: 20px;">
                         <div style="display: flex; align-items: center; gap: 8px;">
-                            <span
-                                style="display: inline-block; width: 12px; height: 12px; border-radius: 2px; background: #10B981;"></span>
-                            <span style="color: #cbd5e1; font-size: 0.85rem;">High Usage (>80kWh)</span>
+                            <span style="display: inline-block; width: 12px; height: 12px; border-radius: 2px; background: #10B981;"></span>
+                            <span style="color: #cbd5e1; font-size: 0.85rem;">High Efficient</span>
                         </div>
                         <div style="display: flex; align-items: center; gap: 8px;">
-                            <span
-                                style="display: inline-block; width: 12px; height: 12px; border-radius: 2px; background: #38BDF8;"></span>
-                            <span style="color: #cbd5e1; font-size: 0.85rem;">Medium Usage (70-80kWh)</span>
+                            <span style="display: inline-block; width: 12px; height: 12px; border-radius: 2px; background: #38BDF8;"></span>
+                            <span style="color: #cbd5e1; font-size: 0.85rem;">Optimized</span>
                         </div>
                         <div style="display: flex; align-items: center; gap: 8px;">
-                            <span
-                                style="display: inline-block; width: 12px; height: 12px; border-radius: 2px; background: #F59E0B;"></span>
-                            <span style="color: #cbd5e1; font-size: 0.85rem;">Low Usage (<70kWh)</span>
+                            <span style="display: inline-block; width: 12px; height: 12px; border-radius: 2px; background: #F59E0B;"></span>
+                            <span style="color: #cbd5e1; font-size: 0.85rem;">Load Spike</span>
                         </div>
                     </div>
                 </div>
@@ -641,22 +685,18 @@
                             Insights</h4>
                         <div style="display: flex; flex-direction: column; gap: 16px;">
                             <div>
-                                <p style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Current
-                                    Month</p>
-                                <p
-                                    style="font-size: 1.5rem; font-weight: 800; background: linear-gradient(135deg, #38BDF8 0%, #10B981 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-                                    {{ $powerUsage ? $powerUsage->units_consumed : '85' }} kWh</p>
+                                <p style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Current Month</p>
+                                <p style="font-size: 1.5rem; font-weight: 800; background: linear-gradient(135deg, #38BDF8 0%, #10B981 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">{{ number_format($currentMonthUsage) }} kWh</p>
                             </div>
                             <div>
-                                <p style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">
-                                    Compared to Last Month</p>
-                                <p style="font-size: 1.1rem; font-weight: 700; color: #10B981;">↓ 12% lower</p>
+                                <p style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Compared to Last Month</p>
+                                <p style="font-size: 1.1rem; font-weight: 700; color: {{ $usageChange > 0 ? '#F59E0B' : '#10B981' }};">
+                                    {{ $usageChange > 0 ? '↑' : '↓' }} {{ abs(round($usageChange)) }}% {{ $usageChange > 0 ? 'higher' : 'lower' }}
+                                </p>
                             </div>
                             <div>
-                                <p style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">
-                                    Estimated Bill</p>
-                                <p style="font-size: 1.1rem; font-weight: 700; color: #F59E0B;">
-                                    ₹{{ $powerUsage ? $powerUsage->bill_amount : '1,250' }}</p>
+                                <p style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Estimated Bill</p>
+                                <p style="font-size: 1.1rem; font-weight: 700; color: #F59E0B;">₹{{ number_format($currentMonthUsage * 7) }}</p>
                             </div>
                         </div>
                     </div>
@@ -667,8 +707,7 @@
                         <h4
                             style="font-size: 1rem; font-weight: 700; color: #f1f5f9; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
                             🤖 AI Insights</h4>
-                        <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.5; margin-bottom: 16px;">Your usage
-                            pattern suggests you can save ~15% by shifting irrigation to off-peak hours (10PM-6AM).</p>
+                        <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.5; margin-bottom: 16px;">{{ $aiInsight }}</p>
                         <button
                             style="color: #38BDF8; font-size: 0.85rem; font-weight: 600; text-decoration: none; padding: 8px 16px; border-radius: 10px; border: 1px solid rgba(56, 189, 248, 0.3); background: rgba(56, 189, 248, 0.1); transition: all 0.3s ease; width: 100%;"
                             onmouseover="this.style.background='rgba(56, 189, 248, 0.2)'; this.style.boxShadow='0 0 15px rgba(56, 189, 248, 0.3)'"
@@ -682,23 +721,23 @@
             <div class="responsive-stats-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 28px;">
                 <div
                     style="background: rgba(255, 255, 255, 0.03); border-radius: 16px; padding: 16px; border: 1px solid rgba(56, 189, 248, 0.1);">
-                    <p style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px;">Peak Hour Usage</p>
-                    <p style="font-size: 1.25rem; font-weight: 800; color: #f1f5f9;">42 kWh</p>
+                    <p style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px;">Peak Usage</p>
+                    <p style="font-size: 1.25rem; font-weight: 800; color: #f1f5f9;">{{ number_format($peakUsageValue) }} kWh</p>
                 </div>
                 <div
                     style="background: rgba(255, 255, 255, 0.03); border-radius: 16px; padding: 16px; border: 1px solid rgba(56, 189, 248, 0.1);">
-                    <p style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px;">Off-Peak Usage</p>
-                    <p style="font-size: 1.25rem; font-weight: 800; color: #f1f5f9;">28 kWh</p>
+                    <p style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px;">Mean Usage</p>
+                    <p style="font-size: 1.25rem; font-weight: 800; color: #f1f5f9;">{{ number_format($avgUsageValue) }} kWh</p>
                 </div>
                 <div
                     style="background: rgba(255, 255, 255, 0.03); border-radius: 16px; padding: 16px; border: 1px solid rgba(56, 189, 248, 0.1);">
                     <p style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px;">Daily Average</p>
-                    <p style="font-size: 1.25rem; font-weight: 800; color: #f1f5f9;">2.8 kWh</p>
+                    <p style="font-size: 1.25rem; font-weight: 800; color: #f1f5f9;">{{ number_format($totalUnits / 30, 1) }} kWh</p>
                 </div>
                 <div
                     style="background: rgba(255, 255, 255, 0.03); border-radius: 16px; padding: 16px; border: 1px solid rgba(56, 189, 248, 0.1);">
-                    <p style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px;">Carbon Saved</p>
-                    <p style="font-size: 1.25rem; font-weight: 800; color: #10B981;">42 kg</p>
+                    <p style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px;">Carbon Offset</p>
+                    <p style="font-size: 1.25rem; font-weight: 800; color: #10B981;">{{ number_format($carbonSaved, 1) }} kg</p>
                 </div>
             </div>
         </div>

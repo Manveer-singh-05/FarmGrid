@@ -25,7 +25,81 @@ class FarmerController extends Controller
         $complaints = $farmer->complaints()->latest()->get();
         $powerUsage = $farmer->powerUsages()->latest()->first();
 
-        return view('farmer.dashboard', compact('farmer', 'schedules', 'complaints', 'powerUsage'));
+        // --- POWER USAGE ANALYTICS ---
+
+        // 1. Chart Data: Monthly (Last 6 Months)
+        $monthlyUsage = $farmer->powerUsages()
+            ->selectRaw('SUM(units_consumed) as total, billing_month')
+            ->groupBy('billing_month')
+            ->limit(6)
+            ->get();
+
+        // 2. Chart Data: Weekly (Last 4 Weeks)
+        $weeklyUsage = $farmer->powerUsages()
+            ->selectRaw("SUM(units_consumed) as total, strftime('%W', created_at) as week_no")
+            ->groupBy('week_no')
+            ->orderBy('week_no', 'DESC')
+            ->limit(4)
+            ->get()
+            ->reverse();
+
+        // 3. Chart Data: Daily (Last 7 Days)
+        $dailyUsage = $farmer->powerUsages()
+            ->selectRaw("SUM(units_consumed) as total, strftime('%Y-%m-%d', created_at) as date")
+            ->groupBy('date')
+            ->orderBy('date', 'DESC')
+            ->limit(7)
+            ->get()
+            ->reverse();
+
+        // 4. Usage Insights
+        $currentMonth = now()->format('F Y');
+        $lastMonth = now()->subMonth()->format('F Y');
+        
+        $currentMonthUsage = $farmer->powerUsages()
+            ->where('billing_month', 'LIKE', '%' . now()->format('M') . '%')
+            ->sum('units_consumed');
+            
+        $lastMonthUsage = $farmer->powerUsages()
+            ->where('billing_month', 'LIKE', '%' . now()->subMonth()->format('M') . '%')
+            ->sum('units_consumed');
+
+        $usageChange = 0;
+        if ($lastMonthUsage > 0) {
+            $usageChange = (($currentMonthUsage - $lastMonthUsage) / $lastMonthUsage) * 100;
+        }
+
+        // 5. Analytics Cards
+        $peakUsageValue = PowerUsage::getPeakUsage($farmer->id) ?: 0;
+        $avgUsageValue = PowerUsage::getAverageUsage($farmer->id) ?: 0;
+        $totalUnits = $farmer->powerUsages()->sum('units_consumed');
+        $carbonSaved = $totalUnits * 0.45; // 0.45kg CO2 saved per unit optimized (placeholder logic)
+
+        // 6. AI Insights Logic
+        $aiInsight = "Your usage is stable. Consider shifting heavy loads to off-peak hours for further savings.";
+        if ($usageChange > 10) {
+            $aiInsight = "Alert: Your usage increased by " . round($usageChange) . "% this month. We recommend auditing your irrigation pumps.";
+        } elseif ($peakUsageValue > 100) {
+            $aiInsight = "Peak usage detected. Shifting operations to 10 PM - 6 AM could reduce your bill by ~15%.";
+        }
+
+        return view('farmer.dashboard', compact(
+            'farmer', 
+            'schedules', 
+            'complaints', 
+            'powerUsage',
+            'monthlyUsage',
+            'weeklyUsage',
+            'dailyUsage',
+            'currentMonthUsage',
+            'lastMonthUsage',
+            'usageChange',
+            'peakUsageValue',
+            'avgUsageValue',
+            'totalUnits',
+            'carbonSaved',
+            'aiInsight'
+        ));
     }
 
     /**
