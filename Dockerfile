@@ -44,11 +44,6 @@ RUN npm install && npm run build
 # Set proper permissions
 RUN chmod -R 775 storage bootstrap/cache
 
-# Laravel optimizations
-RUN php artisan config:cache || true && \
-    php artisan route:cache || true && \
-    php artisan view:cache || true
-
 # Create storage symlink
 RUN php artisan storage:link || true
 
@@ -56,4 +51,4 @@ RUN php artisan storage:link || true
 EXPOSE 10000
 
 # Start Laravel server
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=10000"]
+CMD sh -c "php artisan optimize:clear && php artisan serve --host=0.0.0.0 --port=10000"
