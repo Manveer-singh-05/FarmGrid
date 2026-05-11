@@ -118,3 +118,15 @@ Route::get('/schedules', [ElectricityScheduleController::class, 'index'])->name(
 Route::get('/schedule/{id}', [ElectricityScheduleController::class, 'show'])->name('schedules.show');
 
 require __DIR__ . '/auth.php';
+
+use Illuminate\Support\Facades\Mail;
+
+Route::get('/test-mail', function () {
+
+    Mail::raw('FarmGrid SMTP is working successfully!', function ($message) {
+        $message->to('manveersingh0501l@gmail.com')
+                ->subject('FarmGrid SMTP Test');
+    });
+
+    return 'Mail Sent Successfully!';
+});

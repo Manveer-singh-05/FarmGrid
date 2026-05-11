@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use MongoDB\Laravel\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PowerUsage extends Model
 {
+    protected $connection = 'mongodb';
+
     protected $fillable = [
         'farmer_id',
         'units_consumed',

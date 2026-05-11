@@ -59,27 +59,34 @@ class FarmerController extends Controller
 
         // 1. Chart Data: Monthly (Last 6 Months)
         $monthlyUsage = PowerUsage::whereIn('farmer_id', $connectionIds)
-            ->selectRaw('SUM(units_consumed) as total, billing_month')
+            ->latest()
+            ->limit(100) // Safety limit for collection processing
+            ->get()
             ->groupBy('billing_month')
-            ->limit(6)
-            ->get();
+            ->map(fn($items, $month) => ['total' => $items->sum('units_consumed'), 'billing_month' => $month])
+            ->values()
+            ->take(6);
 
         // 2. Chart Data: Weekly (Last 4 Weeks)
         $weeklyUsage = PowerUsage::whereIn('farmer_id', $connectionIds)
-            ->selectRaw("SUM(units_consumed) as total, strftime('%W', created_at) as week_no")
-            ->groupBy('week_no')
-            ->orderBy('week_no', 'DESC')
-            ->limit(4)
+            ->latest()
+            ->limit(100)
             ->get()
+            ->groupBy(fn($u) => $u->created_at->format('W'))
+            ->map(fn($items, $week) => ['total' => $items->sum('units_consumed'), 'week_no' => $week])
+            ->values()
+            ->take(4)
             ->reverse();
 
         // 3. Chart Data: Daily (Last 7 Days)
         $dailyUsage = PowerUsage::whereIn('farmer_id', $connectionIds)
-            ->selectRaw("SUM(units_consumed) as total, strftime('%Y-%m-%d', created_at) as date")
-            ->groupBy('date')
-            ->orderBy('date', 'DESC')
-            ->limit(7)
+            ->latest()
+            ->limit(100)
             ->get()
+            ->groupBy(fn($u) => $u->created_at->format('Y-m-d'))
+            ->map(fn($items, $date) => ['total' => $items->sum('units_consumed'), 'date' => $date])
+            ->values()
+            ->take(7)
             ->reverse();
 
         // 4. Usage Insights

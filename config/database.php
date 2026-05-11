@@ -60,8 +60,10 @@ return [
             'strict' => true,
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
-                (PHP_VERSION_ID >= 80500 ? Mysql::ATTR_SSL_CA : PDO::MYSQL_ATTR_SSL_CA) => env('MYSQL_ATTR_SSL_CA'),
-            ]) : [],
+    (PHP_VERSION_ID >= 80500 ? Mysql::ATTR_SSL_CA : PDO::MYSQL_ATTR_SSL_CA) => env('MYSQL_ATTR_SSL_CA'),
+    PDO::ATTR_TIMEOUT => 60,
+    PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
+]) : [],
         ],
 
         'mariadb' => [
@@ -112,6 +114,18 @@ return [
             'prefix_indexes' => true,
             // 'encrypt' => env('DB_ENCRYPT', 'yes'),
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
+        ],
+        'sqlite_local' => [
+    'driver' => 'sqlite',
+    'database' => database_path('database.sqlite'),
+    'prefix' => '',
+],
+
+
+        'mongodb' => [
+            'driver' => 'mongodb',
+            'dsn' => env('DB_MONGODB_DSN'),
+            'database' => env('DB_MONGODB_DATABASE', 'farmgrid_analytics'),
         ],
 
     ],

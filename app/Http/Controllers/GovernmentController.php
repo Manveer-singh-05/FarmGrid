@@ -24,19 +24,23 @@ class GovernmentController extends Controller
         $totalPowerUsage = PowerUsage::sum('units_consumed');
 
         // Monthly Trends Data (Last 12 Months)
-        $monthlyUsage = PowerUsage::selectRaw('SUM(units_consumed) as total, billing_month')
-            ->groupBy('billing_month')
-            ->orderByRaw('MIN(created_at) DESC')
-            ->limit(12)
+        $monthlyUsage = PowerUsage::latest()
+            ->limit(500)
             ->get()
+            ->groupBy('billing_month')
+            ->map(fn($items, $month) => ['total' => $items->sum('units_consumed'), 'billing_month' => $month])
+            ->values()
+            ->take(12)
             ->reverse();
 
         // Daily Trends Data (Last 14 Days)
-        $dailyUsage = PowerUsage::selectRaw('SUM(units_consumed) as total, DATE(created_at) as date')
-            ->groupBy('date')
-            ->orderBy('date', 'DESC')
-            ->limit(14)
+        $dailyUsage = PowerUsage::latest()
+            ->limit(500)
             ->get()
+            ->groupBy(fn($u) => $u->created_at->format('Y-m-d'))
+            ->map(fn($items, $date) => ['total' => $items->sum('units_consumed'), 'date' => $date])
+            ->values()
+            ->take(14)
             ->reverse();
 
         // Dynamic Alerts Logic
