@@ -252,7 +252,11 @@
             <button @click="passwordModal = true" class="btn-shine btn-secondary-futuristic">
                 <span>🔐</span> Change Access Password
             </button>
-            <a href="{{ route('dashboard') }}" class="btn-shine" style="background: rgba(255,255,255,0.05); color: #94a3b8; border: 1px solid rgba(255,255,255,0.1); text-decoration: none;">
+            <a href="{{ 
+                Auth::user()->role === 'admin' ? route('admin.dashboard') : 
+                (Auth::user()->role === 'government' ? route('government.dashboard') : 
+                (Auth::user()->role === 'farmer' ? route('farmer.dashboard') : route('dashboard')))
+            }}" class="btn-shine" style="background: rgba(255,255,255,0.05); color: #94a3b8; border: 1px solid rgba(255,255,255,0.1); text-decoration: none;">
                 <span>⬅️</span> Return to Dashboard
             </a>
         </div>
