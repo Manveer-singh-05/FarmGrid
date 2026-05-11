@@ -124,9 +124,28 @@
                                 <td style="color: #f1f5f9; font-weight: 600;">{{ $schedule->start_time }}</td>
                                 <td style="color: #f1f5f9; font-weight: 600;">{{ $schedule->end_time }}</td>
                                 <td>
-                                    <div class="allocation-badge">
-                                        <span style="width: 6px; h: 6px; background: #10B981; border-radius: 50%;"></span>
-                                        {{ $schedule->allocation_percentage }}% Flow
+                                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                                        @php
+                                            $statusColor = match($schedule->dynamic_status) {
+                                                'active' => '#10B981',
+                                                'upcoming' => '#F59E0B',
+                                                'maintenance' => '#EF4444',
+                                                default => '#64748b'
+                                            };
+                                            $statusLabel = match($schedule->dynamic_status) {
+                                                'active' => '⚡ Active',
+                                                'upcoming' => '⏳ Upcoming',
+                                                'maintenance' => '🔧 Maintenance',
+                                                default => '⏸️ Inactive'
+                                            };
+                                        @endphp
+                                        <div class="allocation-badge" style="background: {{ $statusColor }}1A; color: {{ $statusColor }}; border-color: {{ $statusColor }}4D; margin-bottom: 4px;">
+                                            <span style="width: 6px; height: 6px; background: {{ $statusColor }}; border-radius: 50%;"></span>
+                                            {{ $statusLabel }}
+                                        </div>
+                                        <div style="font-size: 0.75rem; color: #94a3b8; font-weight: 600; padding-left: 4px;">
+                                            💧 {{ $schedule->allocation_percentage }}% Flow
+                                        </div>
                                     </div>
                                 </td>
                             </tr>

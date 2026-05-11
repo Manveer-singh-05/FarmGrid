@@ -115,6 +115,29 @@
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
+
+                            <div>
+                                <label for="day_of_week" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    📅 Active Day
+                                </label>
+                                <select id="day_of_week" name="day_of_week"
+                                    class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500">
+                                    @foreach(['Daily', 'Weekdays', 'Weekends', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] as $day)
+                                        <option value="{{ $day }}" {{ old('day_of_week', $schedule->day_of_week) == $day ? 'selected' : '' }}>{{ $day }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="allocation_percentage" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    📊 Allocation (%)
+                                </label>
+                                <input type="number" id="allocation_percentage" name="allocation_percentage"
+                                    value="{{ old('allocation_percentage', $schedule->allocation_percentage) }}"
+                                    min="0" max="100"
+                                    class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    required>
+                            </div>
                         </div>
 
                         <div>

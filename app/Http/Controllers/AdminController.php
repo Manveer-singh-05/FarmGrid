@@ -94,6 +94,8 @@ class AdminController extends Controller
             'zone' => 'required|string',
             'start_time' => 'required|date_format:H:i',
             'end_time' => 'required|date_format:H:i|after:start_time',
+            'day_of_week' => 'nullable|string',
+            'allocation_percentage' => 'nullable|integer|min:0|max:100',
             'description' => 'nullable|string',
         ]);
 
@@ -115,6 +117,8 @@ class AdminController extends Controller
             'zone' => 'required|string',
             'start_time' => 'required|date_format:H:i',
             'end_time' => 'required|date_format:H:i|after:start_time',
+            'day_of_week' => 'nullable|string',
+            'allocation_percentage' => 'nullable|integer|min:0|max:100',
             'status' => 'required|in:active,inactive,maintenance',
             'description' => 'nullable|string',
         ]);

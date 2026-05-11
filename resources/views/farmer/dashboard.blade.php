@@ -164,8 +164,8 @@
                         <div>
                             <p style="font-size: 0.9rem; font-weight: 600; color: #f1f5f9; margin: 0;">Power Availability
                             </p>
-                            <p style="font-size: 1rem; font-weight: 700; color: #10B981; margin: 0;">
-                                {{ $schedules->where('status', 'active')->count() > 0 ? 'Available Now' : 'Scheduled' }}</p>
+                        <p style="font-size: 1rem; font-weight: 700; color: #10B981; margin: 0;">
+                            {{ $schedules->filter->is_currently_active->count() > 0 ? 'Available Now' : 'Offline' }}</p>
                         </div>
                     </div>
 
@@ -176,7 +176,7 @@
                         <div>
                             <p style="font-size: 0.9rem; font-weight: 600; color: #f1f5f9; margin: 0;">Active Schedule</p>
                             <p style="font-size: 1rem; font-weight: 700; color: #F59E0B; margin: 0;">
-                                {{ $schedules->where('zone', $farmer->village)->where('status', 'active')->count() }} Active</p>
+                                {{ $schedules->filter->is_currently_active->count() }} Active</p>
                         </div>
                     </div>
 
@@ -186,8 +186,8 @@
                         <span style="color: #EF4444; font-size: 1.2rem;">⚠️</span>
                         <div>
                             <p style="font-size: 0.9rem; font-weight: 600; color: #f1f5f9; margin: 0;">Pending Issues</p>
-                            <p style="font-size: 1rem; font-weight: 700; color: #EF4444; margin: 0;">
-                                {{ $complaints->where('status', 'pending')->count() }}</p>
+                        <p style="font-size: 1rem; font-weight: 700; color: #EF4444; margin: 0;">
+                            {{ $allComplaints->where('status', 'pending')->count() }}</p>
                         </div>
                     </div>
                 </div>
@@ -247,7 +247,7 @@
                             Pending Issues</h3>
                         <p
                             style="font-size: 2rem; font-weight: 800; background: linear-gradient(135deg, #F59E0B 0%, #EF4444 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 4px;">
-                            {{ $complaints->where('status', 'pending')->count() }}</p>
+                            {{ $allComplaints->where('status', 'pending')->count() }}</p>
                         <a href="{{ route('farmer.complaints') }}"
                             style="color: #F59E0B; font-size: 0.85rem; font-weight: 600; text-decoration: none;">View Detail
                             →</a>
@@ -283,18 +283,31 @@
                         <h3
                             style="color: #94a3b8; font-size: 0.9rem; font-weight: 600; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">
                             Electricity Availability</h3>
-                        @if($schedules->where('status', 'active')->count() > 0)
+                        @php
+                            $currentlyActive = $schedules->filter->is_currently_active;
+                        @endphp
+                        @if($currentlyActive->count() > 0)
                             <p
                                 style="font-size: 2rem; font-weight: 800; background: linear-gradient(135deg, #A855F7 0%, #EC4899 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 4px;">
-                                {{ $schedules->where('status', 'active')->count() }} Zones</p>
+                                {{ $currentlyActive->count() }} Active</p>
                             <p style="color: #64748b; font-size: 0.85rem; font-weight: 500;">
-                                {{ $schedules->where('status', 'active')->first()->start_time ?? 'N/A' }} -
-                                {{ $schedules->where('status', 'active')->first()->end_time ?? 'N/A' }}</p>
+                                @if($currentlyActive->first()->start_time)
+                                    Next reset: {{ $currentlyActive->first()->end_time->format('H:i') }}
+                                @else
+                                    Timings assigned
+                                @endif
+                            </p>
                         @else
                             <p
                                 style="font-size: 2rem; font-weight: 800; background: linear-gradient(135deg, #A855F7 0%, #EC4899 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 4px;">
-                                No Active</p>
-                            <p style="color: #64748b; font-size: 0.85rem; font-weight: 500;">Check schedule for timings</p>
+                                All Off</p>
+                            <p style="color: #64748b; font-size: 0.85rem; font-weight: 500;">
+                                @if($schedules->where('dynamic_status', 'upcoming')->count() > 0)
+                                    Next: {{ $schedules->where('dynamic_status', 'upcoming')->first()->start_time->format('H:i') }}
+                                @else
+                                    Check schedule for timings
+                                @endif
+                            </p>
                         @endif
                     </div>
                     <div class="float-animation" style="font-size: 2.25rem; filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.3));">🔌</div>
@@ -359,15 +372,13 @@
 
                         <div style="display: flex; flex-direction: column; gap: 24px; padding-left: 56px;">
                             @foreach($schedules as $schedule)
-                                <div style="position: relative;">
-                                    <!-- Timeline dot -->
-                                    <div
-                                        style="position: absolute; left: -40px; top: 8px; width: 16px; height: 16px; border-radius: 50%; background: {{ $schedule->status === 'active' ? '#10B981' : '#EF4444' }}; box-shadow: 0 0 15px {{ $schedule->status === 'active' ? 'rgba(16, 185, 129, 0.5)' : 'rgba(239, 68, 68, 0.5)' }}; z-index: 2;">
+                                <div style="position: relative;">                                    <div
+                                        style="position: absolute; left: -40px; top: 8px; width: 16px; height: 16px; border-radius: 50%; background: {{ $schedule->dynamic_status === 'active' ? '#10B981' : ($schedule->dynamic_status === 'upcoming' ? '#F59E0B' : '#64748b') }}; box-shadow: 0 0 15px {{ $schedule->dynamic_status === 'active' ? 'rgba(16, 185, 129, 0.5)' : 'rgba(245, 158, 11, 0.5)' }}; z-index: 2;">
                                     </div>
 
                                     <!-- Schedule card -->
-                                    <div style="background: rgba(255, 255, 255, 0.03); border-radius: 18px; padding: 20px; border: 1px solid {{ $schedule->status === 'active' ? 'rgba(34, 197, 94, 0.3)' : 'rgba(239, 68, 68, 0.3)' }}; transition: all 0.3s ease; cursor: pointer;"
-                                        onmouseover="this.style.transform='translateX(8px)'; this.style.background='rgba(255,255,255,0.06)'; this.style.boxShadow='0 10px 30px {{ $schedule->status === 'active' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)' }}'"
+                                    <div style="background: rgba(255, 255, 255, 0.03); border-radius: 18px; padding: 20px; border: 1px solid {{ $schedule->dynamic_status === 'active' ? 'rgba(34, 197, 94, 0.3)' : ($schedule->dynamic_status === 'upcoming' ? 'rgba(245, 158, 11, 0.3)' : 'rgba(148, 163, 184, 0.2)') }}; transition: all 0.3s ease; cursor: pointer;"
+                                        onmouseover="this.style.transform='translateX(8px)'; this.style.background='rgba(255,255,255,0.06)'; this.style.boxShadow='0 10px 30px {{ $schedule->dynamic_status === 'active' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(245, 158, 11, 0.2)' }}'"
                                         onmouseout="this.style.transform='translateX(0)'; this.style.background='rgba(255,255,255,0.03)'; this.style.boxShadow='none'">
                                         <div
                                             style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
@@ -385,8 +396,16 @@
                                                     {{ $schedule->start_time }} - {{ $schedule->end_time }}</p>
                                             </div>
                                             <span
-                                                style="display: inline-block; padding: 6px 14px; border-radius: 100px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; {{ $schedule->status === 'active' ? 'background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4);' : 'background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4);' }}">
-                                                {{ $schedule->status === 'active' ? '⚡ Active' : '⏸️ Inactive' }}
+                                                style="display: inline-block; padding: 6px 14px; border-radius: 100px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; {{ $schedule->dynamic_status === 'active' ? 'background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4);' : ($schedule->dynamic_status === 'upcoming' ? 'background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4);' : 'background: rgba(148, 163, 184, 0.1); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.2);') }}">
+                                                @if($schedule->dynamic_status === 'active')
+                                                    ⚡ Active
+                                                @elseif($schedule->dynamic_status === 'upcoming')
+                                                    ⏳ Upcoming
+                                                @elseif($schedule->dynamic_status === 'maintenance')
+                                                    🔧 Maint.
+                                                @else
+                                                    ⏸️ Inactive
+                                                @endif
                                             </span>
                                         </div>
                                         <div style="display: flex; align-items: center; gap: 12px;">
@@ -398,7 +417,7 @@
                                             <div style="display: flex; align-items: center; gap: 6px;">
                                                 <span style="color: #10B981;">🔋</span>
                                                 <span style="color: #cbd5e1; font-size: 0.85rem;">Power:
-                                                    {{ $schedule->status === 'active' ? 'Available' : 'Not Available' }}</span>
+                                                    {{ $schedule->dynamic_status === 'active' ? 'Available' : 'Not Available' }}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -421,7 +440,7 @@
                             <div
                                 style="padding: 8px 16px; background: rgba(34, 197, 94, 0.1); border-radius: 10px; border: 1px solid rgba(34, 197, 94, 0.3);">
                                 <span
-                                    style="color: #4ade80; font-weight: 700; font-size: 0.9rem;">{{ $schedules->where('status', 'active')->count() > 0 ? 'Power ON' : 'Power OFF' }}</span>
+                                    style="color: #4ade80; font-weight: 700; font-size: 0.9rem;">{{ $schedules->filter->is_currently_active->count() > 0 ? 'Power ON' : 'Power OFF' }}</span>
                             </div>
                         </div>
                     </div>

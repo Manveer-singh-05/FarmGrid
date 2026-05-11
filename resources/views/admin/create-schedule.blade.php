@@ -180,7 +180,7 @@
                     @enderror
                 </div>
 
-                <!-- Timings Row -->
+                <!-- Timings & Details Row -->
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;">
                     <div style="display: flex; flex-direction: column; gap: 8px;">
                         <label for="start_time" class="field-label">
@@ -204,6 +204,32 @@
                         @error('end_time')
                             <p style="color: #EF4444; font-size: 0.8rem; font-weight: 600; margin-top: 4px;">{{ $message }}</p>
                         @enderror
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <label for="day_of_week" class="field-label">
+                            <span style="color: #A855F7;">📅</span> Active Day
+                        </label>
+                        <select id="day_of_week" name="day_of_week" class="glass-field">
+                            <option value="Daily">Daily</option>
+                            <option value="Weekdays">Weekdays</option>
+                            <option value="Weekends">Weekends</option>
+                            <option value="Monday">Monday</option>
+                            <option value="Tuesday">Tuesday</option>
+                            <option value="Wednesday">Wednesday</option>
+                            <option value="Thursday">Thursday</option>
+                            <option value="Friday">Friday</option>
+                            <option value="Saturday">Saturday</option>
+                            <option value="Sunday">Sunday</option>
+                        </select>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <label for="allocation_percentage" class="field-label">
+                            <span style="color: #3B82F6;">📊</span> Allocation (%)
+                        </label>
+                        <input type="number" id="allocation_percentage" name="allocation_percentage" value="{{ old('allocation_percentage', 100) }}"
+                               min="0" max="100" class="glass-field" required>
                     </div>
                 </div>
 
