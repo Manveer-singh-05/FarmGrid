@@ -1,0 +1,14 @@
+/node_modules
+/vendor
+.env
+.git
+.gitignore
+Dockerfile
+.dockerignore
+/storage/*.key
+/public/build
+/public/storage
+/storage/app/public/*
+.phpunit.result.cache
+npm-debug.log
+auth.json
