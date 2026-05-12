@@ -21,17 +21,17 @@
                     <tbody>
                         @forelse ($complaints as $complaint)
                             <tr style="transition: background 0.3s ease;" onmouseover="this.style.background='rgba(239, 68, 68, 0.05)'" onmouseout="this.style.background='transparent'">
-                                <td style="padding: 16px; color: #f1f5f9; font-weight: 600; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ $complaint->subject }}</td>
-                                <td style="padding: 16px; color: #cbd5e1; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ $complaint->user->name ?? 'N/A' }}</td>
-                                <td style="padding: 16px; color: #cbd5e1; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ Str::limit($complaint->description, 50) }}</td>
-                                <td style="padding: 16px; color: #94a3b8; font-size: 0.85rem; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ $complaint->created_at->format('M d, Y') }}</td>
+                                <td style="padding: 16px; color: #f1f5f9; font-weight: 600; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ $complaint->subject ?? 'No Subject' }}</td>
+                                <td style="padding: 16px; color: #cbd5e1; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ $complaint->farmer?->user?->name ?? 'N/A' }}</td>
+                                <td style="padding: 16px; color: #cbd5e1; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ Str::limit($complaint->description ?? '', 50) }}</td>
+                                <td style="padding: 16px; color: #94a3b8; font-size: 0.85rem; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ $complaint->created_at ? $complaint->created_at->format('M d, Y') : 'N/A' }}</td>
                                 <td style="padding: 16px; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">
                                     @php
                                         $statusColor = $complaint->status === 'resolved' ? '#10B981' : ($complaint->status === 'pending' ? '#F59E0B' : '#EF4444');
                                         $statusBg = $complaint->status === 'resolved' ? 'rgba(16, 185, 129, 0.1)' : ($complaint->status === 'pending' ? 'rgba(245, 158, 11, 0.1)' : 'rgba(239, 68, 68, 0.1)');
                                     @endphp
                                     <span style="background: {{ $statusBg }}; color: {{ $statusColor }}; padding: 6px 12px; border-radius: 100px; font-size: 0.75rem; font-weight: 700; border: 1px solid {{ $statusColor }}40; text-transform: uppercase; letter-spacing: 0.5px;">
-                                        {{ ucfirst($complaint->status) }}
+                                        {{ ucfirst($complaint->status ?? 'Unknown') }}
                                     </span>
                                 </td>
                             </tr>

@@ -31,7 +31,7 @@
                                         $statusBg = $farmer->status === 'approved' ? 'rgba(16, 185, 129, 0.1)' : ($farmer->status === 'pending' ? 'rgba(245, 158, 11, 0.1)' : 'rgba(239, 68, 68, 0.1)');
                                     @endphp
                                     <span style="background: {{ $statusBg }}; color: {{ $statusColor }}; padding: 6px 12px; border-radius: 100px; font-size: 0.75rem; font-weight: 700; border: 1px solid {{ $statusColor }}40; text-transform: uppercase; letter-spacing: 0.5px;">
-                                        {{ ucfirst($farmer->status) }}
+                                        {{ ucfirst($farmer->status ?? 'Unknown') }}
                                     </span>
                                 </td>
                             </tr>

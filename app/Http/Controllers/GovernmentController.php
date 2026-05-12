@@ -16,11 +16,19 @@ class GovernmentController extends Controller
      */
     public function dashboard()
     {
-        $totalFarmers = Farmer::count();
-        $approvedFarmers = Farmer::where('status', 'approved')->count();
-        $totalComplaints = Complaint::count();
-        $resolvedComplaints = Complaint::where('status', 'resolved')->count();
-        $schedules = ElectricitySchedule::all();
+        try {
+            $totalFarmers = Farmer::count();
+            $approvedFarmers = Farmer::where('status', 'approved')->count();
+            $totalComplaints = Complaint::count();
+            $resolvedComplaints = Complaint::where('status', 'resolved')->count();
+            $schedules = ElectricitySchedule::all();
+        } catch (\Exception $e) {
+            $totalFarmers = 0;
+            $approvedFarmers = 0;
+            $totalComplaints = 0;
+            $resolvedComplaints = 0;
+            $schedules = collect();
+        }
         
         try {
             $totalPowerUsage = (float)(PowerUsage::sum('units_consumed') ?? 0);
@@ -56,8 +64,8 @@ class GovernmentController extends Controller
                 $alerts[] = [
                     'type' => 'critical',
                     'title' => 'Voltage Drop',
-                    'description' => "High load detected: " . ($highUsage->farmer?->user?->name ?? 'Unknown') . " consumed " . number_format($highUsage->units_consumed ?? 0) . " kWh.",
-                    'time' => $highUsage->created_at?->diffForHumans() ?? 'Unknown',
+                    'description' => "High load detected: " . ($highUsage->farmer?->user?->name ?? 'Unknown Farmer') . " consumed " . number_format((float)($highUsage->units_consumed ?? 0), 1) . " kWh.",
+                    'time' => $highUsage->created_at ? $highUsage->created_at->diffForHumans() : 'Recently',
                     'color' => '#EF4444'
                 ];
             }
@@ -70,7 +78,7 @@ class GovernmentController extends Controller
                 $alerts[] = [
                     'type' => 'warning',
                     'title' => 'Demand Spike',
-                    'description' => "System-wide demand increased by {$spikePercent}% today.",
+                    'description' => "System-wide demand increased by {$spikePercent}% today compared to average.",
                     'time' => 'Today',
                     'color' => '#F59E0B'
                 ];
@@ -82,22 +90,26 @@ class GovernmentController extends Controller
             $alerts = [[
                 'type' => 'warning',
                 'title' => 'Sync Delay',
-                'description' => 'Real-time usage analytics are currently delayed.',
+                'description' => 'Real-time usage analytics are currently delayed due to cluster sync.',
                 'time' => 'Now',
                 'color' => '#F59E0B'
             ]];
         }
 
         // 3. Resolution Sync (Success) - Recently resolved complaints (SQL - safe)
-        $recentResolved = Complaint::where('status', 'resolved')->latest()->first();
-        if ($recentResolved) {
-            $alerts[] = [
-                'type' => 'success',
-                'title' => 'Resolution Sync',
-                'description' => "Issue #{$recentResolved->id} (" . ucfirst($recentResolved->issue_type ?? 'Issue') . ") successfully resolved.",
-                'time' => $recentResolved->updated_at?->diffForHumans() ?? 'Just now',
-                'color' => '#10B981'
-            ];
+        try {
+            $recentResolved = Complaint::where('status', 'resolved')->latest()->first();
+            if ($recentResolved) {
+                $alerts[] = [
+                    'type' => 'success',
+                    'title' => 'Resolution Sync',
+                    'description' => "Issue #{$recentResolved->id} (" . ucfirst($recentResolved->issue_type ?? 'Issue') . ") successfully resolved.",
+                    'time' => $recentResolved->updated_at ? $recentResolved->updated_at->diffForHumans() : 'Just now',
+                    'color' => '#10B981'
+                ];
+            }
+        } catch (\Exception $e) {
+            // Ignore SQL failures for this minor alert
         }
 
         return view('government.dashboard', compact(
@@ -118,7 +130,11 @@ class GovernmentController extends Controller
      */
     public function farmers()
     {
-        $farmers = Farmer::with('user')->paginate(15);
+        try {
+            $farmers = Farmer::with('user')->paginate(15);
+        } catch (\Exception $e) {
+            $farmers = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15);
+        }
         return view('government.farmers', compact('farmers'));
     }
 
@@ -127,7 +143,11 @@ class GovernmentController extends Controller
      */
     public function complaints()
     {
-        $complaints = Complaint::with(['farmer.user'])->paginate(15);
+        try {
+            $complaints = Complaint::with(['farmer.user'])->paginate(15);
+        } catch (\Exception $e) {
+            $complaints = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15);
+        }
         return view('government.complaints', compact('complaints'));
     }
 
@@ -154,7 +174,11 @@ class GovernmentController extends Controller
      */
     public function schedules()
     {
-        $schedules = ElectricitySchedule::paginate(15);
+        try {
+            $schedules = ElectricitySchedule::paginate(15);
+        } catch (\Exception $e) {
+            $schedules = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15);
+        }
         return view('government.schedules', compact('schedules'));
     }
 
@@ -163,14 +187,24 @@ class GovernmentController extends Controller
      */
     public function reports()
     {
-        $totalFarmers = Farmer::count();
-        $approvedFarmers = Farmer::where('status', 'approved')->count();
-        $pendingFarmers = Farmer::where('status', 'pending')->count();
-        $rejectedFarmers = Farmer::where('status', 'rejected')->count();
+        try {
+            $totalFarmers = Farmer::count();
+            $approvedFarmers = Farmer::where('status', 'approved')->count();
+            $pendingFarmers = Farmer::where('status', 'pending')->count();
+            $rejectedFarmers = Farmer::where('status', 'rejected')->count();
 
-        $totalComplaints = Complaint::count();
-        $pendingComplaints = Complaint::where('status', 'pending')->count();
-        $resolvedComplaints = Complaint::where('status', 'resolved')->count();
+            $totalComplaints = Complaint::count();
+            $pendingComplaints = Complaint::where('status', 'pending')->count();
+            $resolvedComplaints = Complaint::where('status', 'resolved')->count();
+        } catch (\Exception $e) {
+            $totalFarmers = 0;
+            $approvedFarmers = 0;
+            $pendingFarmers = 0;
+            $rejectedFarmers = 0;
+            $totalComplaints = 0;
+            $pendingComplaints = 0;
+            $resolvedComplaints = 0;
+        }
 
         try {
             $totalPowerUsage = (float)(PowerUsage::sum('units_consumed') ?? 0);

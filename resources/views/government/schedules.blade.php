@@ -21,7 +21,7 @@
                     <tbody>
                         @forelse ($schedules as $schedule)
                             <tr style="transition: background 0.3s ease;" onmouseover="this.style.background='rgba(56, 189, 248, 0.05)'" onmouseout="this.style.background='transparent'">
-                                <td style="padding: 16px; color: #f1f5f9; font-weight: 600; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ $schedule->schedule_name }}</td>
+                                <td style="padding: 16px; color: #f1f5f9; font-weight: 600; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ $schedule->schedule_name ?? 'Untitled' }}</td>
                                 <td style="padding: 16px; color: #38BDF8; font-weight: 700; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ $schedule->start_time }}</td>
                                 <td style="padding: 16px; color: #38BDF8; font-weight: 700; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ $schedule->end_time }}</td>
                                 <td style="padding: 16px; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">
@@ -33,7 +33,7 @@
                                         {{ ucfirst($schedule->status ?? 'active') }}
                                     </span>
                                 </td>
-                                <td style="padding: 16px; color: #64748b; font-size: 0.85rem; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ $schedule->created_at->format('M d, Y') }}</td>
+                                <td style="padding: 16px; color: #64748b; font-size: 0.85rem; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ $schedule->created_at ? $schedule->created_at->format('M d, Y') : 'N/A' }}</td>
                             </tr>
                         @empty
                             <tr>

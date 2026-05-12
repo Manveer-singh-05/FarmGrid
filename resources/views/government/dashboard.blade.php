@@ -110,7 +110,10 @@
                         <div style="display: flex; align-items: center; gap: 12px;">
                             <p style="font-size: 1.5rem; font-weight: 800; color: #F59E0B;">{{ ($totalComplaints ?? 0) > 0 ? round((($resolvedComplaints ?? 0) / $totalComplaints) * 100, 1) : 100 }}%</p>
                             <div style="flex: 1; height: 4px; background: rgba(245, 158, 11, 0.2); border-radius: 2px;">
-                                <div style="width: {{ ($totalComplaints ?? 0) > 0 ? round((($resolvedComplaints ?? 0) / $totalComplaints) * 100) : 100 }}%; height: 100%; background: #F59E0B; border-radius: 2px;"></div>
+                                @php
+                                    $complaintRatio = ($totalComplaints ?? 0) > 0 ? round((($resolvedComplaints ?? 0) / $totalComplaints) * 100) : 100;
+                                @endphp
+                                <div style="width: {{ $complaintRatio }}%; height: 100%; background: #F59E0B; border-radius: 2px;"></div>
                             </div>
                         </div>
                     </div>
@@ -123,7 +126,7 @@
             <div class="hover-lift hover-glow smooth-transition" style="background: rgba(20, 35, 60, 0.4); backdrop-filter: blur(20px); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 24px; padding: 28px; box-shadow: 0 0 20px rgba(34, 197, 94, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05); cursor: pointer;">
                 <h3 style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Total Farmers</h3>
                 <div style="display: flex; justify-content: space-between; align-items: flex-end;">
-                    <p style="font-size: 2.2rem; font-weight: 800; background: linear-gradient(135deg, #38BDF8 0%, #10B981 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1;">{{ number_format($totalFarmers) }}</p>
+                    <p style="font-size: 2.2rem; font-weight: 800; background: linear-gradient(135deg, #38BDF8 0%, #10B981 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1;">{{ number_format($totalFarmers ?? 0) }}</p>
                     <span style="font-size: 1.5rem;" class="float-animation">👨‍🌾</span>
                 </div>
             </div>
@@ -131,7 +134,7 @@
             <div class="hover-lift hover-glow smooth-transition" style="background: rgba(20, 35, 60, 0.4); backdrop-filter: blur(20px); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 24px; padding: 28px; box-shadow: 0 0 20px rgba(56, 189, 248, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05); cursor: pointer;">
                 <h3 style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Active Connections</h3>
                 <div style="display: flex; justify-content: space-between; align-items: flex-end;">
-                    <p style="font-size: 2.2rem; font-weight: 800; background: linear-gradient(135deg, #38BDF8 0%, #3B82F6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1;">{{ number_format($approvedFarmers) }}</p>
+                    <p style="font-size: 2.2rem; font-weight: 800; background: linear-gradient(135deg, #38BDF8 0%, #3B82F6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1;">{{ number_format($approvedFarmers ?? 0) }}</p>
                     <span style="font-size: 1.5rem;" class="float-animation">⚡</span>
                 </div>
             </div>
@@ -139,7 +142,7 @@
             <div class="hover-lift hover-glow smooth-transition" style="background: rgba(20, 35, 60, 0.4); backdrop-filter: blur(20px); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 24px; padding: 28px; box-shadow: 0 0 20px rgba(245, 158, 11, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05); cursor: pointer;">
                 <h3 style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Electricity Distributed</h3>
                 <div style="display: flex; justify-content: space-between; align-items: flex-end;">
-                    <p style="font-size: 2.2rem; font-weight: 800; background: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1;">{{ number_format($totalPowerUsage) }} <span style="font-size: 1rem;">kWh</span></p>
+                    <p style="font-size: 2.2rem; font-weight: 800; background: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1;">{{ number_format((float)($totalPowerUsage ?? 0)) }} <span style="font-size: 1rem;">kWh</span></p>
                     <span style="font-size: 1.5rem;" class="float-animation">🔋</span>
                 </div>
             </div>
@@ -167,18 +170,17 @@
                 <!-- Chart Container -->
                 <div id="chart-monthly" style="height: 300px; width: 100%; position: relative; display: flex; align-items: flex-end; gap: 12px; padding: 20px 0;">
                     @php
-                        $maxTotal = $monthlyUsage->max('total') ?: 100;
+                        $safeMonthlyUsage = collect($monthlyUsage ?? []);
+                        $maxTotal = $safeMonthlyUsage->max('total') ?: 100;
                     @endphp
-                    @foreach($monthlyUsage as $usage)
+                    @forelse($safeMonthlyUsage as $usage)
                         <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;">
-                            <div class="hover-lift" style="width: 100%; height: {{ ($usage->total / $maxTotal) * 100 }}%; background: linear-gradient(to top, rgba(56, 189, 248, 0.4), rgba(16, 185, 129, 0.4)); border-top: 2px solid #38BDF8; border-radius: 6px 6px 0 0;" title="{{ number_format($usage->total ?? 0) }} kWh"></div>
+                            <div class="hover-lift" style="width: 100%; height: {{ (($usage->total ?? 0) / $maxTotal) * 100 }}%; background: linear-gradient(to top, rgba(56, 189, 248, 0.4), rgba(16, 185, 129, 0.4)); border-top: 2px solid #38BDF8; border-radius: 6px 6px 0 0;" title="{{ number_format((float)($usage->total ?? 0)) }} kWh"></div>
                             <span style="color: #64748b; font-size: 0.7rem; font-weight: 700;">{{ $usage->billing_month ?? 'N/A' }}</span>
                         </div>
-                    @endforeach
-                    
-                    @if($monthlyUsage->isEmpty())
+                    @empty
                         <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #64748b; font-style: italic;">No usage data recorded.</div>
-                    @endif
+                    @endforelse
 
                     <!-- Y-Axis Mockup -->
                     <div style="position: absolute; left: -20px; top: 0; bottom: 40px; display: flex; flex-direction: column; justify-content: space-between; color: #475569; font-size: 0.65rem; font-weight: 700;">
@@ -192,18 +194,17 @@
 
                 <div id="chart-daily" style="height: 300px; width: 100%; position: relative; display: none; align-items: flex-end; gap: 8px; padding: 20px 0;">
                     @php
-                        $maxDailyTotal = $dailyUsage->max('total') ?: 100;
+                        $safeDailyUsage = collect($dailyUsage ?? []);
+                        $maxDailyTotal = $safeDailyUsage->max('total') ?: 100;
                     @endphp
-                    @foreach($dailyUsage as $usage)
+                    @forelse($safeDailyUsage as $usage)
                         <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;">
-                            <div class="hover-lift" style="width: 100%; height: {{ ($usage->total / $maxDailyTotal) * 100 }}%; background: linear-gradient(to top, rgba(16, 185, 129, 0.4), rgba(56, 189, 248, 0.4)); border-top: 2px solid #10B981; border-radius: 4px 4px 0 0;" title="{{ number_format($usage->total ?? 0) }} kWh"></div>
+                            <div class="hover-lift" style="width: 100%; height: {{ (($usage->total ?? 0) / $maxDailyTotal) * 100 }}%; background: linear-gradient(to top, rgba(16, 185, 129, 0.4), rgba(56, 189, 248, 0.4)); border-top: 2px solid #10B981; border-radius: 4px 4px 0 0;" title="{{ number_format((float)($usage->total ?? 0)) }} kWh"></div>
                             <span style="color: #64748b; font-size: 0.6rem; font-weight: 700; transform: rotate(-45deg); margin-top: 10px;">{{ isset($usage->date) ? \Carbon\Carbon::parse($usage->date)->format('M d') : 'N/A' }}</span>
                         </div>
-                    @endforeach
-
-                    @if($dailyUsage->isEmpty())
+                    @empty
                         <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #64748b; font-style: italic;">No daily data recorded.</div>
-                    @endif
+                    @endforelse
 
                     <!-- Y-Axis Mockup -->
                     <div style="position: absolute; left: -20px; top: 0; bottom: 40px; display: flex; flex-direction: column; justify-content: space-between; color: #475569; font-size: 0.65rem; font-weight: 700;">

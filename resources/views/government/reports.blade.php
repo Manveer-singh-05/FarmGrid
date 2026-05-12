@@ -86,19 +86,19 @@
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px;">
                 <div class="hover-glow" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 28px; border-radius: 24px;">
                     <p style="color: #94a3b8; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Total Population</p>
-                    <p class="stat-glow" style="font-size: 2.5rem; font-weight: 800; color: #38BDF8; margin-top: 12px;">{{ $totalFarmers }}</p>
+                    <p class="stat-glow" style="font-size: 2.5rem; font-weight: 800; color: #38BDF8; margin-top: 12px;">{{ $totalFarmers ?? 0 }}</p>
                 </div>
                 <div class="hover-glow" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 28px; border-radius: 24px;">
                     <p style="color: #94a3b8; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Verified Assets</p>
-                    <p class="stat-glow" style="font-size: 2.5rem; font-weight: 800; color: #10B981; margin-top: 12px;">{{ $approvedFarmers }}</p>
+                    <p class="stat-glow" style="font-size: 2.5rem; font-weight: 800; color: #10B981; margin-top: 12px;">{{ $approvedFarmers ?? 0 }}</p>
                 </div>
                 <div class="hover-glow" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 28px; border-radius: 24px;">
                     <p style="color: #94a3b8; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Pending Audit</p>
-                    <p class="stat-glow" style="font-size: 2.5rem; font-weight: 800; color: #F59E0B; margin-top: 12px;">{{ $pendingFarmers }}</p>
+                    <p class="stat-glow" style="font-size: 2.5rem; font-weight: 800; color: #F59E0B; margin-top: 12px;">{{ $pendingFarmers ?? 0 }}</p>
                 </div>
                 <div class="hover-glow" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 28px; border-radius: 24px;">
                     <p style="color: #94a3b8; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Decommissioned</p>
-                    <p class="stat-glow" style="font-size: 2.5rem; font-weight: 800; color: #EF4444; margin-top: 12px;">{{ $rejectedFarmers }}</p>
+                    <p class="stat-glow" style="font-size: 2.5rem; font-weight: 800; color: #EF4444; margin-top: 12px;">{{ $rejectedFarmers ?? 0 }}</p>
                 </div>
             </div>
         </div>
@@ -112,15 +112,15 @@
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
                 <div class="hover-glow" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 28px; border-radius: 24px;">
                     <p style="color: #94a3b8; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Total Incidents</p>
-                    <p class="stat-glow" style="font-size: 2.5rem; font-weight: 800; color: #EF4444; margin-top: 12px;">{{ $totalComplaints }}</p>
+                    <p class="stat-glow" style="font-size: 2.5rem; font-weight: 800; color: #EF4444; margin-top: 12px;">{{ $totalComplaints ?? 0 }}</p>
                 </div>
                 <div class="hover-glow" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 28px; border-radius: 24px;">
                     <p style="color: #94a3b8; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Critical Attention</p>
-                    <p class="stat-glow" style="font-size: 2.5rem; font-weight: 800; color: #F59E0B; margin-top: 12px;">{{ $pendingComplaints }}</p>
+                    <p class="stat-glow" style="font-size: 2.5rem; font-weight: 800; color: #F59E0B; margin-top: 12px;">{{ $pendingComplaints ?? 0 }}</p>
                 </div>
                 <div class="hover-glow" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 28px; border-radius: 24px;">
                     <p style="color: #94a3b8; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Resolved Issues</p>
-                    <p class="stat-glow" style="font-size: 2.5rem; font-weight: 800; color: #10B981; margin-top: 12px;">{{ $resolvedComplaints }}</p>
+                    <p class="stat-glow" style="font-size: 2.5rem; font-weight: 800; color: #10B981; margin-top: 12px;">{{ $resolvedComplaints ?? 0 }}</p>
                 </div>
             </div>
         </div>
@@ -134,11 +134,11 @@
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px;">
                 <div class="hover-glow" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 28px; border-radius: 24px;">
                     <p style="color: #94a3b8; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Gross Consumption (kWh)</p>
-                    <p class="stat-glow" style="font-size: 2.5rem; font-weight: 800; color: #F59E0B; margin-top: 12px;">{{ number_format($totalPowerUsage, 2) }}</p>
+                    <p class="stat-glow" style="font-size: 2.5rem; font-weight: 800; color: #F59E0B; margin-top: 12px;">{{ number_format((float)($totalPowerUsage ?? 0), 2) }}</p>
                 </div>
                 <div class="hover-glow" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 28px; border-radius: 24px;">
                     <p style="color: #94a3b8; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Mean Node Usage (kWh)</p>
-                    <p class="stat-glow" style="font-size: 2.5rem; font-weight: 800; color: #10B981; margin-top: 12px;">{{ number_format($avgPowerUsage ?? 0, 2) }}</p>
+                    <p class="stat-glow" style="font-size: 2.5rem; font-weight: 800; color: #10B981; margin-top: 12px;">{{ number_format((float)($avgPowerUsage ?? 0), 2) }}</p>
                 </div>
             </div>
         </div>
@@ -152,19 +152,19 @@
             <div style="display: flex; flex-direction: column; gap: 16px;">
                 <div class="hover-glow" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; background: rgba(255,255,255,0.02); border-radius: 16px; border: 1px solid rgba(255,255,255,0.05);">
                     <span style="color: #cbd5e1; font-weight: 500;">Verification Efficiency</span>
-                    <span style="color: #10B981; font-weight: 800; font-size: 1.1rem; text-shadow: 0 0 10px rgba(16, 185, 129, 0.3);">{{ $totalFarmers > 0 ? number_format(($approvedFarmers / $totalFarmers) * 100, 2) : 0 }}%</span>
+                    <span style="color: #10B981; font-weight: 800; font-size: 1.1rem; text-shadow: 0 0 10px rgba(16, 185, 129, 0.3);">{{ ($totalFarmers ?? 0) > 0 ? number_format((($approvedFarmers ?? 0) / $totalFarmers) * 100, 2) : '0.00' }}%</span>
                 </div>
                 <div class="hover-glow" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; background: rgba(255,255,255,0.02); border-radius: 16px; border: 1px solid rgba(255,255,255,0.05);">
                     <span style="color: #cbd5e1; font-weight: 500;">Resolution Accuracy</span>
-                    <span style="color: #38BDF8; font-weight: 800; font-size: 1.1rem; text-shadow: 0 0 10px rgba(56, 189, 248, 0.3);">{{ $totalComplaints > 0 ? number_format(($resolvedComplaints / $totalComplaints) * 100, 2) : 0 }}%</span>
+                    <span style="color: #38BDF8; font-weight: 800; font-size: 1.1rem; text-shadow: 0 0 10px rgba(56, 189, 248, 0.3);">{{ ($totalComplaints ?? 0) > 0 ? number_format((($resolvedComplaints ?? 0) / $totalComplaints) * 100, 2) : '0.00' }}%</span>
                 </div>
                 <div class="hover-glow" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; background: rgba(255,255,255,0.02); border-radius: 16px; border: 1px solid rgba(255,255,255,0.05);">
                     <span style="color: #cbd5e1; font-weight: 500;">Total Monitored Nodes</span>
-                    <span style="color: #f1f5f9; font-weight: 800; font-size: 1.1rem;">{{ $totalFarmers }}</span>
+                    <span style="color: #f1f5f9; font-weight: 800; font-size: 1.1rem;">{{ $totalFarmers ?? 0 }}</span>
                 </div>
                 <div class="hover-glow" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; background: rgba(255,255,255,0.02); border-radius: 16px; border: 1px solid rgba(255,255,255,0.05);">
                     <span style="color: #cbd5e1; font-weight: 500;">System-wide Energy Flow</span>
-                    <span style="color: #F59E0B; font-weight: 800; font-size: 1.1rem; text-shadow: 0 0 10px rgba(245, 158, 11, 0.3);">{{ number_format($totalPowerUsage, 2) }} units</span>
+                    <span style="color: #F59E0B; font-weight: 800; font-size: 1.1rem; text-shadow: 0 0 10px rgba(245, 158, 11, 0.3);">{{ number_format((float)($totalPowerUsage ?? 0), 2) }} units</span>
                 </div>
             </div>
             
