@@ -130,14 +130,14 @@
 
                 <!-- Status Badges & Connection Switcher -->
                 <div style="display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; align-items: center;">
-                    @if($connections->count() > 1)
+                    @if(isset($connections) && $connections->count() > 1)
                         <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(56, 189, 248, 0.3); padding: 8px 16px; border-radius: 16px; display: flex; align-items: center; gap: 12px; backdrop-filter: blur(10px);">
                             <span style="color: #94a3b8; font-size: 0.85rem; font-weight: 700;">SWITCH CONNECTION:</span>
                             <select onchange="window.location.href='?connection_id='+this.value" 
                                     style="background: transparent; color: #38BDF8; border: none; font-weight: 800; font-size: 0.95rem; cursor: pointer; outline: none;">
                                 @foreach($connections as $conn)
-                                    <option value="{{ $conn->id }}" {{ $farmer->id == $conn->id ? 'selected' : '' }} style="background: #0f172a; color: #f1f5f9;">
-                                        {{ $conn->connection_no }} ({{ $conn->village }})
+                                    <option value="{{ $conn->id }}" {{ ($farmer->id ?? null) == $conn->id ? 'selected' : '' }} style="background: #0f172a; color: #f1f5f9;">
+                                        {{ $conn->connection_no ?? 'Unknown' }} ({{ $conn->village ?? 'Unknown' }})
                                     </option>
                                 @endforeach
                             </select>
@@ -152,7 +152,7 @@
                             <div>
                                 <p style="font-size: 0.9rem; font-weight: 600; color: #f1f5f9; margin: 0;">Connection Status</p>
                                 <p style="font-size: 1rem; font-weight: 700; color: #38BDF8; margin: 0;">
-                                    {{ ucfirst($farmer->status) }}</p>
+                                    {{ ucfirst($farmer->status ?? 'Unknown') }}</p>
                             </div>
                         </div>
                     @endif
@@ -165,7 +165,7 @@
                             <p style="font-size: 0.9rem; font-weight: 600; color: #f1f5f9; margin: 0;">Power Availability
                             </p>
                         <p style="font-size: 1rem; font-weight: 700; color: #10B981; margin: 0;">
-                            {{ $schedules->filter->is_currently_active->count() > 0 ? 'Available Now' : 'Offline' }}</p>
+                            {{ (isset($schedules) && $schedules->filter->is_currently_active->count() > 0) ? 'Available Now' : 'Offline' }}</p>
                         </div>
                     </div>
 
@@ -262,12 +262,12 @@
                         <h3
                             style="color: #94a3b8; font-size: 0.9rem; font-weight: 600; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">
                             Monthly Usage</h3>
-                        @if($powerUsage)
+                        @if(isset($powerUsage) && $powerUsage)
                             <p
                                 style="font-size: 2rem; font-weight: 800; background: linear-gradient(135deg, #38BDF8 0%, #3B82F6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 4px;">
-                                {{ $powerUsage->units_consumed }} <span style="font-size: 1.25rem;">kWh</span></p>
+                                {{ number_format($powerUsage->units_consumed ?? 0, 1) }} <span style="font-size: 1.25rem;">kWh</span></p>
                             <p style="color: #64748b; font-size: 0.85rem; font-weight: 500;">Bill:
-                                ₹{{ $powerUsage->bill_amount }}</p>
+                                ₹{{ number_format($powerUsage->bill_amount ?? 0, 2) }}</p>
                         @else
                             <p style="color: #64748b; font-size: 1.1rem; font-weight: 600; margin-top: 8px;">No Data</p>
                         @endif
@@ -377,31 +377,31 @@
                                     </div>
 
                                     <!-- Schedule card -->
-                                    <div style="background: rgba(255, 255, 255, 0.03); border-radius: 18px; padding: 20px; border: 1px solid {{ $schedule->dynamic_status === 'active' ? 'rgba(34, 197, 94, 0.3)' : ($schedule->dynamic_status === 'upcoming' ? 'rgba(245, 158, 11, 0.3)' : 'rgba(148, 163, 184, 0.2)') }}; transition: all 0.3s ease; cursor: pointer;"
-                                        onmouseover="this.style.transform='translateX(8px)'; this.style.background='rgba(255,255,255,0.06)'; this.style.boxShadow='0 10px 30px {{ $schedule->dynamic_status === 'active' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(245, 158, 11, 0.2)' }}'"
+                                    <div style="background: rgba(255, 255, 255, 0.03); border-radius: 18px; padding: 20px; border: 1px solid {{ ($schedule->dynamic_status ?? '') === 'active' ? 'rgba(34, 197, 94, 0.3)' : (($schedule->dynamic_status ?? '') === 'upcoming' ? 'rgba(245, 158, 11, 0.3)' : 'rgba(148, 163, 184, 0.2)') }}; transition: all 0.3s ease; cursor: pointer;"
+                                        onmouseover="this.style.transform='translateX(8px)'; this.style.background='rgba(255,255,255,0.06)'; this.style.boxShadow='0 10px 30px {{ ($schedule->dynamic_status ?? '') === 'active' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(245, 158, 11, 0.2)' }}'"
                                         onmouseout="this.style.transform='translateX(0)'; this.style.background='rgba(255,255,255,0.03)'; this.style.boxShadow='none'">
                                         <div
                                             style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
                                             <div>
                                                 <h4
                                                     style="font-size: 1.1rem; font-weight: 700; color: #f1f5f9; margin-bottom: 4px;">
-                                                    {{ $schedule->zone }} 
+                                                    {{ $schedule->zone ?? 'Unknown Zone' }} 
                                                     @if($schedule->farmer_id)
-                                                        <span style="font-size: 0.7rem; color: #38BDF8; font-weight: 500;">(Conn: {{ $schedule->farmer->connection_no }})</span>
+                                                        <span style="font-size: 0.7rem; color: #38BDF8; font-weight: 500;">(Conn: {{ $schedule->farmer?->connection_no ?? 'N/A' }})</span>
                                                     @else
                                                         <span style="font-size: 0.7rem; color: #94a3b8; font-weight: 500;">(Grid Zone)</span>
                                                     @endif
                                                 </h4>
                                                 <p style="color: #94a3b8; font-size: 0.9rem; font-weight: 500;">
-                                                    {{ $schedule->start_time }} - {{ $schedule->end_time }}</p>
+                                                    {{ $schedule->start_time ?? '--:--' }} - {{ $schedule->end_time ?? '--:--' }}</p>
                                             </div>
                                             <span
-                                                style="display: inline-block; padding: 6px 14px; border-radius: 100px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; {{ $schedule->dynamic_status === 'active' ? 'background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4);' : ($schedule->dynamic_status === 'upcoming' ? 'background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4);' : 'background: rgba(148, 163, 184, 0.1); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.2);') }}">
-                                                @if($schedule->dynamic_status === 'active')
+                                                style="display: inline-block; padding: 6px 14px; border-radius: 100px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; {{ ($schedule->dynamic_status ?? '') === 'active' ? 'background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4);' : (($schedule->dynamic_status ?? '') === 'upcoming' ? 'background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4);' : 'background: rgba(148, 163, 184, 0.1); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.2);') }}">
+                                                @if(($schedule->dynamic_status ?? '') === 'active')
                                                     ⚡ Active
-                                                @elseif($schedule->dynamic_status === 'upcoming')
+                                                @elseif(($schedule->dynamic_status ?? '') === 'upcoming')
                                                     ⏳ Upcoming
-                                                @elseif($schedule->dynamic_status === 'maintenance')
+                                                @elseif(($schedule->dynamic_status ?? '') === 'maintenance')
                                                     🔧 Maint.
                                                 @else
                                                     ⏸️ Inactive
@@ -412,12 +412,17 @@
                                             <div style="display: flex; align-items: center; gap: 6px;">
                                                 <span style="color: #38BDF8;">⏱️</span>
                                                 <span style="color: #cbd5e1; font-size: 0.85rem;">Duration:
-                                                    {{ \Carbon\Carbon::parse($schedule->start_time)->diffInHours(\Carbon\Carbon::parse($schedule->end_time)) }}h</span>
+                                                    @if(isset($schedule->start_time) && isset($schedule->end_time))
+                                                        {{ \Carbon\Carbon::parse($schedule->start_time)->diffInHours(\Carbon\Carbon::parse($schedule->end_time)) }}h
+                                                    @else
+                                                        N/A
+                                                    @endif
+                                                </span>
                                             </div>
                                             <div style="display: flex; align-items: center; gap: 6px;">
                                                 <span style="color: #10B981;">🔋</span>
                                                 <span style="color: #cbd5e1; font-size: 0.85rem;">Power:
-                                                    {{ $schedule->dynamic_status === 'active' ? 'Available' : 'Not Available' }}</span>
+                                                    {{ ($schedule->dynamic_status ?? '') === 'active' ? 'Available' : 'Not Available' }}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -498,9 +503,9 @@
                                         </div>
                                         <div>
                                             <h4 style="font-size: 1rem; font-weight: 700; color: #f1f5f9; margin-bottom: 4px;">
-                                                {{ ucfirst(str_replace('_', ' ', $complaint->issue_type)) }}</h4>
+                                                {{ ucfirst(str_replace('_', ' ', $complaint->issue_type ?? 'Unknown Issue')) }}</h4>
                                             <p style="color: #94a3b8; font-size: 0.85rem; font-weight: 500;">ID:
-                                                {{ $complaint->id }} • {{ $complaint->created_at->format('M d, Y') }}</p>
+                                                {{ $complaint->id ?? '---' }} • {{ $complaint->created_at ? $complaint->created_at->format('M d, Y') : 'Date Unknown' }}</p>
                                         </div>
                                     </div>
                                     <span
@@ -743,17 +748,17 @@
                         <div style="display: flex; flex-direction: column; gap: 16px;">
                             <div>
                                 <p style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Current Month</p>
-                                <p style="font-size: 1.5rem; font-weight: 800; background: linear-gradient(135deg, #38BDF8 0%, #10B981 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">{{ number_format($currentMonthUsage) }} kWh</p>
+                                <p style="font-size: 1.5rem; font-weight: 800; background: linear-gradient(135deg, #38BDF8 0%, #10B981 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">{{ number_format($currentMonthUsage ?? 0, 1) }} kWh</p>
                             </div>
                             <div>
                                 <p style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Compared to Last Month</p>
-                                <p style="font-size: 1.1rem; font-weight: 700; color: {{ $usageChange > 0 ? '#F59E0B' : '#10B981' }};">
-                                    {{ $usageChange > 0 ? '↑' : '↓' }} {{ abs(round($usageChange)) }}% {{ $usageChange > 0 ? 'higher' : 'lower' }}
+                                <p style="font-size: 1.1rem; font-weight: 700; color: {{ ($usageChange ?? 0) > 0 ? '#F59E0B' : '#10B981' }};">
+                                    {{ ($usageChange ?? 0) > 0 ? '↑' : '↓' }} {{ abs(round($usageChange ?? 0)) }}% {{ ($usageChange ?? 0) > 0 ? 'higher' : 'lower' }}
                                 </p>
                             </div>
                             <div>
                                 <p style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Estimated Bill</p>
-                                <p style="font-size: 1.1rem; font-weight: 700; color: #F59E0B;">₹{{ number_format($currentMonthUsage * 7) }}</p>
+                                <p style="font-size: 1.1rem; font-weight: 700; color: #F59E0B;">₹{{ number_format(($currentMonthUsage ?? 0) * 7, 2) }}</p>
                             </div>
                         </div>
                     </div>
@@ -779,22 +784,22 @@
                 <div
                     style="background: rgba(255, 255, 255, 0.03); border-radius: 16px; padding: 16px; border: 1px solid rgba(56, 189, 248, 0.1);">
                     <p style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px;">Peak Usage</p>
-                    <p style="font-size: 1.25rem; font-weight: 800; color: #f1f5f9;">{{ number_format($peakUsageValue) }} kWh</p>
+                    <p style="font-size: 1.25rem; font-weight: 800; color: #f1f5f9;">{{ number_format($peakUsageValue ?? 0, 1) }} kWh</p>
                 </div>
                 <div
                     style="background: rgba(255, 255, 255, 0.03); border-radius: 16px; padding: 16px; border: 1px solid rgba(56, 189, 248, 0.1);">
                     <p style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px;">Mean Usage</p>
-                    <p style="font-size: 1.25rem; font-weight: 800; color: #f1f5f9;">{{ number_format($avgUsageValue) }} kWh</p>
+                    <p style="font-size: 1.25rem; font-weight: 800; color: #f1f5f9;">{{ number_format($avgUsageValue ?? 0, 1) }} kWh</p>
                 </div>
                 <div
                     style="background: rgba(255, 255, 255, 0.03); border-radius: 16px; padding: 16px; border: 1px solid rgba(56, 189, 248, 0.1);">
                     <p style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px;">Daily Average</p>
-                    <p style="font-size: 1.25rem; font-weight: 800; color: #f1f5f9;">{{ number_format($totalUnits / 30, 1) }} kWh</p>
+                    <p style="font-size: 1.25rem; font-weight: 800; color: #f1f5f9;">{{ number_format(($totalUnits ?? 0) / 30, 1) }} kWh</p>
                 </div>
                 <div
                     style="background: rgba(255, 255, 255, 0.03); border-radius: 16px; padding: 16px; border: 1px solid rgba(56, 189, 248, 0.1);">
                     <p style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px;">Carbon Offset</p>
-                    <p style="font-size: 1.25rem; font-weight: 800; color: #10B981;">{{ number_format($carbonSaved, 1) }} kg</p>
+                    <p style="font-size: 1.25rem; font-weight: 800; color: #10B981;">{{ number_format($carbonSaved ?? 0, 1) }} kg</p>
                 </div>
             </div>
         </div>

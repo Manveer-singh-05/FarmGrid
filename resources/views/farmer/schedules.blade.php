@@ -78,21 +78,21 @@
                     </h2>
                 </div>
 
-                @if($connections->count() > 1)
+                @if(isset($connections) && $connections->count() > 1)
                     <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(56, 189, 248, 0.3); padding: 8px 20px; border-radius: 16px; display: flex; align-items: center; gap: 12px; backdrop-filter: blur(10px);">
                         <span style="color: #94a3b8; font-size: 0.8rem; font-weight: 700;">CONNECTION:</span>
                         <select onchange="window.location.href='?connection_id='+this.value" 
                                 style="background: transparent; color: #38BDF8; border: none; font-weight: 800; font-size: 0.9rem; cursor: pointer; outline: none;">
                             @foreach($connections as $conn)
-                                <option value="{{ $conn->id }}" {{ $farmer->id == $conn->id ? 'selected' : '' }} style="background: #0f172a; color: #f1f5f9;">
-                                    {{ $conn->connection_no }}
+                                <option value="{{ $conn->id }}" {{ ($farmer->id ?? null) == $conn->id ? 'selected' : '' }} style="background: #0f172a; color: #f1f5f9;">
+                                    {{ $conn->connection_no ?? 'Unknown' }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
                 @endif
             </div>
-            <p style="color: #94a3b8; font-size: 1.1rem; margin-left: 56px;">Monitor assigned agricultural electricity timings for: <span style="color: #38BDF8;">{{ $farmer->connection_no }} ({{ $farmer->village }})</span></p>
+            <p style="color: #94a3b8; font-size: 1.1rem; margin-left: 56px;">Monitor assigned agricultural electricity timings for: <span style="color: #38BDF8;">{{ $farmer->connection_no ?? '---' }} ({{ $farmer->village ?? '---' }})</span></p>
 
         <!-- Main Schedule Container -->
         <div class="glass-container">
@@ -112,27 +112,28 @@
                             <tr class="schedule-row">
                                 <td style="font-weight: 700; color: #38BDF8;">
                                     <div style="display: flex; flex-direction: column; gap: 4px;">
-                                        <span>{{ $schedule->zone }}</span>
+                                        <span>{{ $schedule->zone ?? 'Unknown' }}</span>
                                         @if($schedule->farmer_id)
-                                            <span style="font-size: 0.7rem; color: #10B981; font-weight: 500;">Connection: {{ $schedule->farmer->connection_no }}</span>
+                                            <span style="font-size: 0.7rem; color: #10B981; font-weight: 500;">Connection: {{ $schedule->farmer?->connection_no ?? 'N/A' }}</span>
                                         @else
                                             <span style="font-size: 0.7rem; color: #64748b; font-weight: 500;">Universal Grid Zone</span>
                                         @endif
                                     </div>
                                 </td>
-                                <td style="color: #f1f5f9;">{{ $schedule->day_of_week }}</td>
-                                <td style="color: #f1f5f9; font-weight: 600;">{{ $schedule->start_time }}</td>
-                                <td style="color: #f1f5f9; font-weight: 600;">{{ $schedule->end_time }}</td>
+                                <td style="color: #f1f5f9;">{{ $schedule->day_of_week ?? 'N/A' }}</td>
+                                <td style="color: #f1f5f9; font-weight: 600;">{{ $schedule->start_time ?? '--:--' }}</td>
+                                <td style="color: #f1f5f9; font-weight: 600;">{{ $schedule->end_time ?? '--:--' }}</td>
                                 <td>
                                     <div style="display: flex; flex-direction: column; gap: 8px;">
                                         @php
-                                            $statusColor = match($schedule->dynamic_status) {
+                                            $statusVal = $schedule->dynamic_status ?? 'inactive';
+                                            $statusColor = match($statusVal) {
                                                 'active' => '#10B981',
                                                 'upcoming' => '#F59E0B',
                                                 'maintenance' => '#EF4444',
                                                 default => '#64748b'
                                             };
-                                            $statusLabel = match($schedule->dynamic_status) {
+                                            $statusLabel = match($statusVal) {
                                                 'active' => '⚡ Active',
                                                 'upcoming' => '⏳ Upcoming',
                                                 'maintenance' => '🔧 Maintenance',
@@ -144,7 +145,7 @@
                                             {{ $statusLabel }}
                                         </div>
                                         <div style="font-size: 0.75rem; color: #94a3b8; font-weight: 600; padding-left: 4px;">
-                                            💧 {{ $schedule->allocation_percentage }}% Flow
+                                            💧 {{ $schedule->allocation_percentage ?? 0 }}% Flow
                                         </div>
                                     </div>
                                 </td>

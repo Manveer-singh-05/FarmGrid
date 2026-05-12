@@ -108,9 +108,9 @@
                     <div style="flex: 1; min-width: 200px; background: rgba(255,255,255,0.03); border: 1px solid rgba(56, 189, 248, 0.1); border-radius: 20px; padding: 20px;">
                         <p style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px;">Complaint Ratio</p>
                         <div style="display: flex; align-items: center; gap: 12px;">
-                            <p style="font-size: 1.5rem; font-weight: 800; color: #F59E0B;">{{ $totalComplaints > 0 ? round(($resolvedComplaints / $totalComplaints) * 100, 1) : 100 }}%</p>
+                            <p style="font-size: 1.5rem; font-weight: 800; color: #F59E0B;">{{ ($totalComplaints ?? 0) > 0 ? round((($resolvedComplaints ?? 0) / $totalComplaints) * 100, 1) : 100 }}%</p>
                             <div style="flex: 1; height: 4px; background: rgba(245, 158, 11, 0.2); border-radius: 2px;">
-                                <div style="width: {{ $totalComplaints > 0 ? round(($resolvedComplaints / $totalComplaints) * 100) : 100 }}%; height: 100%; background: #F59E0B; border-radius: 2px;"></div>
+                                <div style="width: {{ ($totalComplaints ?? 0) > 0 ? round((($resolvedComplaints ?? 0) / $totalComplaints) * 100) : 100 }}%; height: 100%; background: #F59E0B; border-radius: 2px;"></div>
                             </div>
                         </div>
                     </div>
@@ -147,7 +147,7 @@
             <div class="hover-lift hover-glow smooth-transition" style="background: rgba(20, 35, 60, 0.4); backdrop-filter: blur(20px); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 24px; padding: 28px; box-shadow: 0 0 20px rgba(239, 68, 68, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05); cursor: pointer;">
                 <h3 style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Pending Issues</h3>
                 <div style="display: flex; justify-content: space-between; align-items: flex-end;">
-                    <p style="font-size: 2.2rem; font-weight: 800; background: linear-gradient(135deg, #EF4444 0%, #EC4899 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1;">{{ $totalComplaints - $resolvedComplaints }}</p>
+                    <p style="font-size: 2.2rem; font-weight: 800; background: linear-gradient(135deg, #EF4444 0%, #EC4899 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1;">{{ ($totalComplaints ?? 0) - ($resolvedComplaints ?? 0) }}</p>
                     <span style="font-size: 1.5rem;" class="float-animation">⚠️</span>
                 </div>
             </div>
@@ -171,8 +171,8 @@
                     @endphp
                     @foreach($monthlyUsage as $usage)
                         <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;">
-                            <div class="hover-lift" style="width: 100%; height: {{ ($usage->total / $maxTotal) * 100 }}%; background: linear-gradient(to top, rgba(56, 189, 248, 0.4), rgba(16, 185, 129, 0.4)); border-top: 2px solid #38BDF8; border-radius: 6px 6px 0 0;" title="{{ number_format($usage->total) }} kWh"></div>
-                            <span style="color: #64748b; font-size: 0.7rem; font-weight: 700;">{{ $usage->billing_month }}</span>
+                            <div class="hover-lift" style="width: 100%; height: {{ ($usage->total / $maxTotal) * 100 }}%; background: linear-gradient(to top, rgba(56, 189, 248, 0.4), rgba(16, 185, 129, 0.4)); border-top: 2px solid #38BDF8; border-radius: 6px 6px 0 0;" title="{{ number_format($usage->total ?? 0) }} kWh"></div>
+                            <span style="color: #64748b; font-size: 0.7rem; font-weight: 700;">{{ $usage->billing_month ?? 'N/A' }}</span>
                         </div>
                     @endforeach
                     
@@ -196,8 +196,8 @@
                     @endphp
                     @foreach($dailyUsage as $usage)
                         <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;">
-                            <div class="hover-lift" style="width: 100%; height: {{ ($usage->total / $maxDailyTotal) * 100 }}%; background: linear-gradient(to top, rgba(16, 185, 129, 0.4), rgba(56, 189, 248, 0.4)); border-top: 2px solid #10B981; border-radius: 4px 4px 0 0;" title="{{ number_format($usage->total) }} kWh"></div>
-                            <span style="color: #64748b; font-size: 0.6rem; font-weight: 700; transform: rotate(-45deg); margin-top: 10px;">{{ \Carbon\Carbon::parse($usage->date)->format('M d') }}</span>
+                            <div class="hover-lift" style="width: 100%; height: {{ ($usage->total / $maxDailyTotal) * 100 }}%; background: linear-gradient(to top, rgba(16, 185, 129, 0.4), rgba(56, 189, 248, 0.4)); border-top: 2px solid #10B981; border-radius: 4px 4px 0 0;" title="{{ number_format($usage->total ?? 0) }} kWh"></div>
+                            <span style="color: #64748b; font-size: 0.6rem; font-weight: 700; transform: rotate(-45deg); margin-top: 10px;">{{ isset($usage->date) ? \Carbon\Carbon::parse($usage->date)->format('M d') : 'N/A' }}</span>
                         </div>
                     @endforeach
 
@@ -248,12 +248,12 @@
                 <h3 style="font-size: 1.25rem; font-weight: 700; color: #f1f5f9; margin-bottom: 24px;">🚨 Critical Alerts</h3>
                 <div style="display: flex; flex-direction: column; gap: 16px;">
                     @forelse($alerts as $alert)
-                        <div style="background: {{ str_replace('1)', '0.1)', $alert['color']) }}; border: 1px solid {{ str_replace('1)', '0.3)', $alert['color']) }}; border-radius: 16px; padding: 16px; border-left: 4px solid {{ $alert['color'] }};">
+                        <div style="background: {{ str_replace('1)', '0.1)', $alert['color'] ?? 'rgba(56, 189, 248, 1)') }}; border: 1px solid {{ str_replace('1)', '0.3)', $alert['color'] ?? 'rgba(56, 189, 248, 1)') }}; border-radius: 16px; padding: 16px; border-left: 4px solid {{ $alert['color'] ?? '#38BDF8' }};">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                                <p style="color: {{ $alert['color'] }}; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">{{ $alert['title'] }}</p>
-                                <span style="color: #64748b; font-size: 0.65rem; font-weight: 600;">{{ $alert['time'] }}</span>
+                                <p style="color: {{ $alert['color'] ?? '#38BDF8' }}; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">{{ $alert['title'] ?? 'Alert' }}</p>
+                                <span style="color: #64748b; font-size: 0.65rem; font-weight: 600;">{{ $alert['time'] ?? 'Now' }}</span>
                             </div>
-                            <p style="color: #f1f5f9; font-size: 0.9rem; font-weight: 600;">{{ $alert['description'] }}</p>
+                            <p style="color: #f1f5f9; font-size: 0.9rem; font-weight: 600;">{{ $alert['description'] ?? 'No description' }}</p>
                         </div>
                     @empty
                         <div style="text-align: center; padding: 32px; background: rgba(255,255,255,0.03); border-radius: 16px; border: 1px solid rgba(255,255,255,0.05);">

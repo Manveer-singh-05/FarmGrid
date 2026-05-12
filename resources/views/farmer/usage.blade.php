@@ -128,18 +128,18 @@
                         <h2 style="font-size: 3.2rem; font-weight: 950; color: #f1f5f9; margin: 0; letter-spacing: -1.5px; line-height: 1.1;">
                             Power Usage <span style="background: linear-gradient(135deg, #38BDF8 0%, #10B981 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">& Billing</span>
                         </h2>
-                        <p style="color: #64748b; font-size: 1.25rem; margin-top: 8px; font-weight: 500; letter-spacing: 0.2px;">Real-time energy consumption analytics for: <span style="color: #38BDF8;">{{ $farmer->connection_no }}</span></p>
+                        <p style="color: #64748b; font-size: 1.25rem; margin-top: 8px; font-weight: 500; letter-spacing: 0.2px;">Real-time energy consumption analytics for: <span style="color: #38BDF8;">{{ $farmer->connection_no ?? 'Unknown' }}</span></p>
                     </div>
                 </div>
 
-                @if($connections->count() > 1)
+                @if(isset($connections) && $connections->count() > 1)
                     <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(56, 189, 248, 0.3); padding: 12px 24px; border-radius: 20px; display: flex; align-items: center; gap: 15px; backdrop-filter: blur(10px); align-self: flex-end;">
                         <span style="color: #94a3b8; font-size: 0.9rem; font-weight: 700;">SELECT CONNECTION:</span>
                         <select onchange="window.location.href='?connection_id='+this.value" 
                                 style="background: transparent; color: #38BDF8; border: none; font-weight: 800; font-size: 1.1rem; cursor: pointer; outline: none;">
                             @foreach($connections as $conn)
-                                <option value="{{ $conn->id }}" {{ $farmer->id == $conn->id ? 'selected' : '' }} style="background: #0f172a; color: #f1f5f9;">
-                                    {{ $conn->connection_no }}
+                                <option value="{{ $conn->id }}" {{ ($farmer->id ?? null) == $conn->id ? 'selected' : '' }} style="background: #0f172a; color: #f1f5f9;">
+                                    {{ $conn->connection_no ?? 'Unknown' }}
                                 </option>
                             @endforeach
                         </select>
@@ -162,7 +162,7 @@
                     </div>
                     <h3 style="color: #64748b; font-size: 0.85rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px;">Monthly Consumption</h3>
                     <p class="stat-glow" style="font-size: 3.2rem; font-weight: 950; color: #38BDF8; margin: 0; line-height: 1;">
-                        {{ count($usages) > 0 ? $usages->first()->units_consumed : '--' }} <span style="font-size: 1.4rem; font-weight: 700; color: #475569; margin-left: 4px;">kWh</span>
+                        {{ isset($usages) && count($usages) > 0 ? number_format($usages->first()->units_consumed ?? 0, 1) : '--' }} <span style="font-size: 1.4rem; font-weight: 700; color: #475569; margin-left: 4px;">kWh</span>
                     </p>
                 </div>
             </div>
@@ -176,7 +176,7 @@
                     </div>
                     <h3 style="color: #64748b; font-size: 0.85rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px;">Outstanding Balance</h3>
                     <p class="stat-glow" style="font-size: 3.2rem; font-weight: 950; color: #10B981; margin: 0; line-height: 1;">
-                        <span style="font-size: 1.8rem; vertical-align: middle; margin-right: 2px;">₹</span>{{ count($usages) > 0 ? $usages->where('payment_status', '!=', 'paid')->sum('bill_amount') : '--' }}
+                        <span style="font-size: 1.8rem; vertical-align: middle; margin-right: 2px;">₹</span>{{ isset($usages) && count($usages) > 0 ? number_format($usages->where('payment_status', '!=', 'paid')->sum('bill_amount') ?? 0, 2) : '--' }}
                     </p>
                 </div>
             </div>
@@ -189,7 +189,7 @@
                     </div>
                     <h3 style="color: #64748b; font-size: 0.85rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px;">Recent Status</h3>
                     <p class="stat-glow" style="font-size: 2.2rem; font-weight: 950; color: #F59E0B; margin: 0; line-height: 1.1;">
-                        {{ count($usages) > 0 ? ucfirst($usages->first()->payment_status) : 'No Records' }}
+                        {{ isset($usages) && count($usages) > 0 ? ucfirst($usages->first()->payment_status ?? 'No Data') : 'No Records' }}
                     </p>
                 </div>
                 <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.05);">
@@ -224,16 +224,17 @@
                     <tbody>
                         @forelse($usages as $usage)
                             <tr class="usage-row">
-                                <td style="font-weight: 800; color: #f1f5f9;">{{ $usage->billing_month }}</td>
-                                <td style="color: #38BDF8; font-weight: 900; font-size: 1.1rem;">{{ $usage->units_consumed }} <span style="font-size: 0.8rem; color: #475569; font-weight: 600;">kWh</span></td>
-                                <td style="color: #10B981; font-weight: 900; font-size: 1.1rem;">₹{{ $usage->bill_amount }}</td>
+                                <td style="font-weight: 800; color: #f1f5f9;">{{ $usage->billing_month ?? 'Unknown' }}</td>
+                                <td style="color: #38BDF8; font-weight: 900; font-size: 1.1rem;">{{ number_format($usage->units_consumed ?? 0, 1) }} <span style="font-size: 0.8rem; color: #475569; font-weight: 600;">kWh</span></td>
+                                <td style="color: #10B981; font-weight: 900; font-size: 1.1rem;">₹{{ number_format($usage->bill_amount ?? 0, 2) }}</td>
                                 <td>
                                     @php
-                                        $statusClass = 'status-' . $usage->payment_status;
+                                        $statusVal = $usage->payment_status ?? 'pending';
+                                        $statusClass = 'status-' . $statusVal;
                                     @endphp
                                     <div class="status-badge {{ $statusClass }}">
                                         <span style="width: 8px; height: 8px; background: currentColor; border-radius: 50%; box-shadow: 0 0 12px currentColor;"></span>
-                                        {{ ucfirst($usage->payment_status) }}
+                                        {{ ucfirst($statusVal) }}
                                     </div>
                                 </td>
                             </tr>

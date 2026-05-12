@@ -56,68 +56,82 @@ class FarmerController extends Controller
         $powerUsage = $farmer->powerUsages()->latest()->first();
 
         // --- POWER USAGE ANALYTICS ---
+        try {
+            // 1. Chart Data: Monthly (Last 6 Months)
+            $monthlyUsage = PowerUsage::whereIn('farmer_id', $connectionIds)
+                ->latest()
+                ->limit(100) // Safety limit for collection processing
+                ->get()
+                ->filter(fn($u) => !empty($u->billing_month))
+                ->groupBy('billing_month')
+                ->map(fn($items, $month) => ['total' => (float)($items->sum('units_consumed') ?? 0), 'billing_month' => (string)$month])
+                ->values()
+                ->take(6);
 
-        // 1. Chart Data: Monthly (Last 6 Months)
-        $monthlyUsage = PowerUsage::whereIn('farmer_id', $connectionIds)
-            ->latest()
-            ->limit(100) // Safety limit for collection processing
-            ->get()
-            ->groupBy('billing_month')
-            ->map(fn($items, $month) => ['total' => $items->sum('units_consumed'), 'billing_month' => $month])
-            ->values()
-            ->take(6);
+            // 2. Chart Data: Weekly (Last 4 Weeks)
+            $weeklyUsage = PowerUsage::whereIn('farmer_id', $connectionIds)
+                ->latest()
+                ->limit(100)
+                ->get()
+                ->filter(fn($u) => $u->created_at instanceof \Carbon\Carbon)
+                ->groupBy(fn($u) => $u->created_at->format('W'))
+                ->map(fn($items, $week) => ['total' => (float)($items->sum('units_consumed') ?? 0), 'week_no' => (string)$week])
+                ->values()
+                ->take(4)
+                ->reverse();
 
-        // 2. Chart Data: Weekly (Last 4 Weeks)
-        $weeklyUsage = PowerUsage::whereIn('farmer_id', $connectionIds)
-            ->latest()
-            ->limit(100)
-            ->get()
-            ->groupBy(fn($u) => $u->created_at->format('W'))
-            ->map(fn($items, $week) => ['total' => $items->sum('units_consumed'), 'week_no' => $week])
-            ->values()
-            ->take(4)
-            ->reverse();
+            // 3. Chart Data: Daily (Last 7 Days)
+            $dailyUsage = PowerUsage::whereIn('farmer_id', $connectionIds)
+                ->latest()
+                ->limit(100)
+                ->get()
+                ->filter(fn($u) => $u->created_at instanceof \Carbon\Carbon)
+                ->groupBy(fn($u) => $u->created_at->format('Y-m-d'))
+                ->map(fn($items, $date) => ['total' => (float)($items->sum('units_consumed') ?? 0), 'date' => (string)$date])
+                ->values()
+                ->take(7)
+                ->reverse();
 
-        // 3. Chart Data: Daily (Last 7 Days)
-        $dailyUsage = PowerUsage::whereIn('farmer_id', $connectionIds)
-            ->latest()
-            ->limit(100)
-            ->get()
-            ->groupBy(fn($u) => $u->created_at->format('Y-m-d'))
-            ->map(fn($items, $date) => ['total' => $items->sum('units_consumed'), 'date' => $date])
-            ->values()
-            ->take(7)
-            ->reverse();
+            // 4. Usage Insights
+            $currentMonthUsage = (float)PowerUsage::whereIn('farmer_id', $connectionIds)
+                ->where('billing_month', 'LIKE', '%' . now()->format('M') . '%')
+                ->sum('units_consumed');
+                
+            $lastMonthUsage = (float)PowerUsage::whereIn('farmer_id', $connectionIds)
+                ->where('billing_month', 'LIKE', '%' . now()->subMonth()->format('M') . '%')
+                ->sum('units_consumed');
 
-        // 4. Usage Insights
-        $currentMonth = now()->format('F Y');
-        $lastMonth = now()->subMonth()->format('F Y');
-        
-        $currentMonthUsage = PowerUsage::whereIn('farmer_id', $connectionIds)
-            ->where('billing_month', 'LIKE', '%' . now()->format('M') . '%')
-            ->sum('units_consumed');
-            
-        $lastMonthUsage = PowerUsage::whereIn('farmer_id', $connectionIds)
-            ->where('billing_month', 'LIKE', '%' . now()->subMonth()->format('M') . '%')
-            ->sum('units_consumed');
+            $usageChange = 0;
+            if ($lastMonthUsage > 0) {
+                $usageChange = (($currentMonthUsage - $lastMonthUsage) / $lastMonthUsage) * 100;
+            }
 
-        $usageChange = 0;
-        if ($lastMonthUsage > 0) {
-            $usageChange = (($currentMonthUsage - $lastMonthUsage) / $lastMonthUsage) * 100;
-        }
+            // 5. Analytics Cards
+            $peakUsageValue = (float)(PowerUsage::whereIn('farmer_id', $connectionIds)->max('units_consumed') ?: 0);
+            $avgUsageValue = (float)(PowerUsage::whereIn('farmer_id', $connectionIds)->avg('units_consumed') ?: 0);
+            $totalUnits = (float)(PowerUsage::whereIn('farmer_id', $connectionIds)->sum('units_consumed') ?? 0);
+            $carbonSaved = $totalUnits * 0.45; // 0.45kg CO2 saved per unit optimized
 
-        // 5. Analytics Cards
-        $peakUsageValue = PowerUsage::whereIn('farmer_id', $connectionIds)->max('units_consumed') ?: 0;
-        $avgUsageValue = PowerUsage::whereIn('farmer_id', $connectionIds)->avg('units_consumed') ?: 0;
-        $totalUnits = PowerUsage::whereIn('farmer_id', $connectionIds)->sum('units_consumed');
-        $carbonSaved = $totalUnits * 0.45; // 0.45kg CO2 saved per unit optimized
-
-        // 6. AI Insights Logic
-        $aiInsight = "Your usage is stable. Consider shifting heavy loads to off-peak hours for further savings.";
-        if ($usageChange > 10) {
-            $aiInsight = "Alert: Your usage increased by " . round($usageChange) . "% this month. We recommend auditing your irrigation pumps.";
-        } elseif ($peakUsageValue > 100) {
-            $aiInsight = "Peak usage detected. Shifting operations to 10 PM - 6 AM could reduce your bill by ~15%.";
+            // 6. AI Insights Logic
+            $aiInsight = "Your usage is stable. Consider shifting heavy loads to off-peak hours for further savings.";
+            if ($usageChange > 10) {
+                $aiInsight = "Alert: Your usage increased by " . round($usageChange) . "% this month. We recommend auditing your irrigation pumps.";
+            } elseif ($peakUsageValue > 100) {
+                $aiInsight = "Peak usage detected. Shifting operations to 10 PM - 6 AM could reduce your bill by ~15%.";
+            }
+        } catch (\Exception $e) {
+            // Fallback for MongoDB failures
+            $monthlyUsage = collect();
+            $weeklyUsage = collect();
+            $dailyUsage = collect();
+            $currentMonthUsage = 0;
+            $lastMonthUsage = 0;
+            $usageChange = 0;
+            $peakUsageValue = 0;
+            $avgUsageValue = 0;
+            $totalUnits = 0;
+            $carbonSaved = 0;
+            $aiInsight = "Analytics temporarily unavailable due to synchronization. Please check back later.";
         }
 
         return view('farmer.dashboard', compact(
@@ -230,7 +244,12 @@ class FarmerController extends Controller
             ? $connections->firstWhere('id', $connectionId) 
             : $connections->first();
 
-        $usages = $farmer->powerUsages()->latest()->get();
+        try {
+            $usages = $farmer->powerUsages()->latest()->get();
+        } catch (\Exception $e) {
+            $usages = collect();
+        }
+        
         return view('farmer.usage', compact('usages', 'connections', 'farmer'));
     }
 

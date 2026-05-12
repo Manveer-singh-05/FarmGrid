@@ -177,10 +177,10 @@
                         @forelse($complaints as $complaint)
                             <tr class="complaint-row">
                                 <td style="color: #94a3b8; font-weight: 500;">
-                                    {{ $complaint->created_at->format('M d, Y') }}
+                                    {{ $complaint->created_at ? $complaint->created_at->format('M d, Y') : 'Date Unknown' }}
                                 </td>
                                 <td style="font-weight: 700; color: #38BDF8;">
-                                    {{ ucfirst(str_replace('_', ' ', $complaint->issue_type)) }}
+                                    {{ ucfirst(str_replace('_', ' ', $complaint->issue_type ?? 'Unknown Issue')) }}
                                 </td>
                                 <td>
                                     @php
@@ -193,7 +193,7 @@
                                     </div>
                                 </td>
                                 <td style="color: #f1f5f9; max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                    {{ $complaint->description }}
+                                    {{ $complaint->description ?? 'No description provided.' }}
                                 </td>
                                 <td>
                                     @php
@@ -203,7 +203,7 @@
                                     @endphp
                                     <div class="status-badge {{ $statusClass }}">
                                         <span style="width: 6px; height: 6px; background: currentColor; border-radius: 50%; box-shadow: 0 0 10px currentColor;"></span>
-                                        {{ ucfirst($complaint->status) }}
+                                        {{ ucfirst($complaint->status ?? 'Pending') }}
                                     </div>
                                 </td>
                                 <td>

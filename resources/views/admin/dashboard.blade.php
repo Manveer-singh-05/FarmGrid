@@ -158,7 +158,7 @@
                         <div>
                             <p style="font-size: 0.9rem; font-weight: 600; color: #f1f5f9; margin: 0;">Pending Apps</p>
                             <p style="font-size: 1rem; font-weight: 700; color: #F59E0B; margin: 0;">
-                                {{ $pendingApplications }} Awaiting</p>
+                                {{ number_format($pendingApplications ?? 0) }} Awaiting</p>
                         </div>
                     </div>
 
@@ -169,7 +169,7 @@
                         <div>
                             <p style="font-size: 0.9rem; font-weight: 600; color: #f1f5f9; margin: 0;">Open Issues</p>
                             <p style="font-size: 1rem; font-weight: 700; color: #EF4444; margin: 0;">
-                                {{ $pendingComplaints }} Pending</p>
+                                {{ number_format($pendingComplaints ?? 0) }} Pending</p>
                         </div>
                     </div>
                 </div>
@@ -275,11 +275,11 @@
                         <tbody>
                             @foreach($schedules->take(10) as $schedule)
                                 <tr style="transition: background 0.2s;" onmouseover="this.style.background='rgba(255, 255, 255, 0.03)'" onmouseout="this.style.background='transparent'">
-                                    <td style="padding: 16px; color: #f1f5f9; font-weight: 500; border-bottom: 1px solid rgba(255, 255, 255, 0.05);">{{ $schedule->zone }}</td>
-                                    <td style="padding: 16px; color: #cbd5e1; border-bottom: 1px solid rgba(255, 255, 255, 0.05);">{{ $schedule->start_time }} - {{ $schedule->end_time }}</td>
+                                    <td style="padding: 16px; color: #f1f5f9; font-weight: 500; border-bottom: 1px solid rgba(255, 255, 255, 0.05);">{{ $schedule->zone ?? 'Unknown' }}</td>
+                                    <td style="padding: 16px; color: #cbd5e1; border-bottom: 1px solid rgba(255, 255, 255, 0.05);">{{ $schedule->start_time ?? '--' }} - {{ $schedule->end_time ?? '--' }}</td>
                                     <td style="padding: 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
-                                        <span style="display: inline-block; padding: 4px 12px; border-radius: 100px; font-size: 0.8rem; font-weight: 600; {{ $schedule->status === 'active' ? 'background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3);' : 'background: rgba(148, 163, 184, 0.2); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.3);' }}">
-                                            {{ ucfirst($schedule->status) }}
+                                        <span style="display: inline-block; padding: 4px 12px; border-radius: 100px; font-size: 0.8rem; font-weight: 600; {{ ($schedule->status ?? '') === 'active' ? 'background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3);' : 'background: rgba(148, 163, 184, 0.2); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.3);' }}">
+                                            {{ ucfirst($schedule->status ?? 'Inactive') }}
                                         </span>
                                     </td>
                                     <td style="padding: 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.05);">

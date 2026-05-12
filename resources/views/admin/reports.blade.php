@@ -138,28 +138,28 @@
             <div class="glass-card float-animation">
                 <div class="icon-box" style="color: #38BDF8;">📊</div>
                 <div class="stat-label">Total Registered</div>
-                <div class="stat-value">{{ $totalFarmers }}</div>
+                <div class="stat-value">{{ number_format($totalFarmers ?? 0) }}</div>
                 <div style="color: #38BDF8; font-size: 0.75rem; font-weight: 700;">Global Network Base</div>
             </div>
 
             <div class="glass-card float-animation" style="animation-delay: 1s;">
                 <div class="icon-box" style="color: #10B981;">✅</div>
                 <div class="stat-label">Approved Grid Base</div>
-                <div class="stat-value" style="background: linear-gradient(135deg, #fff 0%, #10B981 100%); -webkit-background-clip: text;">{{ $approvedFarmers }}</div>
+                <div class="stat-value" style="background: linear-gradient(135deg, #fff 0%, #10B981 100%); -webkit-background-clip: text;">{{ number_format($approvedFarmers ?? 0) }}</div>
                 <div style="color: #10B981; font-size: 0.75rem; font-weight: 700;">Active Connections</div>
             </div>
 
             <div class="glass-card float-animation" style="animation-delay: 2s;">
                 <div class="icon-box" style="color: #F59E0B;">⏳</div>
-                @php $pending = $totalFarmers - $approvedFarmers; @endphp
+                @php $pending = ($totalFarmers ?? 0) - ($approvedFarmers ?? 0); @endphp
                 <div class="stat-label">Pending / Rejected</div>
-                <div class="stat-value" style="background: linear-gradient(135deg, #fff 0%, #F59E0B 100%); -webkit-background-clip: text;">{{ $pending }}</div>
+                <div class="stat-value" style="background: linear-gradient(135deg, #fff 0%, #F59E0B 100%); -webkit-background-clip: text;">{{ number_format($pending) }}</div>
                 <div style="color: #F59E0B; font-size: 0.75rem; font-weight: 700;">Awaiting Protocol</div>
             </div>
 
             <div class="glass-card float-animation" style="animation-delay: 3s;">
                 <div class="icon-box" style="color: #8B5CF6;">📈</div>
-                @php $approvalRate = $totalFarmers > 0 ? round(($approvedFarmers / $totalFarmers) * 100) : 0; @endphp
+                @php $approvalRate = ($totalFarmers ?? 0) > 0 ? round((($approvedFarmers ?? 0) / ($totalFarmers ?? 1)) * 100) : 0; @endphp
                 <div class="stat-label">Approval Velocity</div>
                 <div class="stat-value" style="background: linear-gradient(135deg, #fff 0%, #8B5CF6 100%); -webkit-background-clip: text;">{{ $approvalRate }}%</div>
                 <div style="color: #8B5CF6; font-size: 0.75rem; font-weight: 700;">Network Growth Rate</div>
@@ -175,14 +175,14 @@
                 <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                     <div>
                         <div class="stat-label">Total Complaints</div>
-                        <div class="stat-value">{{ $totalComplaints }}</div>
+                        <div class="stat-value">{{ number_format($totalComplaints ?? 0) }}</div>
                     </div>
                     <div class="icon-box">🔧</div>
                 </div>
                 <div style="margin-top: 24px;">
                     <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 8px;">
                         <span style="color: #94a3b8; font-weight: 700; text-transform: uppercase;">Resolution Efficiency</span>
-                        @php $resolutionRate = $totalComplaints > 0 ? round(($resolvedComplaints / $totalComplaints) * 100) : 0; @endphp
+                        @php $resolutionRate = ($totalComplaints ?? 0) > 0 ? round((($resolvedComplaints ?? 0) / $totalComplaints) * 100) : 0; @endphp
                         <span style="color: #10B981; font-weight: 900;">{{ $resolutionRate }}%</span>
                     </div>
                     <div class="progress-track">
@@ -196,7 +196,7 @@
                     <div class="icon-box" style="color: #10B981; margin: 0;">🛡️</div>
                     <div>
                         <div class="stat-label">Resolved Issues</div>
-                        <div class="stat-value" style="font-size: 1.8rem; margin: 4px 0;">{{ $resolvedComplaints }}</div>
+                        <div class="stat-value" style="font-size: 1.8rem; margin: 4px 0;">{{ number_format($resolvedComplaints ?? 0) }}</div>
                     </div>
                 </div>
                 <p style="color: #64748b; font-size: 0.8rem; margin-top: 16px; font-weight: 600;">System stability maintained through active intervention.</p>
@@ -205,10 +205,10 @@
             <div class="glass-card">
                 <div style="display: flex; gap: 20px; align-items: center;">
                     <div class="icon-box" style="color: #F59E0B; margin: 0;">⚡</div>
-                    @php $pendingComplaints = $totalComplaints - $resolvedComplaints; @endphp
+                    @php $pendingComplaints = ($totalComplaints ?? 0) - ($resolvedComplaints ?? 0); @endphp
                     <div>
                         <div class="stat-label">Active Tickets</div>
-                        <div class="stat-value" style="font-size: 1.8rem; margin: 4px 0;">{{ $pendingComplaints }}</div>
+                        <div class="stat-value" style="font-size: 1.8rem; margin: 4px 0;">{{ number_format($pendingComplaints) }}</div>
                     </div>
                 </div>
                 <p style="color: #64748b; font-size: 0.8rem; margin-top: 16px; font-weight: 600;">Maintenance teams assigned to high-priority zones.</p>
@@ -225,7 +225,7 @@
                     📉
                 </div>
                 <div class="stat-label">Total Data Points</div>
-                <div class="stat-value" style="font-size: 3.5rem; margin: 12px 0;">{{ number_format($totalUsageRecords) }}</div>
+                <div class="stat-value" style="font-size: 3.5rem; margin: 12px 0;">{{ number_format($totalUsageRecords ?? 0) }}</div>
                 <div style="color: #38BDF8; font-size: 0.8rem; font-weight: 800; text-transform: uppercase;">Metering Records Logged</div>
             </div>
             

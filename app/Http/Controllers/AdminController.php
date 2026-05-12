@@ -174,7 +174,12 @@ class AdminController extends Controller
         $approvedFarmers = Farmer::where('status', 'approved')->count();
         $totalComplaints = Complaint::count();
         $resolvedComplaints = Complaint::where('status', 'resolved')->count();
-        $totalUsageRecords = PowerUsage::count();
+        
+        try {
+            $totalUsageRecords = PowerUsage::count();
+        } catch (\Exception $e) {
+            $totalUsageRecords = 0;
+        }
 
         return view('admin.reports', compact('totalFarmers', 'approvedFarmers', 'totalComplaints', 'resolvedComplaints', 'totalUsageRecords'));
     }
@@ -206,14 +211,18 @@ class AdminController extends Controller
 
         $billAmount = $validated['units_consumed'] * 7;
 
-        PowerUsage::create([
-            'farmer_id' => $validated['farmer_id'],
-            'units_consumed' => $validated['units_consumed'],
-            'meter_reading' => $validated['meter_reading'],
-            'bill_amount' => $billAmount,
-            'billing_month' => $validated['billing_month'],
-            'payment_status' => $validated['payment_status'],
-        ]);
+        try {
+            PowerUsage::create([
+                'farmer_id' => $validated['farmer_id'],
+                'units_consumed' => $validated['units_consumed'],
+                'meter_reading' => $validated['meter_reading'],
+                'bill_amount' => $billAmount,
+                'billing_month' => $validated['billing_month'],
+                'payment_status' => $validated['payment_status'],
+            ]);
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to save usage data to MongoDB Atlas. Please try again later.');
+        }
 
         return back()->with('success', 'Usage record added and bill generated successfully!');
     }
