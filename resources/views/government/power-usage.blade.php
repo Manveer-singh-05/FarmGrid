@@ -10,11 +10,11 @@
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
             <div style="background: rgba(20, 35, 60, 0.4); backdrop-filter: blur(20px); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 24px; padding: 28px; box-shadow: 0 0 20px rgba(245, 158, 11, 0.1);">
                 <h3 style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; margin-bottom: 12px; text-transform: uppercase;">Total Usage</h3>
-                <p style="font-size: 2rem; font-weight: 800; color: #F59E0B;">{{ number_format($totalUsage ?? 0, 2) }} <span style="font-size: 1rem; color: #94a3b8;">Units</span></p>
+                <p style="font-size: 2rem; font-weight: 800; color: #F59E0B;">{{ number_format((float)($totalUsage ?? 0), 2) }} <span style="font-size: 1rem; color: #94a3b8;">Units</span></p>
             </div>
             <div style="background: rgba(20, 35, 60, 0.4); backdrop-filter: blur(20px); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 24px; padding: 28px; box-shadow: 0 0 20px rgba(16, 185, 129, 0.1);">
                 <h3 style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; margin-bottom: 12px; text-transform: uppercase;">Average Usage</h3>
-                <p style="font-size: 2rem; font-weight: 800; color: #10B981;">{{ number_format($avgUsage ?? 0, 2) }} <span style="font-size: 1rem; color: #94a3b8;">Units</span></p>
+                <p style="font-size: 2rem; font-weight: 800; color: #10B981;">{{ number_format((float)($avgUsage ?? 0), 2) }} <span style="font-size: 1rem; color: #94a3b8;">Units</span></p>
             </div>
         </div>
 
@@ -32,10 +32,10 @@
                     <tbody>
                         @forelse ($powerUsage as $usage)
                             <tr style="transition: background 0.3s ease;" onmouseover="this.style.background='rgba(245, 158, 11, 0.05)'" onmouseout="this.style.background='transparent'">
-                                <td style="padding: 16px; color: #f1f5f9; font-weight: 600; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ $usage->farmer?->user?->name ?? 'N/A' }}</td>
-                                <td style="padding: 16px; color: #F59E0B; font-weight: 700; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ $usage->units_consumed ?? 0 }}</td>
-                                <td style="padding: 16px; color: #cbd5e1; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ $usage->meter_reading ?? 0 }} kWh</td>
-                                <td style="padding: 16px; color: #94a3b8; font-size: 0.85rem; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ $usage->created_at ? $usage->created_at->format('M d, Y') : 'N/A' }}</td>
+                                <td style="padding: 16px; color: #f1f5f9; font-weight: 600; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ optional(optional($usage->farmer)->user)->name ?? 'N/A' }}</td>
+                                <td style="padding: 16px; color: #F59E0B; font-weight: 700; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ number_format((float)($usage->units_consumed ?? 0), 1) }}</td>
+                                <td style="padding: 16px; color: #cbd5e1; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ number_format((float)($usage->meter_reading ?? 0), 2) }} kWh</td>
+                                <td style="padding: 16px; color: #94a3b8; font-size: 0.85rem; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ $usage->created_at instanceof \Carbon\Carbon ? $usage->created_at->format('M d, Y') : ($usage->created_at ?? 'N/A') }}</td>
                             </tr>
                         @empty
                             <tr>
