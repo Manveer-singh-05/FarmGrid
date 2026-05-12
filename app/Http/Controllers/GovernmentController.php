@@ -157,11 +157,20 @@ class GovernmentController extends Controller
     public function powerUsage()
     {
         try {
+            // Fetch paginated usage with farmer relation (safe check in Blade)
             $powerUsage = PowerUsage::with('farmer')->paginate(15);
+            
+            // Safe aggregations with null coalescing
             $totalUsage = (float)(PowerUsage::sum('units_consumed') ?? 0);
             $avgUsage = (float)(PowerUsage::avg('units_consumed') ?: 0);
-        } catch (\Exception $e) {
-            $powerUsage = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15);
+        } catch (\Throwable $t) {
+            // Production logging for debugging sync/data issues
+            \Log::error("Government Dashboard - Power Usage Analytics Failure: " . $t->getMessage(), [
+                'trace' => $t->getTraceAsString()
+            ]);
+
+            // Robust fallbacks to prevent 500 errors
+            $powerUsage = new \Illuminate\Pagination\LengthAwarePaginator(collect([]), 0, 15);
             $totalUsage = 0;
             $avgUsage = 0;
         }
