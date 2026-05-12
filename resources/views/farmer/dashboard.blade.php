@@ -618,12 +618,17 @@
             @endphp
 
             @forelse($safeMonthlyUsage as $usage)
-                @php
-                    $height = ($usage->total / $maxMonthly) * 200;
-                    $color = $usage->total > 100
-                        ? '#10B981'
-                        : ($usage->total > 50 ? '#38BDF8' : '#F59E0B');
-                @endphp
+               @php
+    $usageTotal = (float) ($usage->total ?? 0);
+
+    $height = $maxMonthly > 0
+        ? ($usageTotal / $maxMonthly) * 200
+        : 0;
+
+    $color = $usageTotal > 100
+        ? '#10B981'
+        : ($usageTotal > 50 ? '#38BDF8' : '#F59E0B');
+@endphp
 
                 <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
                     <div style="width: 30px; height: {{ $height }}px; background: linear-gradient(to top, {{ $color }}, {{ $color }}99); border-radius: 8px 8px 0 0; position: relative;" title="{{ number_format($usage->total) }} kWh">
