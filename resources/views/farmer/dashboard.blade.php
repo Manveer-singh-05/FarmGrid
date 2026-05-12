@@ -606,31 +606,44 @@
             </div>
 
             <div class="responsive-chart-grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: 28px;">
-                <!-- Chart Area -->
-                <div>
-                    <!-- Monthly Chart -->
-                    <div id="chart-monthly"
-                        style="background: rgba(20, 35, 60, 0.3); border-radius: 18px; padding: 24px; border: 1px solid rgba(56, 189, 248, 0.2); height: 300px; position: relative; overflow: hidden; display: flex; align-items: flex-end; gap: 20px;">
-                        @php
-                            $maxMonthly = $monthlyUsage->max('total') ?: 100;
-                        @endphp
-                        @foreach($monthlyUsage as $usage)
-                            @php
-                                $height = ($usage->total / $maxMonthly) * 200;
-                                $color = $usage->total > 100 ? '#10B981' : ($usage->total > 50 ? '#38BDF8' : '#F59E0B');
-                            @endphp
-                            <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
-                                <div style="width: 30px; height: {{ $height }}px; background: linear-gradient(to top, {{ $color }}, {{ $color }}99); border-radius: 8px 8px 0 0; position: relative;" title="{{ number_format($usage->total) }} kWh">
-                                    <div style="position: absolute; top: -25px; left: 50%; transform: translateX(-50%); color: #f1f5f9; font-size: 0.8rem; font-weight: 700;">{{ number_format($usage->total) }}</div>
-                                </div>
-                                <div style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; margin-top: 12px;">{{ $usage->billing_month }}</div>
-                            </div>
-                        @endforeach
-                        
-                        @if($monthlyUsage->isEmpty())
-                            <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #64748b; font-style: italic;">No monthly records.</div>
-                        @endif
+    <!-- Chart Area -->
+    <div>
+        <!-- Monthly Chart -->
+        <div id="chart-monthly"
+            style="background: rgba(20, 35, 60, 0.3); border-radius: 18px; padding: 24px; border: 1px solid rgba(56, 189, 248, 0.2); height: 300px; position: relative; overflow: hidden; display: flex; align-items: flex-end; gap: 20px;">
+
+            @php
+                $safeMonthlyUsage = collect($monthlyUsage ?? []);
+                $maxMonthly = $safeMonthlyUsage->max('total') ?: 100;
+            @endphp
+
+            @forelse($safeMonthlyUsage as $usage)
+                @php
+                    $height = ($usage->total / $maxMonthly) * 200;
+                    $color = $usage->total > 100
+                        ? '#10B981'
+                        : ($usage->total > 50 ? '#38BDF8' : '#F59E0B');
+                @endphp
+
+                <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                    <div style="width: 30px; height: {{ $height }}px; background: linear-gradient(to top, {{ $color }}, {{ $color }}99); border-radius: 8px 8px 0 0; position: relative;" title="{{ number_format($usage->total) }} kWh">
+                        <div style="position: absolute; top: -25px; left: 50%; transform: translateX(-50%); color: #f1f5f9; font-size: 0.8rem; font-weight: 700;">
+                            {{ number_format($usage->total) }}
+                        </div>
                     </div>
+
+                    <div style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; margin-top: 12px;">
+                        {{ $usage->billing_month }}
+                    </div>
+                </div>
+
+            @empty
+                <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #64748b; font-style: italic;">
+                    No monthly records.
+                </div>
+            @endforelse
+
+        </div>
 
                     <!-- Weekly Chart -->
                     <div id="chart-weekly"
