@@ -291,8 +291,8 @@
                                 style="font-size: 2rem; font-weight: 800; background: linear-gradient(135deg, #A855F7 0%, #EC4899 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 4px;">
                                 {{ $currentlyActive->count() }} Active</p>
                             <p style="color: #64748b; font-size: 0.85rem; font-weight: 500;">
-                                @if($currentlyActive->first()->start_time)
-                                    Next reset: {{ $currentlyActive->first()->end_time->format('H:i') }}
+                                @if(isset($currentlyActive->first()->end_time))
+                                    Next reset: {{ \Carbon\Carbon::parse($currentlyActive->first()->end_time)->format('H:i') }}
                                 @else
                                     Timings assigned
                                 @endif
@@ -302,8 +302,8 @@
                                 style="font-size: 2rem; font-weight: 800; background: linear-gradient(135deg, #A855F7 0%, #EC4899 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 4px;">
                                 All Off</p>
                             <p style="color: #64748b; font-size: 0.85rem; font-weight: 500;">
-                                @if($schedules->where('dynamic_status', 'upcoming')->count() > 0)
-                                    Next: {{ $schedules->where('dynamic_status', 'upcoming')->first()->start_time->format('H:i') }}
+                                @if($schedules->where('dynamic_status', 'upcoming')->count() > 0 && isset($schedules->where('dynamic_status', 'upcoming')->first()->start_time))
+                                    Next: {{ \Carbon\Carbon::parse($schedules->where('dynamic_status', 'upcoming')->first()->start_time)->format('H:i') }}
                                 @else
                                     Check schedule for timings
                                 @endif
@@ -521,13 +521,13 @@
                                         <div style="display: flex; align-items: center; gap: 6px;">
                                             <span style="color: #38BDF8;">📅</span>
                                             <span style="color: #94a3b8; font-size: 0.8rem;">Opened:
-                                                {{ $complaint->created_at->diffForHumans() }}</span>
+                                                {{ $complaint->created_at ? $complaint->created_at->diffForHumans() : 'Date Unknown' }}</span>
                                         </div>
                                         @if($complaint->status === 'pending')
                                             <div style="display: flex; align-items: center; gap: 6px;">
                                                 <span style="color: #F59E0B;">⏱️</span>
                                                 <span style="color: #94a3b8; font-size: 0.8rem;">Waiting:
-                                                    {{ $complaint->created_at->diffInDays(now()) }} days</span>
+                                                    {{ $complaint->created_at ? $complaint->created_at->diffInDays(now()) : 0 }} days</span>
                                             </div>
                                         @endif
                                     </div>
@@ -636,14 +636,14 @@
 @endphp
 
                 <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
-                    <div style="width: 30px; height: {{ $height }}px; background: linear-gradient(to top, {{ $color }}, {{ $color }}99); border-radius: 8px 8px 0 0; position: relative;" title="{{ number_format($usage->total) }} kWh">
+                    <div style="width: 30px; height: {{ $height }}px; background: linear-gradient(to top, {{ $color }}, {{ $color }}99); border-radius: 8px 8px 0 0; position: relative;" title="{{ number_format($usageTotal ?? 0) }} kWh">
                         <div style="position: absolute; top: -25px; left: 50%; transform: translateX(-50%); color: #f1f5f9; font-size: 0.8rem; font-weight: 700;">
-                            {{ number_format($usage->total) }}
+                            {{ number_format($usageTotal ?? 0) }}
                         </div>
                     </div>
 
                     <div style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; margin-top: 12px;">
-                        {{ $usage->billing_month }}
+                        {{ $usage->billing_month ?? 'N/A' }}
                     </div>
                 </div>
 
@@ -659,18 +659,20 @@
                     <div id="chart-weekly"
                         style="background: rgba(20, 35, 60, 0.3); border-radius: 18px; padding: 24px; border: 1px solid rgba(56, 189, 248, 0.2); height: 300px; position: relative; overflow: hidden; display: none; align-items: flex-end; gap: 20px;">
                         @php
-                            $maxWeekly = $weeklyUsage->max('total') ?: 100;
+                            $safeWeeklyUsage = collect($weeklyUsage ?? []);
+                            $maxWeekly = $safeWeeklyUsage->max('total') ?: 100;
                         @endphp
-                        @foreach($weeklyUsage as $usage)
+                        @foreach($safeWeeklyUsage as $usage)
                             @php
-                                $height = ($usage->total / $maxWeekly) * 200;
-                                $color = $usage->total > 50 ? '#10B981' : ($usage->total > 25 ? '#38BDF8' : '#F59E0B');
+                                $usageTotal = (float) ($usage->total ?? 0);
+                                $height = $maxWeekly > 0 ? ($usageTotal / $maxWeekly) * 200 : 0;
+                                $color = $usageTotal > 50 ? '#10B981' : ($usageTotal > 25 ? '#38BDF8' : '#F59E0B');
                             @endphp
                             <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
-                                <div style="width: 30px; height: {{ $height }}px; background: linear-gradient(to top, {{ $color }}, {{ $color }}99); border-radius: 8px 8px 0 0; position: relative;" title="{{ number_format($usage->total) }} kWh">
-                                    <div style="position: absolute; top: -25px; left: 50%; transform: translateX(-50%); color: #f1f5f9; font-size: 0.8rem; font-weight: 700;">{{ number_format($usage->total) }}</div>
+                                <div style="width: 30px; height: {{ $height }}px; background: linear-gradient(to top, {{ $color }}, {{ $color }}99); border-radius: 8px 8px 0 0; position: relative;" title="{{ number_format($usageTotal ?? 0) }} kWh">
+                                    <div style="position: absolute; top: -25px; left: 50%; transform: translateX(-50%); color: #f1f5f9; font-size: 0.8rem; font-weight: 700;">{{ number_format($usageTotal ?? 0) }}</div>
                                 </div>
-                                <div style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; margin-top: 12px;">Wk {{ $usage->week_no }}</div>
+                                <div style="color: #94a3b8; font-size: 0.85rem; font-weight: 600; margin-top: 12px;">Wk {{ $usage->week_no ?? '?' }}</div>
                             </div>
                         @endforeach
 
@@ -683,18 +685,20 @@
                     <div id="chart-daily"
                         style="background: rgba(20, 35, 60, 0.3); border-radius: 18px; padding: 24px; border: 1px solid rgba(56, 189, 248, 0.2); height: 300px; position: relative; overflow: hidden; display: none; align-items: flex-end; gap: 20px;">
                         @php
-                            $maxDaily = $dailyUsage->max('total') ?: 100;
+                            $safeDailyUsage = collect($dailyUsage ?? []);
+                            $maxDaily = $safeDailyUsage->max('total') ?: 100;
                         @endphp
-                        @foreach($dailyUsage as $usage)
+                        @foreach($safeDailyUsage as $usage)
                             @php
-                                $height = ($usage->total / $maxDaily) * 200;
-                                $color = $usage->total > 20 ? '#10B981' : ($usage->total > 10 ? '#38BDF8' : '#F59E0B');
+                                $usageTotal = (float) ($usage->total ?? 0);
+                                $height = $maxDaily > 0 ? ($usageTotal / $maxDaily) * 200 : 0;
+                                $color = $usageTotal > 20 ? '#10B981' : ($usageTotal > 10 ? '#38BDF8' : '#F59E0B');
                             @endphp
                             <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
-                                <div style="width: 30px; height: {{ $height }}px; background: linear-gradient(to top, {{ $color }}, {{ $color }}99); border-radius: 8px 8px 0 0; position: relative;" title="{{ number_format($usage->total) }} kWh">
-                                    <div style="position: absolute; top: -25px; left: 50%; transform: translateX(-50%); color: #f1f5f9; font-size: 0.8rem; font-weight: 700;">{{ number_format($usage->total) }}</div>
+                                <div style="width: 30px; height: {{ $height }}px; background: linear-gradient(to top, {{ $color }}, {{ $color }}99); border-radius: 8px 8px 0 0; position: relative;" title="{{ number_format($usageTotal ?? 0) }} kWh">
+                                    <div style="position: absolute; top: -25px; left: 50%; transform: translateX(-50%); color: #f1f5f9; font-size: 0.8rem; font-weight: 700;">{{ number_format($usageTotal ?? 0) }}</div>
                                 </div>
-                                <div style="color: #94a3b8; font-size: 0.75rem; font-weight: 600; margin-top: 12px;">{{ \Carbon\Carbon::parse($usage->date)->format('M d') }}</div>
+                                <div style="color: #94a3b8; font-size: 0.75rem; font-weight: 600; margin-top: 12px;">{{ isset($usage->date) ? \Carbon\Carbon::parse($usage->date)->format('M d') : 'N/A' }}</div>
                             </div>
                         @endforeach
 
