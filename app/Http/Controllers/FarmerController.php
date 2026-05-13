@@ -120,6 +120,7 @@ class FarmerController extends Controller
                 $aiInsight = "Peak usage detected. Shifting operations to 10 PM - 6 AM could reduce your bill by ~15%.";
             }
         } catch (\Exception $e) {
+            \Log::error('MongoDB Analytics Error', ['message' => $e->getMessage()]);
             // Fallback for MongoDB failures
             $monthlyUsage = collect();
             $weeklyUsage = collect();

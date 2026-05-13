@@ -19,6 +19,7 @@ class PowerUsage extends Model
     ];
 
     protected $casts = [
+        'farmer_id' => 'integer',
         'units_consumed' => 'decimal:2',
         'bill_amount' => 'decimal:2',
         'meter_reading' => 'decimal:2',

@@ -210,10 +210,10 @@ class AdminController extends Controller
         ]);
 
         $billAmount = $validated['units_consumed'] * 7;
-
+        
         try {
-            PowerUsage::create([
-                'farmer_id' => $validated['farmer_id'],
+            $usage = PowerUsage::create([
+                'farmer_id' => (int) $validated['farmer_id'],
                 'units_consumed' => $validated['units_consumed'],
                 'meter_reading' => $validated['meter_reading'],
                 'bill_amount' => $billAmount,
@@ -221,6 +221,7 @@ class AdminController extends Controller
                 'payment_status' => $validated['payment_status'],
             ]);
         } catch (\Exception $e) {
+            \Log::error('Power Usage Save Failure', ['error' => $e->getMessage()]);
             return back()->with('error', 'Failed to save usage data to MongoDB Atlas. Please try again later.');
         }
 
