@@ -15,6 +15,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => AdminMiddleware::class,
         ]);
+
+        $middleware->redirectTo(
+            guests: '/login',
+            users: '/',
+        );
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

@@ -46,6 +46,17 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
+        // Redirect based on user role (New users are farmers by default)
+        $role = $user->role;
+
+        if ($role === 'admin') {
+            return redirect(route('admin.dashboard', absolute: false));
+        } elseif ($role === 'government') {
+            return redirect(route('government.dashboard', absolute: false));
+        } elseif ($role === 'farmer') {
+            return redirect(route('farmer.dashboard', absolute: false));
+        }
+
         return redirect(route('dashboard', absolute: false));
     }
 }
