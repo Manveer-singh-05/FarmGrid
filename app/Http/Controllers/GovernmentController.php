@@ -9,6 +9,7 @@ use App\Models\PowerUsage;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use MongoDB\BSON\UTCDateTime;
 
 class GovernmentController extends Controller
 {
@@ -313,6 +314,16 @@ class GovernmentController extends Controller
         }
 
         // MongoDB BSON Date (UTCDateTime)
+        if ($date instanceof UTCDateTime) {
+            try {
+                return Carbon::instance($date->toDateTime());
+            } catch (\Exception $e) {
+                \Log::warning("parseSafeDate - UTCDateTime conversion failed");
+                return null;
+            }
+        }
+
+        // Generic object with toDateTime (backup check)
         if (is_object($date) && method_exists($date, 'toDateTime')) {
             try {
                 return Carbon::instance($date->toDateTime());
