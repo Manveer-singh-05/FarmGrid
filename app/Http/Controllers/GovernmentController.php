@@ -89,12 +89,7 @@ class GovernmentController extends Controller
             $highUsage = PowerUsage::orderBy('units_consumed', 'desc')->first();
             if ($highUsage && (float)($highUsage->units_consumed ?? 0) > 100) { 
                 // Safe name extraction
-                $farmerName = 'A connection';
-                try {
-                    $farmerName = optional(optional($highUsage->farmer)->user)->name ?? 'A connection';
-                } catch (\Exception $e) {
-                    $farmerName = 'A connection';
-                }
+                $farmerName = $this->getSafeFarmerName($highUsage);
 
                 // Safe date handling
                 $carbonDate = $this->parseSafeDate($highUsage->created_at);
@@ -342,5 +337,59 @@ class GovernmentController extends Controller
         }
 
         return null;
+    }
+
+    /**
+     * Robustly resolve farmer name from a PowerUsage record
+     * Handles missing relations, malformed records, and inconsistent structures
+     */
+    private function getSafeFarmerName($usage)
+    {
+        $default = 'A connection';
+        
+        if (!$usage || !is_object($usage)) {
+            return $default;
+        }
+
+        try {
+            // 1. Attempt to resolve the farmer relation
+            $farmer = null;
+            if (method_exists($usage, 'farmer')) {
+                $farmer = $usage->farmer;
+            } elseif (isset($usage->farmer)) {
+                $farmer = $usage->farmer;
+            }
+
+            if (!$farmer || !is_object($farmer)) {
+                return $default;
+            }
+
+            // 2. Direct name check on farmer model
+            if (isset($farmer->name) && !empty($farmer->name)) {
+                return (string)$farmer->name;
+            }
+
+            // 3. Resolve the user relation from the farmer
+            $user = null;
+            if (method_exists($farmer, 'user')) {
+                $user = $farmer->user;
+            } elseif (isset($farmer->user)) {
+                $user = $farmer->user;
+            }
+
+            if ($user && is_object($user) && isset($user->name) && !empty($user->name)) {
+                return (string)$user->name;
+            }
+
+            // 4. Connection number as a secondary fallback
+            if (isset($farmer->connection_no) && !empty($farmer->connection_no)) {
+                return "Conn #" . $farmer->connection_no;
+            }
+
+        } catch (\Exception $e) {
+            \Log::warning("Farmer Name Resolution Failure: " . $e->getMessage());
+        }
+
+        return $default;
     }
 }
