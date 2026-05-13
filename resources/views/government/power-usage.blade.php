@@ -35,7 +35,27 @@
                                 <td style="padding: 16px; color: #f1f5f9; font-weight: 600; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ optional(optional($usage->farmer)->user)->name ?? 'N/A' }}</td>
                                 <td style="padding: 16px; color: #F59E0B; font-weight: 700; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ number_format((float)($usage->units_consumed ?? 0), 1) }}</td>
                                 <td style="padding: 16px; color: #cbd5e1; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ number_format((float)($usage->meter_reading ?? 0), 2) }} kWh</td>
-                                <td style="padding: 16px; color: #94a3b8; font-size: 0.85rem; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ $usage->created_at instanceof \Carbon\Carbon ? $usage->created_at->format('M d, Y') : ($usage->created_at ?? 'N/A') }}</td>
+                                <td style="padding: 16px; color: #94a3b8; font-size: 0.85rem; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">
+                                    @php
+                                        $displayDate = 'N/A';
+                                        if (!empty($usage->created_at)) {
+                                            if ($usage->created_at instanceof \Carbon\Carbon) {
+                                                $displayDate = $usage->created_at->format('M d, Y');
+                                            } elseif (is_object($usage->created_at) && method_exists($usage->created_at, 'toDateTime')) {
+                                                $displayDate = \Carbon\Carbon::instance($usage->created_at->toDateTime())->format('M d, Y');
+                                            } elseif (is_string($usage->created_at)) {
+                                                try {
+                                                    $displayDate = \Carbon\Carbon::parse($usage->created_at)->format('M d, Y');
+                                                } catch (\Exception $e) {
+                                                    $displayDate = (string)$usage->created_at;
+                                                }
+                                            } else {
+                                                $displayDate = (string)$usage->created_at;
+                                            }
+                                        }
+                                    @endphp
+                                    {{ $displayDate }}
+                                </td>
                             </tr>
                         @empty
                             <tr>

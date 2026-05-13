@@ -8,6 +8,7 @@ use App\Models\Complaint;
 use App\Models\PowerUsage;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class GovernmentController extends Controller
 {
@@ -65,17 +66,8 @@ class GovernmentController extends Controller
             $dailyUsage = PowerUsage::where('created_at', '>=', $fourteenDaysAgo)
                 ->get()
                 ->groupBy(function($u) {
-                    if ($u->created_at instanceof \Carbon\Carbon) {
-                        return $u->created_at->format('Y-m-d');
-                    }
-                    if (is_string($u->created_at)) {
-                        try {
-                            return \Carbon\Carbon::parse($u->created_at)->format('Y-m-d');
-                        } catch (\Exception $e) {
-                            return 'unknown';
-                        }
-                    }
-                    return 'unknown';
+                    $carbon = $this->parseSafeDate($u->created_at);
+                    return $carbon ? $carbon->format('Y-m-d') : 'unknown';
                 })
                 ->map(fn($items, $date) => (object)[
                     'total' => (float)($items->sum('units_consumed') ?? 0), 
@@ -104,16 +96,8 @@ class GovernmentController extends Controller
                 }
 
                 // Safe date handling
-                $usageTime = 'Recently';
-                if ($highUsage->created_at instanceof \Carbon\Carbon) {
-                    $usageTime = $highUsage->created_at->diffForHumans();
-                } elseif (!empty($highUsage->created_at)) {
-                    try {
-                        $usageTime = \Carbon\Carbon::parse($highUsage->created_at)->diffForHumans();
-                    } catch (\Exception $e) {
-                        $usageTime = 'Recently';
-                    }
-                }
+                $carbonDate = $this->parseSafeDate($highUsage->created_at);
+                $usageTime = $carbonDate ? $carbonDate->diffForHumans() : 'Recently';
 
                 $alerts[] = [
                     'type' => 'critical',
@@ -153,10 +137,8 @@ class GovernmentController extends Controller
         try {
             $recentResolved = Complaint::where('status', 'resolved')->latest()->first();
             if ($recentResolved) {
-                $resolvedTime = 'Just now';
-                if ($recentResolved->updated_at instanceof \Carbon\Carbon) {
-                    $resolvedTime = $recentResolved->updated_at->diffForHumans();
-                }
+                $carbonResolved = $this->parseSafeDate($recentResolved->updated_at);
+                $resolvedTime = $carbonResolved ? $carbonResolved->diffForHumans() : 'Just now';
 
                 $alerts[] = [
                     'type' => 'success',
@@ -308,5 +290,46 @@ class GovernmentController extends Controller
             'totalPowerUsage',
             'avgPowerUsage'
         ));
+    }
+
+    /**
+     * Safely convert various date types to Carbon instance
+     * Supports MySQL, MongoDB BSON dates, and malformed strings
+     */
+    private function parseSafeDate($date)
+    {
+        if (empty($date)) {
+            return null;
+        }
+
+        // Already Carbon
+        if ($date instanceof Carbon) {
+            return $date;
+        }
+
+        // Generic PHP DateTime
+        if ($date instanceof \DateTimeInterface) {
+            return Carbon::instance($date);
+        }
+
+        // MongoDB BSON Date (UTCDateTime)
+        if (is_object($date) && method_exists($date, 'toDateTime')) {
+            try {
+                return Carbon::instance($date->toDateTime());
+            } catch (\Exception $e) {
+                return null;
+            }
+        }
+
+        // Strings or Timestamps
+        if (is_string($date) || is_numeric($date)) {
+            try {
+                return Carbon::parse($date);
+            } catch (\Exception $e) {
+                return null;
+            }
+        }
+
+        return null;
     }
 }
