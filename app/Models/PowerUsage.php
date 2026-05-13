@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use MongoDB\Laravel\Eloquent\Model;
+use MongoDB\Laravel\Eloquent\HybridRelations;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PowerUsage extends Model
 {
+    use HybridRelations;
+
     protected $connection = 'mongodb';
 
     protected $fillable = [
