@@ -64,7 +64,19 @@ class GovernmentController extends Controller
             $fourteenDaysAgo = now()->subDays(14)->startOfDay();
             $dailyUsage = PowerUsage::where('created_at', '>=', $fourteenDaysAgo)
                 ->get()
-                ->groupBy(fn($u) => $u->created_at ? $u->created_at->format('Y-m-d') : 'unknown')
+                ->groupBy(function($u) {
+                    if ($u->created_at instanceof \Carbon\Carbon) {
+                        return $u->created_at->format('Y-m-d');
+                    }
+                    if (is_string($u->created_at)) {
+                        try {
+                            return \Carbon\Carbon::parse($u->created_at)->format('Y-m-d');
+                        } catch (\Exception $e) {
+                            return 'unknown';
+                        }
+                    }
+                    return 'unknown';
+                })
                 ->map(fn($items, $date) => (object)[
                     'total' => (float)($items->sum('units_consumed') ?? 0), 
                     'date' => (string)$date
@@ -82,12 +94,32 @@ class GovernmentController extends Controller
         try {
             // High Usage Alert
             $highUsage = PowerUsage::orderBy('units_consumed', 'desc')->first();
-            if ($highUsage && (float)$highUsage->units_consumed > 100) { // Lowered threshold for visibility
+            if ($highUsage && (float)($highUsage->units_consumed ?? 0) > 100) { 
+                // Safe name extraction
+                $farmerName = 'A connection';
+                try {
+                    $farmerName = optional(optional($highUsage->farmer)->user)->name ?? 'A connection';
+                } catch (\Exception $e) {
+                    $farmerName = 'A connection';
+                }
+
+                // Safe date handling
+                $usageTime = 'Recently';
+                if ($highUsage->created_at instanceof \Carbon\Carbon) {
+                    $usageTime = $highUsage->created_at->diffForHumans();
+                } elseif (!empty($highUsage->created_at)) {
+                    try {
+                        $usageTime = \Carbon\Carbon::parse($highUsage->created_at)->diffForHumans();
+                    } catch (\Exception $e) {
+                        $usageTime = 'Recently';
+                    }
+                }
+
                 $alerts[] = [
                     'type' => 'critical',
                     'title' => 'High Load Detected',
-                    'description' => ($highUsage->farmer?->user?->name ?? 'A connection') . " recorded " . number_format((float)($highUsage->units_consumed ?? 0), 1) . " kWh.",
-                    'time' => $highUsage->created_at ? $highUsage->created_at->diffForHumans() : 'Recently',
+                    'description' => "{$farmerName} recorded " . number_format((float)($highUsage->units_consumed ?? 0), 1) . " kWh.",
+                    'time' => $usageTime,
                     'color' => '#EF4444'
                 ];
             }
@@ -95,9 +127,15 @@ class GovernmentController extends Controller
             // Demand Spike Check
             $avgDaily = (float)(PowerUsage::avg('units_consumed') ?: 0);
             $startOfToday = now()->startOfDay();
-            $todayUsage = (float)PowerUsage::where('created_at', '>=', $startOfToday)->sum('units_consumed');
             
-            if ($todayUsage > ($avgDaily * 1.2) && $avgDaily > 0) {
+            // Safe summing with try-catch for MongoDB date issues
+            try {
+                $todayUsage = (float)PowerUsage::where('created_at', '>=', $startOfToday)->sum('units_consumed');
+            } catch (\Exception $e) {
+                $todayUsage = 0;
+            }
+            
+            if ($avgDaily > 0 && $todayUsage > ($avgDaily * 1.2)) {
                 $spikePercent = round((($todayUsage / $avgDaily) - 1) * 100);
                 $alerts[] = [
                     'type' => 'warning',
@@ -115,11 +153,16 @@ class GovernmentController extends Controller
         try {
             $recentResolved = Complaint::where('status', 'resolved')->latest()->first();
             if ($recentResolved) {
+                $resolvedTime = 'Just now';
+                if ($recentResolved->updated_at instanceof \Carbon\Carbon) {
+                    $resolvedTime = $recentResolved->updated_at->diffForHumans();
+                }
+
                 $alerts[] = [
                     'type' => 'success',
                     'title' => 'Resolution Sync',
                     'description' => "Issue #{$recentResolved->id} (" . ucfirst($recentResolved->issue_type ?? 'Issue') . ") successfully resolved.",
-                    'time' => $recentResolved->updated_at ? $recentResolved->updated_at->diffForHumans() : 'Just now',
+                    'time' => $resolvedTime,
                     'color' => '#10B981'
                 ];
             }

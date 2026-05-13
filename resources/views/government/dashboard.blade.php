@@ -200,7 +200,7 @@
                     @forelse($safeDailyUsage as $usage)
                         <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;">
                             <div class="hover-lift" style="width: 100%; height: {{ (($usage->total ?? 0) / $maxDailyTotal) * 100 }}%; background: linear-gradient(to top, rgba(16, 185, 129, 0.4), rgba(56, 189, 248, 0.4)); border-top: 2px solid #10B981; border-radius: 4px 4px 0 0;" title="{{ number_format((float)($usage->total ?? 0)) }} kWh"></div>
-                            <span style="color: #64748b; font-size: 0.6rem; font-weight: 700; transform: rotate(-45deg); margin-top: 10px;">{{ isset($usage->date) ? \Carbon\Carbon::parse($usage->date)->format('M d') : 'N/A' }}</span>
+                            <span style="color: #64748b; font-size: 0.6rem; font-weight: 700; transform: rotate(-45deg); margin-top: 10px;">{{ (isset($usage->date) && $usage->date !== 'unknown') ? \Carbon\Carbon::parse($usage->date)->format('M d') : 'N/A' }}</span>
                         </div>
                     @empty
                         <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #64748b; font-style: italic;">No daily data recorded.</div>
