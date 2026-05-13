@@ -33,19 +33,7 @@
                         @forelse ($powerUsage as $usage)
                             <tr style="transition: background 0.3s ease;" onmouseover="this.style.background='rgba(245, 158, 11, 0.05)'" onmouseout="this.style.background='transparent'">
                                 <td style="padding: 16px; color: #f1f5f9; font-weight: 600; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">
-                                    @php
-                                        $farmerName = 'N/A';
-                                        try {
-                                            if (isset($usage->farmer)) {
-                                                $farmerName = optional($usage->farmer->user)->name 
-                                                    ?? ($usage->farmer->name 
-                                                    ?? ($usage->farmer->connection_no ? 'Conn #' . $usage->farmer->connection_no : 'N/A'));
-                                            }
-                                        } catch (\Exception $e) {
-                                            $farmerName = 'N/A';
-                                        }
-                                    @endphp
-                                    {{ $farmerName }}
+                                    {{ $usage->farmer_name ?? 'N/A' }}
                                 </td>
                                 <td style="padding: 16px; color: #F59E0B; font-weight: 700; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ number_format((float)($usage->units_consumed ?? 0), 1) }}</td>
                                 <td style="padding: 16px; color: #cbd5e1; border-bottom: 1px solid rgba(56, 189, 248, 0.05);">{{ number_format((float)($usage->meter_reading ?? 0), 2) }} kWh</td>

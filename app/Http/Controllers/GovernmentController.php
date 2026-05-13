@@ -205,8 +205,14 @@ class GovernmentController extends Controller
     public function powerUsage()
     {
         try {
-            // Fetch paginated usage with farmer relation (safe check in Blade)
-            $powerUsage = PowerUsage::with('farmer')->paginate(15);
+            // Fetch paginated usage (STOP using with('farmer') for hybrid architecture stability)
+            $powerUsage = PowerUsage::paginate(15);
+            
+            // Manually resolve names for the collection (Hybrid MySQL + MongoDB lookup)
+            $powerUsage->getCollection()->transform(function($usage) {
+                $usage->farmer_name = $this->getSafeFarmerName($usage);
+                return $usage;
+            });
             
             // Safe aggregations with null coalescing and logging
             $totalUsage = (float)(PowerUsage::sum('units_consumed') ?? 0);
@@ -341,7 +347,7 @@ class GovernmentController extends Controller
 
     /**
      * Robustly resolve farmer name from a PowerUsage record
-     * Handles missing relations, malformed records, and inconsistent structures
+     * Hybrid Architecture Support: Manually fetches MySQL models using MongoDB IDs
      */
     private function getSafeFarmerName($usage)
     {
@@ -352,42 +358,37 @@ class GovernmentController extends Controller
         }
 
         try {
-            // 1. Attempt to resolve the farmer relation
-            $farmer = null;
-            if (method_exists($usage, 'farmer')) {
-                $farmer = $usage->farmer;
-            } elseif (isset($usage->farmer)) {
-                $farmer = $usage->farmer;
-            }
-
-            if (!$farmer || !is_object($farmer)) {
+            // 1. Safely read farmer_id directly from MongoDB record
+            $farmerId = $usage->farmer_id;
+            
+            if (!$farmerId) {
                 return $default;
             }
 
-            // 2. Direct name check on farmer model
+            // 2. Manual MySQL Lookup (Hybrid Database Support)
+            $farmer = Farmer::find($farmerId);
+            
+            if (!$farmer) {
+                return $default;
+            }
+
+            // 3. Resolve Name from User (MySQL to MySQL relation is stable)
+            $user = $farmer->user;
+            if ($user && isset($user->name) && !empty($user->name)) {
+                return (string)$user->name;
+            }
+
+            // 4. Fallback to Farmer attributes
             if (isset($farmer->name) && !empty($farmer->name)) {
                 return (string)$farmer->name;
             }
 
-            // 3. Resolve the user relation from the farmer
-            $user = null;
-            if (method_exists($farmer, 'user')) {
-                $user = $farmer->user;
-            } elseif (isset($farmer->user)) {
-                $user = $farmer->user;
-            }
-
-            if ($user && is_object($user) && isset($user->name) && !empty($user->name)) {
-                return (string)$user->name;
-            }
-
-            // 4. Connection number as a secondary fallback
             if (isset($farmer->connection_no) && !empty($farmer->connection_no)) {
                 return "Conn #" . $farmer->connection_no;
             }
 
         } catch (\Exception $e) {
-            \Log::warning("Farmer Name Resolution Failure: " . $e->getMessage());
+            \Log::warning("Hybrid Name Resolution Failure: " . $e->getMessage());
         }
 
         return $default;
