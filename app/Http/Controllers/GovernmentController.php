@@ -16,6 +16,7 @@ class GovernmentController extends Controller
      */
     public function dashboard()
     {
+        // 1. Basic Stats (MySQL - very stable)
         try {
             $totalFarmers = Farmer::count();
             $approvedFarmers = Farmer::where('status', 'approved')->count();
@@ -23,6 +24,7 @@ class GovernmentController extends Controller
             $resolvedComplaints = Complaint::where('status', 'resolved')->count();
             $schedules = ElectricitySchedule::all();
         } catch (\Exception $e) {
+            \Log::error("Gov Dashboard - Basic Stats Failure: " . $e->getMessage());
             $totalFarmers = 0;
             $approvedFarmers = 0;
             $totalComplaints = 0;
@@ -30,73 +32,86 @@ class GovernmentController extends Controller
             $schedules = collect();
         }
         
+        // 2. Power Usage Totals (MongoDB)
         try {
             $totalPowerUsage = (float)(PowerUsage::sum('units_consumed') ?? 0);
+        } catch (\Exception $e) {
+            \Log::error("Gov Dashboard - Power Totals Failure: " . $e->getMessage());
+            $totalPowerUsage = 0;
+        }
 
-            // Monthly Trends Data (Last 12 Months)
+        // 3. Monthly Trends (MongoDB - limited fetch for performance)
+        try {
             $monthlyUsage = PowerUsage::latest()
-                ->limit(500)
+                ->limit(1000)
                 ->get()
                 ->filter(fn($u) => !empty($u->billing_month))
                 ->groupBy('billing_month')
-                ->map(fn($items, $month) => ['total' => (float)($items->sum('units_consumed') ?? 0), 'billing_month' => (string)$month])
+                ->map(fn($items, $month) => (object)[
+                    'total' => (float)($items->sum('units_consumed') ?? 0), 
+                    'billing_month' => (string)$month
+                ])
                 ->values()
                 ->take(12)
                 ->reverse();
+        } catch (\Exception $e) {
+            \Log::error("Gov Dashboard - Monthly Trends Failure: " . $e->getMessage());
+            $monthlyUsage = collect();
+        }
 
-            // Daily Trends Data (Last 14 Days)
-            $dailyUsage = PowerUsage::latest()
-                ->limit(500)
+        // 4. Daily Trends (MongoDB - range query for reliability)
+        try {
+            $fourteenDaysAgo = now()->subDays(14)->startOfDay();
+            $dailyUsage = PowerUsage::where('created_at', '>=', $fourteenDaysAgo)
                 ->get()
-                ->filter(fn($u) => $u->created_at instanceof \Carbon\Carbon)
-                ->groupBy(fn($u) => $u->created_at->format('Y-m-d'))
-                ->map(fn($items, $date) => ['total' => (float)($items->sum('units_consumed') ?? 0), 'date' => (string)$date])
+                ->groupBy(fn($u) => $u->created_at ? $u->created_at->format('Y-m-d') : 'unknown')
+                ->map(fn($items, $date) => (object)[
+                    'total' => (float)($items->sum('units_consumed') ?? 0), 
+                    'date' => (string)$date
+                ])
                 ->values()
-                ->take(14)
-                ->reverse();
+                ->sortBy('date')
+                ->take(14);
+        } catch (\Exception $e) {
+            \Log::error("Gov Dashboard - Daily Trends Failure: " . $e->getMessage());
+            $dailyUsage = collect();
+        }
 
-            // Dynamic Alerts Logic
-            $alerts = [];
-            
-            // 1. Voltage Drop Alert (Critical)
-            $highUsage = PowerUsage::where('units_consumed', '>', 500)->latest()->first();
-            if ($highUsage) {
+        // 5. Dynamic Alerts (MongoDB)
+        $alerts = [];
+        try {
+            // High Usage Alert
+            $highUsage = PowerUsage::orderBy('units_consumed', 'desc')->first();
+            if ($highUsage && (float)$highUsage->units_consumed > 100) { // Lowered threshold for visibility
                 $alerts[] = [
                     'type' => 'critical',
-                    'title' => 'Voltage Drop',
-                    'description' => "High load detected: " . ($highUsage->farmer?->user?->name ?? 'Unknown Farmer') . " consumed " . number_format((float)($highUsage->units_consumed ?? 0), 1) . " kWh.",
+                    'title' => 'High Load Detected',
+                    'description' => ($highUsage->farmer?->user?->name ?? 'A connection') . " recorded " . number_format((float)($highUsage->units_consumed ?? 0), 1) . " kWh.",
                     'time' => $highUsage->created_at ? $highUsage->created_at->diffForHumans() : 'Recently',
                     'color' => '#EF4444'
                 ];
             }
 
-            // 2. Demand Spike Alert (Warning)
+            // Demand Spike Check
             $avgDaily = (float)(PowerUsage::avg('units_consumed') ?: 0);
-            $todayUsage = (float)PowerUsage::whereDate('created_at', now())->sum('units_consumed');
-            if ($todayUsage > ($avgDaily * 1.5)) {
-                $spikePercent = $avgDaily > 0 ? round((($todayUsage / $avgDaily) - 1) * 100) : 0;
+            $startOfToday = now()->startOfDay();
+            $todayUsage = (float)PowerUsage::where('created_at', '>=', $startOfToday)->sum('units_consumed');
+            
+            if ($todayUsage > ($avgDaily * 1.2) && $avgDaily > 0) {
+                $spikePercent = round((($todayUsage / $avgDaily) - 1) * 100);
                 $alerts[] = [
                     'type' => 'warning',
                     'title' => 'Demand Spike',
-                    'description' => "System-wide demand increased by {$spikePercent}% today compared to average.",
+                    'description' => "Grid load is {$spikePercent}% higher today than historical average.",
                     'time' => 'Today',
                     'color' => '#F59E0B'
                 ];
             }
         } catch (\Exception $e) {
-            $totalPowerUsage = 0;
-            $monthlyUsage = collect();
-            $dailyUsage = collect();
-            $alerts = [[
-                'type' => 'warning',
-                'title' => 'Sync Delay',
-                'description' => 'Real-time usage analytics are currently delayed due to cluster sync.',
-                'time' => 'Now',
-                'color' => '#F59E0B'
-            ]];
+            \Log::warning("Gov Dashboard - Alerts Processing Partial Failure: " . $e->getMessage());
         }
 
-        // 3. Resolution Sync (Success) - Recently resolved complaints (SQL - safe)
+        // 6. Resolution Sync Alert (MySQL)
         try {
             $recentResolved = Complaint::where('status', 'resolved')->latest()->first();
             if ($recentResolved) {
@@ -112,6 +127,17 @@ class GovernmentController extends Controller
             // Ignore SQL failures for this minor alert
         }
 
+        // Fallback alert if everything else empty
+        if (empty($alerts) && $totalPowerUsage == 0) {
+            $alerts[] = [
+                'type' => 'info',
+                'title' => 'Data Syncing',
+                'description' => 'Usage telemetry is being synchronized from the regional grid.',
+                'time' => 'Now',
+                'color' => '#38BDF8'
+            ];
+        }
+
         return view('government.dashboard', compact(
             'totalFarmers',
             'approvedFarmers',
@@ -124,6 +150,7 @@ class GovernmentController extends Controller
             'alerts'
         ));
     }
+
 
     /**
      * View all farmers for reporting
@@ -160,7 +187,7 @@ class GovernmentController extends Controller
             // Fetch paginated usage with farmer relation (safe check in Blade)
             $powerUsage = PowerUsage::with('farmer')->paginate(15);
             
-            // Safe aggregations with null coalescing
+            // Safe aggregations with null coalescing and logging
             $totalUsage = (float)(PowerUsage::sum('units_consumed') ?? 0);
             $avgUsage = (float)(PowerUsage::avg('units_consumed') ?: 0);
         } catch (\Throwable $t) {
@@ -196,6 +223,7 @@ class GovernmentController extends Controller
      */
     public function reports()
     {
+        // 1. Farmer & Complaint Stats (MySQL)
         try {
             $totalFarmers = Farmer::count();
             $approvedFarmers = Farmer::where('status', 'approved')->count();
@@ -206,6 +234,7 @@ class GovernmentController extends Controller
             $pendingComplaints = Complaint::where('status', 'pending')->count();
             $resolvedComplaints = Complaint::where('status', 'resolved')->count();
         } catch (\Exception $e) {
+            \Log::error("Gov Reports - Basic Stats Failure: " . $e->getMessage());
             $totalFarmers = 0;
             $approvedFarmers = 0;
             $pendingFarmers = 0;
@@ -215,10 +244,12 @@ class GovernmentController extends Controller
             $resolvedComplaints = 0;
         }
 
+        // 2. Power Usage Analytics (MongoDB)
         try {
             $totalPowerUsage = (float)(PowerUsage::sum('units_consumed') ?? 0);
             $avgPowerUsage = (float)(PowerUsage::avg('units_consumed') ?: 0);
         } catch (\Exception $e) {
+            \Log::error("Gov Reports - Power Analytics Failure: " . $e->getMessage());
             $totalPowerUsage = 0;
             $avgPowerUsage = 0;
         }
