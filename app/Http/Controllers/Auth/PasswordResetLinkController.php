@@ -26,6 +26,15 @@ class PasswordResetLinkController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        // MASSIVE DIAGNOSTIC LOG
+        \Log::emergency("================================================================");
+        \Log::emergency("CRITICAL DIAGNOSTIC: PasswordResetLinkController@store CALLED");
+        \Log::emergency("EMAIL: " . $request->email);
+        \Log::emergency("METHOD: " . $request->method());
+        \Log::emergency("URL: " . $request->fullUrl());
+        \Log::emergency("IP: " . $request->ip());
+        \Log::emergency("================================================================");
+
         $request->validate([
             'email' => ['required', 'email'],
         ]);

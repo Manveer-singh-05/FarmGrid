@@ -12,7 +12,7 @@
         <!-- Email Address -->
         <div>
             <label for="email" class="glassmorphic-label block mb-2">{{ __('Email Address') }}</label>
-            <input id="email" class="glassmorphic-input block w-full" type="email" name="email" :value="old('email')"
+            <input id="email" class="glassmorphic-input block w-full" type="email" name="email" value="{{ old('email') }}"
                 required autofocus placeholder="Enter your email address" />
             <x-input-error :messages="$errors->get('email')" class="glassmorphic-error" />
         </div>

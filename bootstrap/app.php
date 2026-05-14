@@ -20,6 +20,8 @@ return Application::configure(basePath: dirname(__DIR__))
             guests: '/login',
             users: '/',
         );
+
+        $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
