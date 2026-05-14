@@ -6,18 +6,18 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <form method="POST" action="{{ route('password.email') }}" class="space-y-6">
+    <form method="POST" action="{{ route('password.email') }}" onsubmit="console.log('Form submitting to: ' + this.action); return true;" novalidate>
         @csrf
 
         <!-- Email Address -->
-        <div>
-            <label for="email" class="glassmorphic-label block mb-2">{{ __('Email Address') }}</label>
-            <input id="email" class="glassmorphic-input block w-full" type="email" name="email" value="{{ old('email') }}"
+        <div class="form-group">
+            <label for="email" class="glassmorphic-label">{{ __('Email Address') }}</label>
+            <input id="email" class="glassmorphic-input" type="email" name="email" value="{{ old('email') }}"
                 required autofocus placeholder="Enter your email address" />
             <x-input-error :messages="$errors->get('email')" class="glassmorphic-error" />
         </div>
 
-        <button type="submit" class="glassmorphic-button w-full justify-center text-center">
+        <button type="submit" class="glassmorphic-button" onclick="console.log('Button clicked!');">
             {{ __('Send Password Reset Link') }}
         </button>
 
