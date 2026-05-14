@@ -1,4 +1,10 @@
 <x-guest-layout>
+    <script>
+        console.log('Forgot Password Page Loaded');
+        document.addEventListener('submit', function(e) {
+            console.log('Submit event intercepted:', e.target.action);
+        }, true);
+    </script>
     <div class="mb-6 text-center text-white text-opacity-90">
         {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
     </div>
@@ -17,7 +23,8 @@
             <x-input-error :messages="$errors->get('email')" class="glassmorphic-error" />
         </div>
 
-        <button type="submit" class="glassmorphic-button" onclick="console.log('Button clicked!');">
+        <button type="button" class="glassmorphic-button" 
+            onclick="console.log('Submit button clicked manually'); console.log('Action:', this.form.action); this.form.submit();">
             {{ __('Send Password Reset Link') }}
         </button>
 
