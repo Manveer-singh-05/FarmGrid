@@ -34,9 +34,10 @@ class GovernmentController extends Controller
             $schedules = collect();
         }
         
-        // 2. Power Usage Totals (MongoDB)
+        // 2. Power Usage Totals (MongoDB - robust aggregation)
         try {
-            $totalPowerUsage = (float)(PowerUsage::sum('units_consumed') ?? 0);
+            // Using pluck()->sum() is safer for mixed types in MongoDB (strings vs numbers)
+            $totalPowerUsage = (float)(PowerUsage::pluck('units_consumed')->sum() ?? 0);
         } catch (\Exception $e) {
             \Log::error("Gov Dashboard - Power Totals Failure: " . $e->getMessage());
             $totalPowerUsage = 0;
@@ -214,8 +215,8 @@ class GovernmentController extends Controller
                 return $usage;
             });
             
-            // Safe aggregations with null coalescing and logging
-            $totalUsage = (float)(PowerUsage::sum('units_consumed') ?? 0);
+            // Safe aggregations with null coalescing and type-safe summing
+            $totalUsage = (float)(PowerUsage::pluck('units_consumed')->sum() ?? 0);
             $avgUsage = (float)(PowerUsage::avg('units_consumed') ?: 0);
         } catch (\Throwable $t) {
             // Production logging for debugging sync/data issues
@@ -271,9 +272,9 @@ class GovernmentController extends Controller
             $resolvedComplaints = 0;
         }
 
-        // 2. Power Usage Analytics (MongoDB)
+        // 2. Power Usage Analytics (MongoDB - hardened)
         try {
-            $totalPowerUsage = (float)(PowerUsage::sum('units_consumed') ?? 0);
+            $totalPowerUsage = (float)(PowerUsage::pluck('units_consumed')->sum() ?? 0);
             $avgPowerUsage = (float)(PowerUsage::avg('units_consumed') ?: 0);
         } catch (\Exception $e) {
             \Log::error("Gov Reports - Power Analytics Failure: " . $e->getMessage());
