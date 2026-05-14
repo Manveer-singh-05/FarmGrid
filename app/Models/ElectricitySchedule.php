@@ -32,8 +32,8 @@ class ElectricitySchedule extends Model
      */
     public function getIsCurrentlyActiveAttribute(): bool
     {
-        if ($this->status !== 'active') return false;
-
+        if (($this->status ?? '') !== 'active') return false;
+        /*  if ($this->status !== 'active') return false;*/
         $now = now();
         
         // Day of week check
@@ -44,19 +44,30 @@ class ElectricitySchedule extends Model
             if (!in_array($this->day_of_week, ['Daily', 'Weekdays', 'Weekends']) && $this->day_of_week !== $today) return false;
         }
 
-        $start = \Carbon\Carbon::parse($this->getRawOriginal('start_time'))->setDate($now->year, $now->month, $now->day);
-        $end = \Carbon\Carbon::parse($this->getRawOriginal('end_time'))->setDate($now->year, $now->month, $now->day);
+        try {
+            $rawStart = $this->getRawOriginal('start_time');
+            $rawEnd = $this->getRawOriginal('end_time');
+            
+            if (!$rawStart || !$rawEnd) return false;
 
-        // Handle overnight schedules
-        if ($end->lt($start)) {
-            if ($now->lt($start)) {
-                $start->subDay();
-            } else {
-                $end->addDay();
+            // Use setTimeFromTimeString to safely normalize time-only strings to today's date in app timezone
+            // This avoids issues with Carbon::parse() defaulting to different dates or timezones
+            $start = $now->copy()->setTimeFromTimeString($rawStart);
+            $end = $now->copy()->setTimeFromTimeString($rawEnd);
+
+            // Handle overnight schedules (e.g., 22:00 to 02:00)
+            if ($end->lt($start)) {
+                if ($now->lt($start)) {
+                    $start->subDay();
+                } else {
+                    $end->addDay();
+                }
             }
-        }
 
-        return $now->between($start, $end);
+            return $now->between($start, $end);
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 
     /**
@@ -70,18 +81,26 @@ class ElectricitySchedule extends Model
         if ($this->is_currently_active) return 'active';
 
         $now = now();
-        $start = \Carbon\Carbon::parse($this->getRawOriginal('start_time'))->setDate($now->year, $now->month, $now->day);
         
-        // Basic upcoming check
-        if ($now->lt($start)) {
-             // Check if it's for today
-             if ($this->day_of_week && $this->day_of_week !== 'Daily') {
-                $today = $now->format('l');
-                if ($this->day_of_week === 'Weekdays' && in_array($today, ['Saturday', 'Sunday'])) return 'inactive';
-                if ($this->day_of_week === 'Weekends' && !in_array($today, ['Saturday', 'Sunday'])) return 'inactive';
-                if (!in_array($this->day_of_week, ['Daily', 'Weekdays', 'Weekends']) && $this->day_of_week !== $today) return 'inactive';
+        try {
+            $rawStart = $this->getRawOriginal('start_time');
+            if (!$rawStart) return 'inactive';
+
+            $start = $now->copy()->setTimeFromTimeString($rawStart);
+            
+            // Basic upcoming check
+            if ($now->lt($start)) {
+                 // Check if it's for today
+                 if ($this->day_of_week && $this->day_of_week !== 'Daily') {
+                    $today = $now->format('l');
+                    if ($this->day_of_week === 'Weekdays' && in_array($today, ['Saturday', 'Sunday'])) return 'inactive';
+                    if ($this->day_of_week === 'Weekends' && !in_array($today, ['Saturday', 'Sunday'])) return 'inactive';
+                    if (!in_array($this->day_of_week, ['Daily', 'Weekdays', 'Weekends']) && $this->day_of_week !== $today) return 'inactive';
+                }
+                return 'upcoming';
             }
-            return 'upcoming';
+        } catch (\Exception $e) {
+            return 'inactive';
         }
 
         return 'completed';
