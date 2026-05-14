@@ -105,13 +105,14 @@ class GovernmentController extends Controller
                 ];
             }
 
-            // Demand Spike Check
-            $avgDaily = (float)(PowerUsage::avg('units_consumed') ?: 0);
+            // Demand Spike Check (Robust Avg Calculation)
+            $allUnits = PowerUsage::pluck('units_consumed');
+            $avgDaily = (float)($allUnits->avg() ?: 0);
             $startOfToday = now()->startOfDay();
             
             // Safe summing with try-catch for MongoDB date issues
             try {
-                $todayUsage = (float)PowerUsage::where('created_at', '>=', $startOfToday)->sum('units_consumed');
+                $todayUsage = (float)PowerUsage::where('created_at', '>=', $startOfToday)->pluck('units_consumed')->sum();
             } catch (\Exception $e) {
                 $todayUsage = 0;
             }
@@ -206,8 +207,8 @@ class GovernmentController extends Controller
     public function powerUsage()
     {
         try {
-            // Fetch paginated usage (STOP using with('farmer') for hybrid architecture stability)
-            $powerUsage = PowerUsage::paginate(15);
+            // Fetch paginated usage (Hybrid Architecture: Manual relation resolution)
+            $powerUsage = PowerUsage::latest()->paginate(15);
             
             // Manually resolve names for the collection (Hybrid MySQL + MongoDB lookup)
             $powerUsage->getCollection()->transform(function($usage) {
@@ -215,9 +216,10 @@ class GovernmentController extends Controller
                 return $usage;
             });
             
-            // Safe aggregations with null coalescing and type-safe summing
-            $totalUsage = (float)(PowerUsage::pluck('units_consumed')->sum() ?? 0);
-            $avgUsage = (float)(PowerUsage::avg('units_consumed') ?: 0);
+            // Safe aggregations using pluck() to avoid Decimal128 cast exceptions
+            $usageValues = PowerUsage::pluck('units_consumed');
+            $totalUsage = (float)($usageValues->sum() ?? 0);
+            $avgUsage = (float)($usageValues->avg() ?: 0);
         } catch (\Throwable $t) {
             // Production logging for debugging sync/data issues
             \Log::error("Government Dashboard - Power Usage Analytics Failure: " . $t->getMessage(), [
@@ -274,8 +276,9 @@ class GovernmentController extends Controller
 
         // 2. Power Usage Analytics (MongoDB - hardened)
         try {
-            $totalPowerUsage = (float)(PowerUsage::pluck('units_consumed')->sum() ?? 0);
-            $avgPowerUsage = (float)(PowerUsage::avg('units_consumed') ?: 0);
+            $reportUsage = PowerUsage::pluck('units_consumed');
+            $totalPowerUsage = (float)($reportUsage->sum() ?? 0);
+            $avgPowerUsage = (float)($reportUsage->avg() ?: 0);
         } catch (\Exception $e) {
             \Log::error("Gov Reports - Power Analytics Failure: " . $e->getMessage());
             $totalPowerUsage = 0;
