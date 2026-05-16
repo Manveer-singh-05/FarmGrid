@@ -48,12 +48,13 @@ class PasswordResetLinkController extends Controller
             // DIAGNOSTIC LOGGING
             \Log::info("PASSWORD_RESET_DEBUG: Dispatching Reset Link...", [
                 'email' => $request->email,
+                'runtime_host' => config('mail.mailers.smtp.host'),
+                'runtime_port' => config('mail.mailers.smtp.port'),
+                'runtime_encryption' => config('mail.mailers.smtp.encryption'),
+                'runtime_from' => config('mail.from.address'),
+                'env_host' => env('MAIL_HOST'), // Check if env() differs from config()
                 'mailer' => config('mail.default'),
-                'host' => config('mail.mailers.smtp.host'),
-                'port' => config('mail.mailers.smtp.port'),
-                'encryption' => config('mail.mailers.smtp.encryption'),
                 'timeout' => config('mail.mailers.smtp.timeout'),
-                'app_url' => config('app.url')
             ]);
 
             $startTime = microtime(true);
