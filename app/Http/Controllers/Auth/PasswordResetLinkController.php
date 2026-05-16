@@ -42,23 +42,32 @@ class PasswordResetLinkController extends Controller
         ]);
 
         try {
-            // DIAGNOSTIC LOGGING (Temporary)
-            \Log::info("PASSWORD_RESET_DEBUG: Dispatching Reset Link", [
+            // PREVENTION: Prevent PHP from hanging forever
+            set_time_limit(30);
+
+            // DIAGNOSTIC LOGGING
+            \Log::info("PASSWORD_RESET_DEBUG: Dispatching Reset Link...", [
                 'email' => $request->email,
                 'mailer' => config('mail.default'),
                 'host' => config('mail.mailers.smtp.host'),
                 'port' => config('mail.mailers.smtp.port'),
-                'from' => config('mail.from.address'),
+                'encryption' => config('mail.mailers.smtp.encryption'),
+                'timeout' => config('mail.mailers.smtp.timeout'),
                 'app_url' => config('app.url')
             ]);
 
+            $startTime = microtime(true);
+            
             $status = Password::sendResetLink(
                 $request->only('email')
             );
 
-            \Log::info("PASSWORD_RESET_DEBUG: Reset Link Result", [
+            $duration = round(microtime(true) - $startTime, 2);
+
+            \Log::info("PASSWORD_RESET_DEBUG: Reset Link Result Received", [
                 'status' => $status, 
-                'email' => $request->email
+                'email' => $request->email,
+                'duration_seconds' => $duration
             ]);
 
             return $status == Password::RESET_LINK_SENT
@@ -66,6 +75,17 @@ class PasswordResetLinkController extends Controller
                         : back()->withInput($request->only('email'))
                             ->withErrors(['email' => __($status)]);
                             
+        } catch (\Symfony\Component\Mailer\Exception\TransportExceptionInterface $e) {
+            \Log::error("PASSWORD_RESET_DEBUG: Transport Failure - " . $e->getMessage(), [
+                'email' => $request->email,
+                'code' => $e->getCode(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return back()
+                ->withInput($request->only('email'))
+                ->withErrors(['email' => 'Mail server connection timeout. Please try again later.']);
+
         } catch (\Exception $e) {
             // Log the full error for production diagnosis
             \Log::error("PASSWORD_RESET_DEBUG: Failure - " . $e->getMessage(), [
