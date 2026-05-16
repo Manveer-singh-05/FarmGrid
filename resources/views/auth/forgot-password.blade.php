@@ -23,8 +23,7 @@
             <x-input-error :messages="$errors->get('email')" class="glassmorphic-error" />
         </div>
 
-        <button type="button" class="glassmorphic-button" 
-            onclick="console.log('Submit button clicked manually'); console.log('Action:', this.form.action); this.form.submit();">
+        <button type="submit" class="glassmorphic-button">
             {{ __('Send Password Reset Link') }}
         </button>
 

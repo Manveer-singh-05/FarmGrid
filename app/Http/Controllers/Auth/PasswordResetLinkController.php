@@ -26,14 +26,16 @@ class PasswordResetLinkController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        // MASSIVE DIAGNOSTIC LOG
-        \Log::emergency("================================================================");
-        \Log::emergency("CRITICAL DIAGNOSTIC: PasswordResetLinkController@store CALLED");
-        \Log::emergency("EMAIL: " . $request->email);
-        \Log::emergency("METHOD: " . $request->method());
-        \Log::emergency("URL: " . $request->fullUrl());
-        \Log::emergency("IP: " . $request->ip());
-        \Log::emergency("================================================================");
+        // PRODUCTION DIAGNOSTIC LOG
+        \Log::info("PASSWORD_RESET_DEBUG: Request Received", [
+            'method' => $request->method(),
+            'url' => $request->fullUrl(),
+            'email' => $request->email,
+            'has_csrf' => $request->has('_token'),
+            'referer' => $request->header('referer'),
+            'user_agent' => $request->userAgent(),
+            'ip' => $request->ip()
+        ]);
 
         $request->validate([
             'email' => ['required', 'email'],
@@ -41,24 +43,23 @@ class PasswordResetLinkController extends Controller
 
         try {
             // DIAGNOSTIC LOGGING (Temporary)
-            \Log::info("Password Reset Attempt Initiated", [
+            \Log::info("PASSWORD_RESET_DEBUG: Dispatching Reset Link", [
                 'email' => $request->email,
-                'mail_mailer' => config('mail.default'),
-                'mail_host' => config('mail.mailers.smtp.host'),
-                'mail_port' => config('mail.mailers.smtp.port'),
-                'mail_from' => config('mail.from.address'),
-                'app_url' => config('app.url'),
-                'env' => config('app.env')
+                'mailer' => config('mail.default'),
+                'host' => config('mail.mailers.smtp.host'),
+                'port' => config('mail.mailers.smtp.port'),
+                'from' => config('mail.from.address'),
+                'app_url' => config('app.url')
             ]);
 
-            // We will send the password reset link to this user. Once we have attempted
-            // to send the link, we will examine the response then see the message we
-            // need to show to the user. Finally, we'll send out a proper response.
             $status = Password::sendResetLink(
                 $request->only('email')
             );
 
-            \Log::info("Password Reset Link Result", ['status' => $status, 'email' => $request->email]);
+            \Log::info("PASSWORD_RESET_DEBUG: Reset Link Result", [
+                'status' => $status, 
+                'email' => $request->email
+            ]);
 
             return $status == Password::RESET_LINK_SENT
                         ? back()->with('status', __($status))
@@ -67,7 +68,7 @@ class PasswordResetLinkController extends Controller
                             
         } catch (\Exception $e) {
             // Log the full error for production diagnosis
-            \Log::error("Password Reset Link Failure: " . $e->getMessage(), [
+            \Log::error("PASSWORD_RESET_DEBUG: Failure - " . $e->getMessage(), [
                 'email' => $request->email,
                 'trace' => $e->getTraceAsString()
             ]);
