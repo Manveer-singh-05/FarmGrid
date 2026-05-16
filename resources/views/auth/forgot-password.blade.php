@@ -1,10 +1,4 @@
 <x-guest-layout>
-    <script>
-        console.log('Forgot Password Page Loaded');
-        document.addEventListener('submit', function(e) {
-            console.log('Submit event intercepted:', e.target.action);
-        }, true);
-    </script>
     <div class="mb-6 text-center text-white text-opacity-90">
         {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
     </div>
@@ -12,7 +6,7 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <form method="POST" action="{{ route('password.email') }}" onsubmit="console.log('Form submitting to: ' + this.action); return true;" novalidate>
+    <form method="POST" action="{{ route('password.email') }}" novalidate>
         @csrf
 
         <!-- Email Address -->

@@ -26,50 +26,17 @@ class PasswordResetLinkController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        // PRODUCTION DIAGNOSTIC LOG
-        \Log::info("PASSWORD_RESET_DEBUG: Request Received", [
-            'method' => $request->method(),
-            'url' => $request->fullUrl(),
-            'email' => $request->email,
-            'has_csrf' => $request->has('_token'),
-            'referer' => $request->header('referer'),
-            'user_agent' => $request->userAgent(),
-            'ip' => $request->ip()
-        ]);
-
         $request->validate([
             'email' => ['required', 'email'],
         ]);
 
         try {
-            // PREVENTION: Prevent PHP from hanging forever
+            // PREVENTION: Prevent PHP from hanging if SMTP is unresponsive
             set_time_limit(30);
 
-            // DIAGNOSTIC LOGGING
-            \Log::info("PASSWORD_RESET_DEBUG: Dispatching Reset Link...", [
-                'email' => $request->email,
-                'runtime_host' => config('mail.mailers.smtp.host'),
-                'runtime_port' => config('mail.mailers.smtp.port'),
-                'runtime_encryption' => config('mail.mailers.smtp.encryption'),
-                'runtime_from' => config('mail.from.address'),
-                'env_host' => env('MAIL_HOST'), // Check if env() differs from config()
-                'mailer' => config('mail.default'),
-                'timeout' => config('mail.mailers.smtp.timeout'),
-            ]);
-
-            $startTime = microtime(true);
-            
             $status = Password::sendResetLink(
                 $request->only('email')
             );
-
-            $duration = round(microtime(true) - $startTime, 2);
-
-            \Log::info("PASSWORD_RESET_DEBUG: Reset Link Result Received", [
-                'status' => $status, 
-                'email' => $request->email,
-                'duration_seconds' => $duration
-            ]);
 
             return $status == Password::RESET_LINK_SENT
                         ? back()->with('status', __($status))
@@ -77,10 +44,9 @@ class PasswordResetLinkController extends Controller
                             ->withErrors(['email' => __($status)]);
                             
         } catch (\Symfony\Component\Mailer\Exception\TransportExceptionInterface $e) {
-            \Log::error("PASSWORD_RESET_DEBUG: Transport Failure - " . $e->getMessage(), [
+            \Log::error("Password Reset Transport Failure: " . $e->getMessage(), [
                 'email' => $request->email,
-                'code' => $e->getCode(),
-                'trace' => $e->getTraceAsString()
+                'code' => $e->getCode()
             ]);
 
             return back()
@@ -88,10 +54,8 @@ class PasswordResetLinkController extends Controller
                 ->withErrors(['email' => 'Mail server connection timeout. Please try again later.']);
 
         } catch (\Exception $e) {
-            // Log the full error for production diagnosis
-            \Log::error("PASSWORD_RESET_DEBUG: Failure - " . $e->getMessage(), [
-                'email' => $request->email,
-                'trace' => $e->getTraceAsString()
+            \Log::error("Password Reset Failure: " . $e->getMessage(), [
+                'email' => $request->email
             ]);
 
             // Provide a graceful fallback to the user
