@@ -113,6 +113,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('government')->group(fu
 
     // Reports and Analytics
     Route::get('/reports', [GovernmentController::class, 'reports'])->name('government.reports');
+    Route::get('/reports/download', [GovernmentController::class, 'downloadReport'])->name('government.reports.download');
 });
 
 /**

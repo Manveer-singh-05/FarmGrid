@@ -299,6 +299,59 @@ class GovernmentController extends Controller
     }
 
     /**
+     * Download reports and analytics as PDF
+     */
+    public function downloadReport()
+    {
+        // 1. Farmer & Complaint Stats (MySQL)
+        try {
+            $totalFarmers = Farmer::count();
+            $approvedFarmers = Farmer::where('status', 'approved')->count();
+            $pendingFarmers = Farmer::where('status', 'pending')->count();
+            $rejectedFarmers = Farmer::where('status', 'rejected')->count();
+
+            $totalComplaints = Complaint::count();
+            $pendingComplaints = Complaint::where('status', 'pending')->count();
+            $resolvedComplaints = Complaint::where('status', 'resolved')->count();
+        } catch (\Exception $e) {
+            \Log::error("Gov Reports PDF - Basic Stats Failure: " . $e->getMessage());
+            $totalFarmers = 0;
+            $approvedFarmers = 0;
+            $pendingFarmers = 0;
+            $rejectedFarmers = 0;
+            $totalComplaints = 0;
+            $pendingComplaints = 0;
+            $resolvedComplaints = 0;
+        }
+
+        // 2. Power Usage Analytics (MongoDB - hardened)
+        try {
+            $reportUsage = PowerUsage::pluck('units_consumed');
+            $totalPowerUsage = (float)($reportUsage->sum() ?? 0);
+            $avgPowerUsage = (float)($reportUsage->avg() ?: 0);
+        } catch (\Exception $e) {
+            \Log::error("Gov Reports PDF - Power Analytics Failure: " . $e->getMessage());
+            $totalPowerUsage = 0;
+            $avgPowerUsage = 0;
+        }
+
+        $data = compact(
+            'totalFarmers',
+            'approvedFarmers',
+            'pendingFarmers',
+            'rejectedFarmers',
+            'totalComplaints',
+            'pendingComplaints',
+            'resolvedComplaints',
+            'totalPowerUsage',
+            'avgPowerUsage'
+        );
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('government.pdf.report', $data);
+        return $pdf->download('FarmGrid_Executive_Report.pdf');
+    }
+
+    /**
      * Safely convert various date types to Carbon instance
      * Supports MySQL, MongoDB BSON dates, and malformed strings
      */
