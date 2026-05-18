@@ -158,7 +158,7 @@
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex gap-4 relative z-10">
             <!-- Sidebar -->
-            <aside style="width: 280px; flex-shrink: 0; position: sticky; top: 84px; height: fit-content;">
+            <aside style="width: 280px; flex-shrink: 0; position: sticky; top: 84px; height: fit-content; margin-left: -24px; margin-right: 24px;">
                 <div
                     style="background: rgba(20, 35, 60, 0.4); backdrop-filter: blur(20px); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 24px; padding: 24px; box-shadow: 0 0 30px rgba(34, 197, 94, 0.15), 0 25px 80px rgba(37, 99, 235, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1);">
                     <h2
