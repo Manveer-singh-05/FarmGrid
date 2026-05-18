@@ -347,8 +347,17 @@ class GovernmentController extends Controller
             'avgPowerUsage'
         );
 
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('government.pdf.report', $data);
-        return $pdf->download('FarmGrid_Executive_Report.pdf');
+        \Log::info('Gov Reports PDF - Triggered downloadReport method');
+
+        try {
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('government.pdf.report', $data);
+            \Log::info('Gov Reports PDF - View loaded successfully');
+            
+            return $pdf->download('FarmGrid_Executive_Report.pdf');
+        } catch (\Throwable $e) {
+            \Log::error('Gov Reports PDF - Generation Exception: ' . $e->getMessage());
+            return back()->with('error', 'Failed to generate PDF. Please try again later.');
+        }
     }
 
     /**

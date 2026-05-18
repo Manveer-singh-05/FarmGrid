@@ -168,7 +168,7 @@
                 </div>
             </div>
             
-            <a href="{{ route('government.reports.download') }}" class="btn-shine" style="margin-top: 40px; width: 100%; padding: 20px; background: linear-gradient(135deg, #38BDF8 0%, #10B981 100%); border: none; border-radius: 20px; color: white; font-size: 1.1rem; font-weight: 800; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 15px 30px rgba(56, 189, 248, 0.3); display: flex; align-items: center; justify-content: center; gap: 12px; text-decoration: none;" onmouseover="this.style.transform='translateY(-5px) scale(1.01)'; this.style.boxShadow='0 20px 40px rgba(56, 189, 248, 0.4)'" onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 15px 30px rgba(56, 189, 248, 0.3)'">
+            <a href="/government/reports/download" target="_blank" class="btn-shine" style="margin-top: 40px; width: 100%; padding: 20px; background: linear-gradient(135deg, #38BDF8 0%, #10B981 100%); border: none; border-radius: 20px; color: white; font-size: 1.1rem; font-weight: 800; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 15px 30px rgba(56, 189, 248, 0.3); display: flex; align-items: center; justify-content: center; gap: 12px; text-decoration: none;" onmouseover="this.style.transform='translateY(-5px) scale(1.01)'; this.style.boxShadow='0 20px 40px rgba(56, 189, 248, 0.4)'" onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 15px 30px rgba(56, 189, 248, 0.3)'">
                 <span style="font-size: 1.4rem;">📥</span> Download Executive State Report (PDF)
             </a>
         </div>
