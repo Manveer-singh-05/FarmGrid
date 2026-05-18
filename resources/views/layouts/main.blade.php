@@ -37,16 +37,78 @@
                         </div>
                     </div>
                     <div class="flex items-center gap-6">
-                        <!-- Notification Bell -->
-                        <button
-                            class="relative flex items-center justify-center p-2 rounded-xl transition-all duration-300 hover:bg-white/10"
-                            style="border: 1px solid rgba(56, 189, 248, 0.2); backdrop-filter: blur(10px); height: 44px; width: 44px;"
-                            onmouseover="this.style.boxShadow='0 0 20px rgba(56, 189, 248, 0.3)'; this.style.borderColor='rgba(56, 189, 248, 0.4)'"
-                            onmouseout="this.style.boxShadow='none'; this.style.borderColor='rgba(56, 189, 248, 0.2)'">
-                            <span style="color: #38BDF8; font-size: 1.2rem;">🔔</span>
-                            <span
-                                class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">3</span>
-                        </button>
+                        <!-- Notification Dropdown -->
+                        <div class="relative group" x-data="{ notifOpen: false }" @click.outside="notifOpen = false">
+                            <button @click="notifOpen = !notifOpen"
+                                class="relative flex items-center justify-center p-2 rounded-xl transition-all duration-300 hover:bg-white/10"
+                                style="border: 1px solid rgba(56, 189, 248, 0.2); backdrop-filter: blur(10px); height: 44px; width: 44px;"
+                                onmouseover="this.style.boxShadow='0 0 20px rgba(56, 189, 248, 0.3)'; this.style.borderColor='rgba(56, 189, 248, 0.4)'"
+                                onmouseout="this.style.boxShadow='none'; this.style.borderColor='rgba(56, 189, 248, 0.2)'">
+                                <span style="color: #38BDF8; font-size: 1.2rem;">🔔</span>
+                                @if(Auth::check() && Auth::user()->unreadNotifications->count() > 0)
+                                    <span
+                                        class="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
+                                        {{ Auth::user()->unreadNotifications->count() }}
+                                    </span>
+                                @endif
+                            </button>
+                            
+                            <div x-show="notifOpen" x-transition:enter="transition ease-out duration-200"
+                                x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                                x-transition:leave="transition ease-in duration-150"
+                                x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+                                class="absolute right-0 top-full mt-2 w-80 z-50" style="display: none;">
+                                <div class="bg-slate-900/90 backdrop-blur-xl border border-slate-700/50 rounded-2xl shadow-2xl overflow-hidden">
+                                    <div class="p-4 border-b border-slate-700/50 flex justify-between items-center bg-slate-800/50">
+                                        <h3 class="text-white font-semibold">Notifications</h3>
+                                        @if(Auth::check() && Auth::user()->unreadNotifications->count() > 0)
+                                            <form action="{{ route('notifications.markAllRead') }}" method="POST">
+                                                @csrf
+                                                <button type="submit" class="text-xs text-sky-400 hover:text-sky-300 transition-colors">Mark all read</button>
+                                            </form>
+                                        @endif
+                                    </div>
+                                    <div class="max-h-80 overflow-y-auto custom-scrollbar" style="scrollbar-width: thin; scrollbar-color: rgba(56, 189, 248, 0.3) transparent;">
+                                        @if(Auth::check() && Auth::user()->notifications->count() > 0)
+                                            @foreach(Auth::user()->notifications()->latest()->take(10)->get() as $notification)
+                                                <div class="p-4 border-b border-slate-700/50 hover:bg-white/5 transition-colors {{ is_null($notification->read_at) ? 'bg-sky-900/20' : '' }}">
+                                                    <div class="flex justify-between items-start gap-3">
+                                                        <div class="flex-1">
+                                                            <div class="flex items-center gap-2 mb-1">
+                                                                @if(($notification->data['type'] ?? '') === 'security')
+                                                                    <span class="text-orange-400 text-sm">🔒</span>
+                                                                @elseif(($notification->data['type'] ?? '') === 'billing')
+                                                                    <span class="text-emerald-400 text-sm">💰</span>
+                                                                @else
+                                                                    <span class="text-sky-400 text-sm">⚡</span>
+                                                                @endif
+                                                                <p class="text-sm font-medium {{ is_null($notification->read_at) ? 'text-white' : 'text-slate-300' }}">
+                                                                    {{ $notification->data['title'] ?? 'Notification' }}
+                                                                </p>
+                                                            </div>
+                                                            <p class="text-xs text-slate-400 line-clamp-2">{{ $notification->data['message'] ?? '' }}</p>
+                                                            <p class="text-[10px] text-slate-500 mt-2">{{ $notification->created_at->diffForHumans() }}</p>
+                                                        </div>
+                                                        @if(is_null($notification->read_at))
+                                                            <form action="{{ route('notifications.read', $notification->id) }}" method="POST">
+                                                                @csrf
+                                                                @method('PATCH')
+                                                                <button type="submit" class="w-2 h-2 rounded-full bg-sky-400 mt-2 hover:scale-150 transition-transform" title="Mark as read"></button>
+                                                            </form>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        @else
+                                            <div class="p-6 text-center">
+                                                <div class="text-slate-500 mb-2 text-2xl">📭</div>
+                                                <p class="text-sm text-slate-400">No new notifications</p>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                         <!-- Profile Dropdown -->
                         <div class="relative group" x-data="{ open: false }" @click.outside="open = false">
