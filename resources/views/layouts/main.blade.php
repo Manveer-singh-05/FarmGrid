@@ -140,10 +140,6 @@
                                         class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-white text-sm transition-colors">
                                         <span>👤</span> Profile
                                     </a>
-                                    <a href="#"
-                                        class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-white text-sm transition-colors">
-                                        <span>⚙️</span> Settings
-                                    </a>
                                     <div class="border-t border-slate-700/50 my-2"></div>
                                     <form action="{{ route('logout') }}" method="POST">
                                         @csrf
